@@ -1,0 +1,23 @@
+{
+  "source": "Nielsen Norman Group",
+  "url": "https://www.nngroup.com/articles/dropdown-list/",
+  "title": "Does Your Form Really Need a Dropdown List?",
+  "author": {
+    "name": "Huei-Hsin Wang",
+    "url": "https://www.nngroup.com/articles/author/huei-hsin-wang/"
+  },
+  "published_at": "2026-07-17T17:00:00+00:00",
+  "modified_at": "2026-07-16T16:09:58+00:00",
+  "reading_time_minutes": 11,
+  "summary": "Dropdown lists can be used in narrow, specific scenarios, but misuse can cause more harm than alternatives.",
+  "image_url": "https://media.nngroup.com/media/articles/opengraph_images/Does_Your_Form_Really_Need_a_Dropdown_List_-1_YvXTirT.png",
+  "table_of_contents": [
+    "Definition",
+    "The Appeal of Dropdown Lists",
+    "The Hidden Costs of Dropdown Lists",
+    "When to Avoid Dropdown Lists",
+    "When Dropdowns Still Make Sense",
+    "Conclusion"
+  ],
+  "retrieved_at": "2026-07-25T14:11:06+09:00"
+}

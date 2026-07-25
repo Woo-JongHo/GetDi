@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "Nielsen Norman Group",
+    "url": "https://www.nngroup.com"
+  },
+  "topic": {
+    "name": "Design Process",
+    "slug": "ux-design-process",
+    "url": "https://www.nngroup.com/topic/ux-design-process/?page=4"
+  },
+  "collection": {
+    "page": 4,
+    "retrieved_at": "2026-07-25T05:49:59.964017+00:00",
+    "item_count": 20,
+    "visible_page_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "next_page_url": "https://www.nngroup.com/topic/ux-design-process/?page=5"
+  },
+  "items": [
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/product-partners/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Collaborating_with_Product_Partners.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Collaborating with Product Partners: 3 Tips",
+      "summary": "Team up with product partners more effectively by making research accessible, framing the context and value of analytics, and establishing a regular communication cadence.",
+      "published_date": "2023-05-19",
+      "duration_minutes": 3,
+      "slug": "product-partners"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/data-findings-insights-differences/",
+      "title": "Data vs. Findings vs. Insights: The Differences Explained",
+      "summary": "Data refers to unanalyzed user observations, findings capture patterns among data points, and insights are the actionable opportunities based on research and business goals.",
+      "published_date": "2023-04-23",
+      "duration_minutes": 3,
+      "slug": "data-findings-insights-differences"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/when-to-empathy-map/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/When_to_Empathy_Map_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "When to Empathy Map",
+      "summary": "Empathy maps can be used to plan for future research studies, capture insights during current user research, and communicate research insights from research that has already been conducted.",
+      "published_date": "2023-04-21",
+      "duration_minutes": 3,
+      "slug": "when-to-empathy-map"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/prototype-specifications/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Prototype_Specifications_3_Types_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Prototype Specifications: 3 Types",
+      "summary": "Element, functionality, and content are three types of prototype specifications that help us document design details that are otherwise easily overlooked.",
+      "published_date": "2023-04-14",
+      "duration_minutes": 3,
+      "slug": "prototype-specifications"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/ux-research-roadmaps/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/UX_Research_Roadmaps_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "UX Research Roadmaps",
+      "summary": "A UX research roadmap is a living artifact that prioritizes and communicates a team’s future research efforts, from early discovery-based initiatives to later-stage usability testing.",
+      "published_date": "2023-04-14",
+      "duration_minutes": 4,
+      "slug": "ux-research-roadmaps"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/impact-on-ux/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Impact_on_UX-_Individual_Designers_vs._Systematic_Methodology_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Impact on UX: Individual Designers vs. Systematic Methodology",
+      "summary": "How is the quality of the final design impacted by the contribution of individual designers vs. the outcome of following systematic UX methodology?",
+      "published_date": "2023-03-31",
+      "duration_minutes": 1,
+      "slug": "impact-on-ux"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ux-basics-study-guide/",
+      "title": "UX Basics: Study Guide",
+      "summary": "Unsure where to start? Use this collection of links to our articles and videos to learn more about the basics of user experience.",
+      "published_date": "2023-03-26",
+      "duration_minutes": 5,
+      "slug": "ux-basics-study-guide"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/tips-for-new-prototypers/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/5_Tips_for_New_Prototypers_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "5 Tips for New Prototypers",
+      "summary": "Are you new to prototyping? We compiled our favorite design and workflow tips to help you create effective prototypes for usability testing.",
+      "published_date": "2023-03-17",
+      "duration_minutes": 3,
+      "slug": "tips-for-new-prototypers"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/strategy-study-guide/",
+      "title": "UX Strategy: Study Guide",
+      "summary": "Unsure where to start? Use this collection of links to our articles and videos about UX visioning and strategy.",
+      "published_date": "2023-03-12",
+      "duration_minutes": 2,
+      "slug": "strategy-study-guide"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/mood-boards/",
+      "title": "Mood Boards in UX: How and Why to Use Them",
+      "summary": "Create mood boards to collect visual inspiration, communicate brand identity, and decide on the product's visual direction.",
+      "published_date": "2023-02-26",
+      "duration_minutes": 6,
+      "slug": "mood-boards"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/using-empathy-maps/",
+      "title": "When to Use Empathy Maps: 3 Options",
+      "summary": "Empathy maps are a powerful, flexible tool that can be used to plan for future research studies, capture insights during current user research, and communicate research insights from research that has already been conducted to others.",
+      "published_date": "2023-02-12",
+      "duration_minutes": 3,
+      "slug": "using-empathy-maps"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/discovery-in-agile/",
+      "title": "Discovery in Agile",
+      "summary": "Scaling discovery work in Agile helps teams plan appropriately scoped activities around targeted questions and probable assumptions instead of arbitrary sprint timeframes.",
+      "published_date": "2023-02-05",
+      "duration_minutes": 7,
+      "slug": "discovery-in-agile"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/stop-solutioneering/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Stop_Solutioneering_UX_Slogan_18_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Stop Solutioneering (UX Slogan # 18)",
+      "summary": "UX designers and engineering teams are often too quick to propose solutions, without understanding the problem (or even if there is a problem at all). Ask questions first, before jumping to a solution.",
+      "published_date": "2023-01-13",
+      "duration_minutes": 2,
+      "slug": "stop-solutioneering"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/journey-mapping-how/",
+      "title": "How Practitioners Create Journey Maps: Typical Uses, Roles, and Methods",
+      "summary": "Data from 343 companies provide a baseline to understanding typical approaches for selecting journey-mapping applications, research methods, contributing roles, and map components.",
+      "published_date": "2023-01-08",
+      "duration_minutes": 6,
+      "slug": "journey-mapping-how"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/journey-map-how-much-time/",
+      "title": "How Much Time Does It Take to Create a Journey Map?",
+      "summary": "Data from 343 respondents provide a baseline to help teams understand and estimate the time and cost involved in the journey-mapping process.",
+      "published_date": "2022-12-18",
+      "duration_minutes": 4,
+      "slug": "journey-map-how-much-time"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ux-mapping-methods-visual-design-guide/",
+      "title": "UX Mapping Methods: Visual-Design Guide",
+      "summary": "Visual-design principles can be applied consistently throughout the process of creating a polished UX map. Start by choosing a tool, then create a visual system, establish the basic layout, and finally add content and make adjustments.",
+      "published_date": "2022-12-04",
+      "duration_minutes": 6,
+      "slug": "ux-mapping-methods-visual-design-guide"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/intranet-trends/2022-intranet-trends/",
+      "title": "The 10 Best Intranets of 2022: Trends in Design and Process",
+      "summary": "Still challenged by the global pandemic but unwavering, intranet-design teams committed to accessibility and inclusion. Empathy and logic prevailed, resulting in winning intranets that are accepting and supportive of all employees equally.",
+      "published_date": "2022-08-07",
+      "duration_minutes": 9,
+      "slug": "2022-intranet-trends"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/intranet-design/2022/",
+      "title": "10 Best Intranets of 2022: What Makes Them Great",
+      "summary": "The 2022 Intranet Design Annual winning teams were small relative to the size of their organizations, yet they produced excellent designs quickly. Teams continued to partner with outside consultants for support in development, project management, design, research, and other areas. A wide variety of industries from only four countries were represented this year.",
+      "published_date": "2022-07-10",
+      "duration_minutes": 6,
+      "slug": "2022"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/design-thinking-activities/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Design_Thinking_Activities_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Design Thinking Activities",
+      "summary": "The 6 stages of the design thinking process can be supported by a very wide range of UX methods and activities. Don't limit yourself to the most commonly mentioned methods.",
+      "published_date": "2022-07-08",
+      "duration_minutes": 5,
+      "slug": "design-thinking-activities"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/okrs-in-ux/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Objectives_and_Key_Results_OKRs_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Objectives and Key Results (OKRs) in UX",
+      "summary": "Define objectives and measurable key results to guide and track UX work. Use OKRs as a tool to align your team, provide focus, and a tangible way to monitor progress.",
+      "published_date": "2022-07-01",
+      "duration_minutes": 3,
+      "slug": "okrs-in-ux"
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "Nielsen Norman Group",
+    "url": "https://www.nngroup.com"
+  },
+  "topic": {
+    "name": "Design Process",
+    "slug": "ux-design-process",
+    "url": "https://www.nngroup.com/topic/ux-design-process/?page=12"
+  },
+  "collection": {
+    "page": 12,
+    "retrieved_at": "2026-07-25T05:58:02.090952+00:00",
+    "item_count": 20,
+    "visible_page_numbers": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "next_page_url": "https://www.nngroup.com/topic/ux-design-process/?page=13"
+  },
+  "items": [
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/one-person-ux-team/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Coping_with_being_the_one_person_UX_team_Garrett.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Coping with Being the One-Person UX Team",
+      "summary": "How to maximize your impact when you are the sole UX specialist on your project or in your organization.",
+      "published_date": "2018-05-18",
+      "duration_minutes": 2,
+      "slug": "one-person-ux-team"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/post-it-in-ux/",
+      "title": "In Defense of Post-its",
+      "summary": "Sticky notes strengthen team dynamics and represent an egalitarian, concise means for expressing ideas in UX design projects.",
+      "published_date": "2018-03-25",
+      "duration_minutes": 4,
+      "slug": "post-it-in-ux"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ux-expert-reviews/",
+      "title": "UX Expert Reviews",
+      "summary": "Expert reviews involve the analysis of a design by a UX expert with the goal of identifying usability problems and strengths.",
+      "published_date": "2018-02-25",
+      "duration_minutes": 8,
+      "slug": "ux-expert-reviews"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/5-steps-service-blueprinting/",
+      "title": "The 5 Steps to Service Blueprinting",
+      "summary": "Five key steps comprise a framework for service blueprinting that can be scaled to any scope or timeline.",
+      "published_date": "2018-02-04",
+      "duration_minutes": 4,
+      "slug": "5-steps-service-blueprinting"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/why-personas-fail/",
+      "title": "Why Personas Fail",
+      "summary": "Personas are useful tools for UX work, so why do they often fail? Find out what pitfalls cause personas to fail, and how to avoid and overcome them.",
+      "published_date": "2018-01-28",
+      "duration_minutes": 6,
+      "slug": "why-personas-fail"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/empathy-mapping/",
+      "title": "Empathy Mapping: The First Step in Design Thinking",
+      "summary": "Empathy maps help UX teams visualize user attitudes and behaviors, building a shared understanding of end users while highlighting gaps in existing user data.",
+      "published_date": "2018-01-14",
+      "duration_minutes": 6,
+      "slug": "empathy-mapping"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/decision-framing-cognitive-bias-ux-pros/",
+      "title": "Decision Frames: How Cognitive Biases Affect UX Practitioners",
+      "summary": "Designers are vulnerable to the same cognitive biases as users. The context in which you present a problem can bias your design choices.",
+      "published_date": "2017-12-19",
+      "duration_minutes": 5,
+      "slug": "decision-framing-cognitive-bias-ux-pros"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/bad-design-suggestions/",
+      "title": "How to Deal With Bad Design Suggestions",
+      "summary": "Gracefully respond to unsolicited design ideas, and prevent them from derailing good design. Turn them into UX learning experiences.",
+      "published_date": "2017-12-10",
+      "duration_minutes": 5,
+      "slug": "bad-design-suggestions"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ux-mapping-cheat-sheet/",
+      "title": "UX Mapping Methods Compared: A Cheat Sheet",
+      "summary": "Empathy maps, customer journey maps, experience maps, and service blueprints depict different processes and have different goals, yet they all build common ground within an organization.",
+      "published_date": "2017-11-05",
+      "duration_minutes": 5,
+      "slug": "ux-mapping-cheat-sheet"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ideation-in-practice/",
+      "title": "Ideation in Practice: How Effective UX Teams Generate Ideas",
+      "summary": "Data from 257 UX professionals shows that quality UX ideas come from ideating early in the design cycle, drawing inspiration from user research, and working with a group. Many struggle with generating ideas because they lack time, managerial support, and a methodology for conducting effective ideation sessions.",
+      "published_date": "2017-10-29",
+      "duration_minutes": 9,
+      "slug": "ideation-in-practice"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/presenting-remotely/",
+      "title": "5 Strategies for Presenting UX Remotely",
+      "summary": "Master remote presentations by creating the right environment, being human, reducing distractions, taking control, and telling a story.",
+      "published_date": "2017-09-24",
+      "duration_minutes": 6,
+      "slug": "presenting-remotely"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/scaling-design-thinking/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Scaling_Design_Thinking_to_Fit_Your_Needs_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Scaling Design Thinking to Fit Your Needs (and Budget)",
+      "summary": "Design-thinking methods are flexible and scalable. You can apply them to a variety of design challenges regardless of budget and team size.",
+      "published_date": "2017-09-15",
+      "duration_minutes": 2,
+      "slug": "scaling-design-thinking"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/bringing-personas-agile/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Bringing_Personas_to_Agile_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Bringing Personas to Agile",
+      "summary": "Kim discusses ways to fit personas in Agile environments.",
+      "published_date": "2017-09-08",
+      "duration_minutes": 2,
+      "slug": "bringing-personas-agile"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/service-blueprints-definition/",
+      "title": "Service Blueprints: Definition",
+      "summary": "Service blueprints visualize organizational processes in order to optimize how a business delivers a user experience.",
+      "published_date": "2017-08-27",
+      "duration_minutes": 5,
+      "slug": "service-blueprints-definition"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/group-ideation/",
+      "title": "Troubleshooting Group Ideation: 10 Fixes for More and Better UX Ideas",
+      "summary": "Groups can bias individuals and impact collaborative ideation. A focus on getting as many ideas as possible can mitigate some of the negative group effects.",
+      "published_date": "2017-08-13",
+      "duration_minutes": 5,
+      "slug": "group-ideation"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/personas-jobs-be-done/",
+      "title": "Personas vs. Jobs-to-Be-Done",
+      "summary": "Jobs-to-be-done focus on user problems and needs, while well-executed personas include the same information and also add behavioral and attitudinal details.",
+      "published_date": "2017-08-06",
+      "duration_minutes": 8,
+      "slug": "personas-jobs-be-done"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/does-agile-destroy-ux/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Does_Agile_Destroy_UX_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Does Agile Destroy UX?",
+      "summary": "As Agile UX evolves, so does the role of the UX practitioner. In modern software-development environments, UX helps define how products are developed.",
+      "published_date": "2017-08-04",
+      "duration_minutes": 2,
+      "slug": "does-agile-destroy-ux"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/designer-developer-relationships/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Designer_Developer_Relationships_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Building Strong Designer-Developer Relationships",
+      "summary": "Sarah Gibbons discusses techniques for fostering collaboration and communication among product team members.",
+      "published_date": "2017-07-28",
+      "duration_minutes": 2,
+      "slug": "designer-developer-relationships"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/facilitating-design-studio-workshop/",
+      "title": "Facilitating an Effective Design Studio Workshop",
+      "summary": "Design studios are UX workshops that combine ideation and design critique with idea prioritization and help teams collaborate and feel invested in the project.",
+      "published_date": "2017-07-02",
+      "duration_minutes": 6,
+      "slug": "facilitating-design-studio-workshop"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/prioritize-ideas-ux-brainstorming/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Prioritizing-UX-Ideas-Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "How to Prioritize Ideas from UX Brainstorming Sessions",
+      "summary": "Use ranking techniques to help turn workshop ideas into concrete action plans.",
+      "published_date": "2017-06-23",
+      "duration_minutes": 3,
+      "slug": "prioritize-ideas-ux-brainstorming"
+    }
+  ]
+}

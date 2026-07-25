@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "Nielsen Norman Group",
+    "url": "https://www.nngroup.com"
+  },
+  "topic": {
+    "name": "Design Process",
+    "slug": "ux-design-process",
+    "url": "https://www.nngroup.com/topic/ux-design-process/?page=10"
+  },
+  "collection": {
+    "page": 10,
+    "retrieved_at": "2026-07-25T05:56:00.706200+00:00",
+    "item_count": 20,
+    "visible_page_numbers": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "next_page_url": "https://www.nngroup.com/topic/ux-design-process/?page=11"
+  },
+  "items": [
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/service-blueprinting-practice/",
+      "title": "Service Blueprinting in Practice: Who, When, What",
+      "summary": "UX practitioners associate the term “service blueprinting” with an artifact, framework, or collaborative tool. Those surveyed used service blueprints early on or near the end of the product-design lifecycle.",
+      "published_date": "2019-10-20",
+      "duration_minutes": 7,
+      "slug": "service-blueprinting-practice"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/why-service-design/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Why_Service_Design_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Why Service Design",
+      "summary": "A service design perspective is needed to avoid fragmenting the long-term customer experience by individual (but uncoordinated) touchpoints, provided by siloed internal teams.",
+      "published_date": "2019-10-18",
+      "duration_minutes": 2,
+      "slug": "why-service-design"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ux-agile-backlog/",
+      "title": "Incorporating UX Work into Your Agile Backlog",
+      "summary": "Three different backlog models enable teams to keep track of UX work in their Agile processes. Each model comes with pros and cons.",
+      "published_date": "2019-10-06",
+      "duration_minutes": 6,
+      "slug": "ux-agile-backlog"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/design-thinking-agile/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Design_Thinking_and_Agile_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Design Thinking and Agile",
+      "summary": "The design thinking project life-cycle has 6 well-defined stages. Mapping these stages onto a typical Agile development project shows when designers should conduct which UX activities.",
+      "published_date": "2019-09-27",
+      "duration_minutes": 3,
+      "slug": "design-thinking-agile"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/visual-mapping-strategies/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/3_Powerful_Visual_Mapping_Strategies_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "3 Powerful Visual Mapping Strategies in UX Design",
+      "summary": "Cognitive maps, mind maps, and concept maps are different ways of visualizing mental models. They each have a role in the UX design process.",
+      "published_date": "2019-09-20",
+      "duration_minutes": 2,
+      "slug": "visual-mapping-strategies"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/parking-lots/",
+      "title": "Parking Lots in UX Meetings and Workshops",
+      "summary": "A parking lot captures unrelated questions or out-of-scope conversations during UX meetings or workshops to keep the discussion focused and maintain momentum.",
+      "published_date": "2019-09-08",
+      "duration_minutes": 4,
+      "slug": "parking-lots"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/design-thinking-designers-definition/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Phase_1_-_Design_Thinking_Research_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "How UX Professionals Define Design Thinking in Practice",
+      "summary": "We conducted research with UX professionals and designers to find out what they think Design Thinking actually is. What attributes do practitioners assign to Design Thinking, as used in practice? And how does this understanding evolve as practitioners get more experience?",
+      "published_date": "2019-08-30",
+      "duration_minutes": 3,
+      "slug": "design-thinking-designers-definition"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/scenario-mapping/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Scenario_Mapping_for_Design_Exploration_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Scenario Mapping for Design Exploration",
+      "summary": "When you are in the early stages of designing a user experience flow, use scenario mapping to work out how different personas will use the proposed design to solve their tasks.",
+      "published_date": "2019-08-23",
+      "duration_minutes": 3,
+      "slug": "scenario-mapping"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/designops-101/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/DesignOps_101_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "DesignOps 101",
+      "summary": "DesignOps (Design Operations) is a system for amplifying user experience design's value and impact at scale.",
+      "published_date": "2019-07-26",
+      "duration_minutes": 4,
+      "slug": "designops-101"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/design-operations-101/",
+      "title": "DesignOps 101",
+      "summary": "The practice of Design Operations focuses on processes and measures that support designers in creating consistent, quality designs.",
+      "published_date": "2019-07-21",
+      "duration_minutes": 6,
+      "slug": "design-operations-101"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/cognitive-mind-concept/",
+      "title": "Cognitive Maps, Mind Maps, and Concept Maps: Definitions",
+      "summary": "Cognitive maps, concept maps, and mind maps are diagramming techniques that can be utilized throughout the UX process to visualize knowledge and surface relationships among concepts.",
+      "published_date": "2019-07-14",
+      "duration_minutes": 7,
+      "slug": "cognitive-mind-concept"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/dot-voting/",
+      "title": "Dot Voting: A Simple Decision-Making and Prioritizing Technique in UX",
+      "summary": "By placing colored dots, participants in UX workshops, activities, or collaborative sessions individually vote on the importance of design ideas, features, usability findings, and anything else that requires prioritization.",
+      "published_date": "2019-07-07",
+      "duration_minutes": 5,
+      "slug": "dot-voting"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/tracking-assumptions/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Assumptions_How_to_Track_Them_During_the_UX_Design_Process_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Assumptions: How to Track Them in the UX Design Process",
+      "summary": "The best user experiences are backed by research, but sometimes we move more quickly than our research does. How can we best use and track assumptions as we go through design iterations?",
+      "published_date": "2019-07-05",
+      "duration_minutes": 4,
+      "slug": "tracking-assumptions"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/sketch-ui-non-designers/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/HowtoSketch.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "How to Sketch a UI for Nondesigners",
+      "summary": "\"I can't draw,\" is a common phrase heard in ideation. But ideation happens in early stages of design and is meant to be messy. This video shows how to use basic shapes to convey UI elements.",
+      "published_date": "2019-07-05",
+      "duration_minutes": 2,
+      "slug": "sketch-ui-non-designers"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/paper-prototyping-101/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Paper_Prototyping_101_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Paper Prototyping 101",
+      "summary": "Using paper prototypes is a great way to test a design idea and get usability feedback quickly. You can test whether a layout makes sense to users and make immediate changes if they run into issues.",
+      "published_date": "2019-06-07",
+      "duration_minutes": 2,
+      "slug": "paper-prototyping-101"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/journey-mapping-101/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Customer_Journey_Mapping_101_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Customer Journey Mapping 101",
+      "summary": "The 5 components of a journey map and the benefits of using this qualitative method as part of a UX design process to discover, document, and share the bigger picture of what users want.",
+      "published_date": "2019-05-10",
+      "duration_minutes": 2,
+      "slug": "journey-mapping-101"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/persuasive-storytelling/",
+      "title": "6 Rules for Persuasive Storytelling",
+      "summary": "Stories build empathy and make the user needs and pain points memorable to your team. Effective stories speak the language of the audience, are rooted in data, and take advantage of compelling artifacts.",
+      "published_date": "2019-04-28",
+      "duration_minutes": 7,
+      "slug": "persuasive-storytelling"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/sympathy-vs-empathy-ux/",
+      "title": "Sympathy vs. Empathy in UX",
+      "summary": "The majority of UX professionals practice sympathy instead of empathy for their users.",
+      "published_date": "2019-04-21",
+      "duration_minutes": 6,
+      "slug": "sympathy-vs-empathy-ux"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/retrospectives/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/How_to_Run_a_Retrospective_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "How to Run a Retrospective for a Design Team",
+      "summary": "Retrospectives are a dedicated time to come together, reflect, and collaboratively improve your design team’s process. In this video, we'll walk through the four components of a retrospective and how to use this meeting effectively.",
+      "published_date": "2019-04-12",
+      "duration_minutes": 3,
+      "slug": "retrospectives"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/journey-mapping-faq/",
+      "title": "Journey Mapping: 9 Frequently Asked Questions",
+      "summary": "Journey maps are useful for building common ground in an organization, but practitioners often have questions and misunderstandings about their scope and how to create them.",
+      "published_date": "2019-04-07",
+      "duration_minutes": 6,
+      "slug": "journey-mapping-faq"
+    }
+  ]
+}

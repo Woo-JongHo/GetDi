@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "Nielsen Norman Group",
+    "url": "https://www.nngroup.com"
+  },
+  "topic": {
+    "name": "Design Process",
+    "slug": "ux-design-process",
+    "url": "https://www.nngroup.com/topic/ux-design-process/?page=7"
+  },
+  "collection": {
+    "page": 7,
+    "retrieved_at": "2026-07-25T05:53:00.258759+00:00",
+    "item_count": 20,
+    "visible_page_numbers": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "next_page_url": "https://www.nngroup.com/topic/ux-design-process/?page=8"
+  },
+  "items": [
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/7-fundamental-activities-ux-workshops/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/7_Fundamental_Workshop_Activities_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "7 Fundamental Activities for UX Workshops",
+      "summary": "At the core of all the myriad of exercises and activity types in UX workshops are a simpler set of 7 foundational activities that can be blended to achieve the desired result.",
+      "published_date": "2021-04-23",
+      "duration_minutes": 5,
+      "slug": "7-fundamental-activities-ux-workshops"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/intranet-design/2021/",
+      "title": "10 Best Intranets of 2021: What Makes Them Great",
+      "summary": "The 2021 Intranet Design Annual winning teams exhibited a capacity to swiftly pivot, as well as compassion and empathy for employees.",
+      "published_date": "2021-04-12",
+      "duration_minutes": 11,
+      "slug": "2021"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/design-systems-101/",
+      "title": "Design Systems 101",
+      "summary": "A design system is a set of standards to manage design at scale by reducing redundancy while creating a shared language and visual consistency across pages and channels.",
+      "published_date": "2021-04-11",
+      "duration_minutes": 7,
+      "slug": "design-systems-101"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/tips-remote-ux-design-collaboration/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Tips_for_Remote_UX_Design_Collaboration_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Tips for Remote UX Design Collaboration",
+      "summary": "With experience, UX teams have evolved techniques for better collaboration and design practices to involve and engage remote and distributed team members. With participants at the Virtual UX Conference.",
+      "published_date": "2021-04-09",
+      "duration_minutes": 4,
+      "slug": "tips-remote-ux-design-collaboration"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/redesign-incremental-vs-overhaul/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Product_Redesigns_Incremental_or_Overhaul_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Product Redesigns: Incremental or Overhaul",
+      "summary": "Redesigning a user interface can be done in many smaller incremental releases or as one big complete redo. Big change is risky but necessary in 3 cases.",
+      "published_date": "2021-04-02",
+      "duration_minutes": 2,
+      "slug": "redesign-incremental-vs-overhaul"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/scenario-mapping-personas/",
+      "title": "Scenario Mapping: Design Ideation Using Personas",
+      "summary": "Persona-based scenarios can be leveraged to influence design through guided brainstorming workshops called scenario-mapping workshops.",
+      "published_date": "2021-03-28",
+      "duration_minutes": 7,
+      "slug": "scenario-mapping-personas"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/visual-design-heuristics-posters/",
+      "title": "Applying UX Principles to the Visual Design of Graphical Artifacts: The Case of the Heuristics Posters",
+      "summary": "We made the 10 heuristics’ posters easy to read and understand by iterating through multiple versions and improving each based on user-centered principles and methods.",
+      "published_date": "2021-03-21",
+      "duration_minutes": 6,
+      "slug": "visual-design-heuristics-posters"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/journey-mapping-tips/",
+      "title": "Getting Started with Journey Mapping: 27 Tips from Practitioners",
+      "summary": "Set yourself up for journey-mapping success by educating yourself on the basics, defining objectives, building a crossfunctional team, collaborating on the map, and optimizing your presentation.",
+      "published_date": "2021-03-07",
+      "duration_minutes": 8,
+      "slug": "journey-mapping-tips"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/remote-design-challenges/",
+      "title": "Remote Design Work: Top Challenges",
+      "summary": "Communication is the top challenge when designing remotely, according to 213 UX professionals. Receiving feedback, replicating informal conversations, and maintaining a clear direction on projects were the biggest communication concerns.",
+      "published_date": "2021-02-07",
+      "duration_minutes": 5,
+      "slug": "remote-design-challenges"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/diverge-converge-technique/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/First_Diverge_Then_Converge_During_UX_Ideation_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "First Diverge, Then Converge During UX Workshops",
+      "summary": "A general technique that's helpful in many kinds of UX workshops and design ideation is to first have team members work independently to create diverging ideas and solutions. Then, as a separate step, everybody works together to converge on the final outcome.",
+      "published_date": "2021-02-05",
+      "duration_minutes": 4,
+      "slug": "diverge-converge-technique"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/intranet-vision/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Intranet_Visions_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Intranet Vision",
+      "summary": "A clear vision gives the team something to aim for, and this is especially important for intranet projects, which often involve contributors from many different departments or functions.",
+      "published_date": "2021-02-05",
+      "duration_minutes": 3,
+      "slug": "intranet-vision"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/how-might-we-questions/",
+      "title": "Using “How Might We” Questions to Ideate on the Right Problems",
+      "summary": "Constructing how-might-we questions generates creative solutions while keeping teams focused on the right problems to solve.",
+      "published_date": "2021-01-17",
+      "duration_minutes": 4,
+      "slug": "how-might-we-questions"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/design-thinking-learners-journey/",
+      "title": "Design Thinking: The Learner’s Journey",
+      "summary": "As an individual learns design thinking, they go through 4 learning phases: newcomer, adopter, leader, and grandmaster.",
+      "published_date": "2021-01-10",
+      "duration_minutes": 10,
+      "slug": "design-thinking-learners-journey"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/dot-voting-ux-design-process/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Dot_Voting_in_the_UX_Design_Process_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Dot Voting in the UX Design Process",
+      "summary": "In UX design, you always have to prioritize. Features, personas, usability problems, and the list goes on. Dot votes are a simple way to find the group's sense of what's the most important.",
+      "published_date": "2020-12-18",
+      "duration_minutes": 4,
+      "slug": "dot-voting-ux-design-process"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/facilitation-101/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Facilitation_101_How_to_Improve_UX_Team_Performance_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Facilitation 101",
+      "summary": "The facilitator of a UX workshop, meeting, or other team activity anywhere in the design process has the job of enhancing the group's performance by optimizing the process through structure, activity, and guidance.",
+      "published_date": "2020-12-04",
+      "duration_minutes": 4,
+      "slug": "facilitation-101"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/roadmapping-steps/",
+      "title": "The 6 Steps to Roadmapping",
+      "summary": "To create a roadmap, inputs are gathered and clustered into themes, then prioritized and visualized. This article covers 6 key steps to roadmapping that can be applied to any scope or industry.",
+      "published_date": "2020-11-29",
+      "duration_minutes": 7,
+      "slug": "roadmapping-steps"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/roadmap-types/",
+      "title": "3 Types of Roadmaps in UX and Product Design",
+      "summary": "Roadmaps that include UX work can have 3 scopes: product, field, and specialty. Understanding these and their benefits can focus your process, effort, and goals.",
+      "published_date": "2020-11-01",
+      "duration_minutes": 7,
+      "slug": "roadmap-types"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/4-steps-designops/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/4Steps-DesignOps-Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "4 Steps to Getting Started with DesignOps",
+      "summary": "To launch a new design operations practice in a company, prioritize and aim for manageable and achievable first steps. Preferably measurable ones that can prove value and form the basis for subsequent steps.",
+      "published_date": "2020-09-25",
+      "duration_minutes": 2,
+      "slug": "4-steps-designops"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/service-blueprinting-workshops/",
+      "title": "A Guide to Service-Blueprinting Workshops",
+      "summary": "Service-blueprinting workshops require thoughtful planning and hands-on facilitation.",
+      "published_date": "2020-09-20",
+      "duration_minutes": 8,
+      "slug": "service-blueprinting-workshops"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/complex-app-101/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Complex_App_101_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Complex Apps 101",
+      "summary": "3 tips for designing applications for experts or specialized user groups doing complex domain-specific tasks (often with nonlinear workflows).",
+      "published_date": "2020-09-04",
+      "duration_minutes": 3,
+      "slug": "complex-app-101"
+    }
+  ]
+}

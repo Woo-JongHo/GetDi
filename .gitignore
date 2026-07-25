@@ -1,0 +1,27 @@
+# Node / web
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+*.log
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+
+# Python (수집 스크립트를 들일 경우)
+__pycache__/
+*.py[cod]
+.venv/
+
+# Runtime state and local caches
+data/state/*
+!data/state/.gitkeep
+data/private/
+*.sqlite3
+*.db

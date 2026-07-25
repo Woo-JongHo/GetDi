@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "Nielsen Norman Group",
+    "url": "https://www.nngroup.com"
+  },
+  "topic": {
+    "name": "Design Process",
+    "slug": "ux-design-process",
+    "url": "https://www.nngroup.com/topic/ux-design-process/"
+  },
+  "collection": {
+    "page": 1,
+    "retrieved_at": "2026-07-25T05:46:45.961333+00:00",
+    "item_count": 20,
+    "visible_page_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "next_page_url": "https://www.nngroup.com/topic/ux-design-process/?page=2"
+  },
+  "items": [
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/product-sense-definition/",
+      "title": "A Concrete Definition of “Product Sense” (and How to Build It)",
+      "summary": "Product sense means predicting which product decisions will succeed based on patterns learned through experimentation — and knowing when those patterns apply.",
+      "published_date": "2026-07-24",
+      "duration_minutes": 6,
+      "slug": "product-sense-definition"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/mistakes-to-avoid-presenting-complex-ux-maps/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Therese_4_Mistakes_to_Avoid_Cover.png.650x364_q75_autocrop_crop-smart_upscale.png",
+      "title": "4 Mistakes to Avoid When Presenting Complex UX Maps",
+      "summary": "UX maps clarify complexity but are often presented poorly. Prepare audiences by communicating early, speaking plainly, and focusing on collaborative outcomes.",
+      "published_date": "2026-07-13",
+      "duration_minutes": 4,
+      "slug": "mistakes-to-avoid-presenting-complex-ux-maps"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/design-system-maturity/",
+      "title": "Design-System Maturity: A 6-Dimension Framework",
+      "summary": "Use this maturity model to assess your design system’s health and identify where to focus next.",
+      "published_date": "2026-07-10",
+      "duration_minutes": 9,
+      "slug": "design-system-maturity"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/what-are-design-specs/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Thumbnail_Design_Spec.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "What are Design Specs?",
+      "summary": "When designs get rejected in dev review, missing specs are often the culprit. A solid spec covers layout, interactions, requirements, and project scope.",
+      "published_date": "2026-07-06",
+      "duration_minutes": 3,
+      "slug": "what-are-design-specs"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/quantity-yields-quality-in-ux-iterative-vs-parallel-vs-competitive-design/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Therese_Quantity_Yields_Quality_in_UX.png.650x364_q75_autocrop_crop-smart_upscale.png",
+      "title": "Quantity Yields Quality in UX: Iterative vs. Parallel vs. Competitive Design",
+      "summary": "No design is perfect on the first try. Combining iteration, parallel design, and competitive testing helps teams move quickly, explore broadly, and make confident, evidence-based design decisions.",
+      "published_date": "2026-06-22",
+      "duration_minutes": 5,
+      "slug": "quantity-yields-quality-in-ux-iterative-vs-parallel-vs-competitive-design"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/atomic-research-small-insights-big-impact/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Atomic_Research__Small_Insights_Big_Impact.png.650x364_q75_autocrop_crop-smart_upscale.png",
+      "title": "Atomic Research: Small Insights, Big Impact",
+      "summary": "Atomic research breaks user research into small, evidence-backed units to improve analysis, repository organization, and cross-team collaboration.",
+      "published_date": "2026-06-01",
+      "duration_minutes": 4,
+      "slug": "atomic-research-small-insights-big-impact"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/after-design-critique/",
+      "title": "Closing the Loop: What to Do After a Design Critique Ends",
+      "summary": "Most designers invest in running critiques but skip the followup. That missing step is often why feedback culture breaks down.",
+      "published_date": "2026-05-22",
+      "duration_minutes": 5,
+      "slug": "after-design-critique"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/design-disposables/",
+      "title": "The Case for Design Disposables",
+      "summary": "Design disposables are rough artifacts you make to think, not to deliver. Learn to tell them apart from deliverables and avoid the sunk-cost trap.",
+      "published_date": "2026-05-22",
+      "duration_minutes": 4,
+      "slug": "design-disposables"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/lean-design-system-teams/",
+      "title": "Small by Design: The Strength of Lean Design-System Teams",
+      "summary": "Lean design-system teams, when strategically planned, can move faster, prioritize sharply, and scale impact beyond their size.",
+      "published_date": "2026-05-15",
+      "duration_minutes": 6,
+      "slug": "lean-design-system-teams"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/information-pipeline/",
+      "title": "Boost Design Autonomy with an Information Pipeline",
+      "summary": "A four-step framework for building influence over product direction by closing the information gaps that large, complex organizations create.",
+      "published_date": "2026-04-17",
+      "duration_minutes": 9,
+      "slug": "information-pipeline"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/field-guide-to-ux-strategy/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Anna_and_Sarah_Field_Guide_to_Explaining_UX_Strategy.png.650x364_q75_autocrop_crop-smart_upscale.png",
+      "title": "Field Guide to Explaining UX Strategy",
+      "summary": "Simple, relatable ways to explain complex UX strategy concepts like UX vision, goals, OKRs, and outcomes. Translate UX strategy into language anyone on your team can understand.",
+      "published_date": "2026-04-13",
+      "duration_minutes": 3,
+      "slug": "field-guide-to-ux-strategy"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/design-process-isnt-dead/",
+      "title": "Design Process Isn't Dead, It’s Compressed",
+      "summary": "As AI speeds up design work, the argument to \"throw out the process\" misrepresents how experienced designers work.",
+      "published_date": "2026-03-13",
+      "duration_minutes": 5,
+      "slug": "design-process-isnt-dead"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ux-postmortems/",
+      "title": "Project Postmortems for UX Teams: Learning from Success and Failure",
+      "summary": "Although postmortems are one of the most powerful learning tools in product development, most teams haven't yet discovered how to use them effectively.",
+      "published_date": "2026-02-27",
+      "duration_minutes": 10,
+      "slug": "ux-postmortems"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/design-system-enforcer/",
+      "title": "Your Design System Needs an Enforcer",
+      "summary": "Although design systems promise consistency, most still fail without someone actively enforcing the rules and making teams follow them.",
+      "published_date": "2026-02-06",
+      "duration_minutes": 4,
+      "slug": "design-system-enforcer"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/vague-prototyping/",
+      "title": "Prompt to Design Interfaces: Why Vague Prompts Fail and How to Fix Them",
+      "summary": "Create better AI-prototyping designs by using precise visual keywords, references, analysis, as well as mock data and code snippets.",
+      "published_date": "2025-12-05",
+      "duration_minutes": 9,
+      "slug": "vague-prototyping"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/when-is-high-fidelity-worth-it/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/When_is_High-fidelity_Worth_It_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "When is High-fidelity Worth It?",
+      "summary": "4 questions to ask yourself when deciding whether process work should be high-fidelity or not.",
+      "published_date": "2025-12-01",
+      "duration_minutes": 3,
+      "slug": "when-is-high-fidelity-worth-it"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/ai-prototyping/",
+      "title": "Good from Afar, But Far from Good: AI Prototyping in Real Design Contexts",
+      "summary": "AI prototyping tools follow general directions but lack the judgment and nuance of an experienced designer.",
+      "published_date": "2025-10-24",
+      "duration_minutes": 8,
+      "slug": "ai-prototyping"
+    },
+    {
+      "format": "article",
+      "url": "https://www.nngroup.com/articles/developer-designer-relationship/",
+      "title": "From Confrontation to Collaboration: The Developer-Designer Relationship",
+      "summary": "The infamous developer-designer relationship doesn’t need to be toxic. Design and development teams should approach collaboration as coowners of the product experience.",
+      "published_date": "2025-09-26",
+      "duration_minutes": 4,
+      "slug": "developer-designer-relationship"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/ai-assisted-prototyping/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/AI_Assisted_Prototyping_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "AI-Assisted Prototyping: Promise and Pitfalls",
+      "summary": "AI tools turn static designs into working prototypes fast, but speed can mask flaws. Use them to explore, not as a final product.",
+      "published_date": "2025-09-22",
+      "duration_minutes": 5,
+      "slug": "ai-assisted-prototyping"
+    },
+    {
+      "format": "video",
+      "url": "https://www.nngroup.com/videos/template-trap/",
+      "thumbnail_url": "https://media.nngroup.com/media/videos/thumbnails/Template_Trap_Thumbnail.jpg.650x364_q75_autocrop_crop-smart_upscale.jpg",
+      "title": "Template Trap",
+      "summary": "Templates help, but only when used with intent. Use them thoughtfully, adapt them to context, and don’t skip the critical thinking.",
+      "published_date": "2025-09-08",
+      "duration_minutes": 5,
+      "slug": "template-trap"
+    }
+  ]
+}
