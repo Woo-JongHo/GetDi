@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok"]
+    },
+    "model_role": {
+      "type": "string"
+    }
+  },
+  "required": ["status", "model_role"],
+  "additionalProperties": false
+}

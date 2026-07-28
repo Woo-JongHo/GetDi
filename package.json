@@ -1,0 +1,26 @@
+{
+  "name": "getdi",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host localhost --port 5545 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --host localhost --port 5545 --strictPort",
+    "smoke": "node scripts/smoke.mjs",
+    "precompute:analyses": "node scripts/precompute_analyses.mjs",
+    "regenerate:four-analyses": "node scripts/regenerate_four_analyses.mjs",
+    "prepare:four": "node scripts/prepare_four.mjs",
+    "prepare:fable-four": "node scripts/prepare_fable_four.mjs",
+    "export:four": "node scripts/export_cards.mjs"
+    ,"generate:product-html": "node scripts/generate_product_html.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "vite": "^6.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "lucide-react": "^0.468.0"
+  },
+  "devDependencies": {}
+}

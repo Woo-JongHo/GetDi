@@ -1,0 +1,4 @@
+interface:
+  display_name: "Article Refinement"
+  short_description: "원문 근거를 보존해 카드뉴스용 기사 구조로 정제"
+  default_prompt: "Use $article-refinement to refine this article into evidence-linked Korean cardnews copy."
