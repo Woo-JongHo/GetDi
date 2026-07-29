@@ -1267,6 +1267,8 @@ a {
   line-height: 0.98;
   letter-spacing: -0.065em;
   word-break: keep-all;
+  /* 줄 나누는 자리는 의미 단위로 이미 정해져 들어온다. 그대로 지킨다. */
+  white-space: pre-line;
   -webkit-box-orient: vertical;
 }
 
@@ -1304,13 +1306,17 @@ a {
   margin-top: auto;
 }
 
+/* 카드 배경이 검정이 되면서 이 블록도 어두워졌다. 안의 도형은 전부 흰색
+   전제로 그려져 있으므로 배경을 accent로 채우면 대비가 무너진다.
+   accent는 테두리와 숫자에만 남긴다. */
 .generated-card-visual {
   position: relative;
   min-height: 310px;
   margin-top: auto;
   overflow: hidden;
+  border: 2px solid color-mix(in srgb, var(--card-accent) 38%, transparent);
   border-radius: 28px;
-  background: var(--card-accent);
+  background: #191b1e;
   color: #fff;
 }
 
@@ -1318,11 +1324,12 @@ a {
   position: absolute;
   right: 28px;
   bottom: 18px;
+  color: var(--card-accent);
   font-size: 104pt;
   font-style: normal;
   font-weight: 850;
   line-height: 0.8;
-  opacity: 0.18;
+  opacity: 0.24;
 }
 
 .visual-shape {
@@ -3655,5 +3662,224 @@ a {
   margin: 0 0 8px;
   color: var(--muted);
   font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ── 4단계 헤더·크롤링 화면 반응형 ──────────────────────────── */
+
+@media (max-width: 1180px) {
+  /* 단계 번호는 넓을 때만 쓸모 있다. 좁아지면 이름이 먼저다. */
+  .step-number {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  /* 헤더 자식이 셋(brand·steps·help)이라 2열로 접으면 갈 자리가 없다. */
+  .topbar {
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+  }
+
+  .topnav.steps {
+    justify-self: center;
+    overflow-x: auto;
+    max-width: 100%;
+    scrollbar-width: none;
+  }
+
+  .topnav.steps::-webkit-scrollbar {
+    display: none;
+  }
+
+  .topnav.steps a {
+    white-space: nowrap;
+  }
+
+  .help-link span,
+  .help-link {
+    font-size: 11px;
+  }
+
+  .crawl-layout {
+    padding: 32px 20px 80px;
+  }
+
+  .crawl-intro {
+    display: block;
+  }
+
+  .crawl-intro h1 {
+    font-size: 32px;
+  }
+
+  .crawl-actions {
+    margin-top: 20px;
+  }
+
+  .crawl-status {
+    display: block;
+  }
+
+  .crawl-progress {
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 720px) {
+  /* 브랜드 이름을 접어 단계 메뉴에 폭을 넘긴다. */
+  .brand-name {
+    display: none;
+  }
+
+  .help-link {
+    padding: 6px 9px;
+  }
+
+  .help-link-label {
+    display: none;
+  }
+
+  .crawl-layout {
+    padding: 24px 14px 72px;
+  }
+
+  .crawl-intro h1 {
+    font-size: 27px;
+  }
+
+  .crawl-lede {
+    font-size: 13px;
+  }
+
+  .crawl-actions button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .crawl-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .crawl-metric {
+    padding: 13px 14px;
+  }
+
+  .crawl-metric-value {
+    font-size: 20px;
+  }
+
+  .crawl-log pre {
+    font-size: 11px;
+  }
+}
+
+/* ── 화면 3 요약본 레이아웃 ─────────────────────────────────── */
+
+/* Reader의 3열(목차·본문·근거)에서 목차를 뺀 2열이다. 보기 방식 탭이
+   본문 위로 올라갔기 때문에 옆 레일이 더 필요하지 않다. */
+.summary-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  min-height: calc(100vh - 68px);
+}
+
+.summary-layout .reader-main {
+  padding: 34px 48px 96px;
+}
+
+.summary-layout .back-link {
+  margin-bottom: 22px;
+}
+
+.summary-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 30px 0 34px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ecebe6;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.summary-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.summary-tabs button {
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 18px;
+  color: #6e706b;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.summary-tabs button.active {
+  color: var(--ink);
+  background: var(--white);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+@media (max-width: 1180px) {
+  .summary-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+  }
+
+  .summary-layout .reader-main {
+    padding: 32px 36px 88px;
+  }
+}
+
+@media (max-width: 900px) {
+  /* 근거 패널을 본문 아래로 내린다. 좁은 폭에서 2열은 둘 다 못 읽는다.
+     내려간 패널은 sticky를 풀어야 화면 높이를 통째로 차지하지 않는다. */
+  .summary-layout {
+    display: block;
+  }
+
+  .summary-layout .reader-main {
+    padding: 28px 24px 40px;
+  }
+
+  .summary-layout .evidence-panel {
+    position: static;
+    height: auto;
+    padding: 28px 24px 72px;
+  }
+}
+
+@media (max-width: 720px) {
+  .summary-layout .reader-main {
+    padding: 22px 16px 32px;
+  }
+
+  .summary-tabs {
+    width: 100%;
+    margin: 24px 0 28px;
+  }
+
+  .summary-tabs button {
+    flex: 1;
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+}
+
+/* 연결 논리(CER의 Reasoning) — 인용 바로 아래 붙어 인용과 주장을 잇는다. */
+.why-block.reasoning {
+  border-left-color: var(--purple);
+}
+
+.summary-reasoning {
+  color: var(--muted);
+  font-size: 14px;
   line-height: 1.7;
 }

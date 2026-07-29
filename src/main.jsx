@@ -114,7 +114,8 @@ function Header({ route }) {
         className={`help-link ${route.name === "guide" ? "active" : ""}`}
         href="#/guide"
       >
-        <CircleHelp size={16} /> 사용법
+        <CircleHelp size={16} />
+        <span className="help-link-label">사용법</span>
       </a>
     </header>
   );

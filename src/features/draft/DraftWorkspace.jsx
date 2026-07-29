@@ -1,12 +1,13 @@
+import {
+  createCardEditor,
+  plainCardText,
+} from "./cardLayout.js";
+
 import React, { useEffect, useRef, useState } from "react";
 
 import { ArrowLeft, ArrowUpRight, CircleHelp, Image as ImageIcon, MessageSquare } from "lucide-react";
 
 import { SourceBadges } from "../../shared/SourceBadges.jsx";
-
-function plainCardText(value = "") {
-  return value.replace(/\*\*/g, "").trim();
-}
 
 function escapeHtml(value = "") {
   return value
@@ -15,45 +16,6 @@ function escapeHtml(value = "") {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
-}
-
-function createCardEditor(card) {
-  const cover = card.role === "cover";
-  const visualizationMethod = card.visualization_method || "statement";
-  const palettes = {
-    statement: { background: "#f1eee7", accent: "#7566c4" },
-    comparison: { background: "#edf0ed", accent: "#387b65" },
-    steps: { background: "#f3eee8", accent: "#c06945" },
-    cycle: { background: "#eceaf4", accent: "#6757bd" },
-    checklist: { background: "#edf1ec", accent: "#477b5d" },
-    warning: { background: "#f3e8e4", accent: "#b64f40" },
-    example: { background: "#e9eef2", accent: "#466f8f" },
-    quote: { background: "#f1ece5", accent: "#9a6945" },
-    number: { background: "#ece9f1", accent: "#6552b6" },
-  };
-  const palette = palettes[visualizationMethod] || palettes.statement;
-  return {
-    width: 1080,
-    height: 1350,
-    background: cover ? "#18191b" : palette.background,
-    textColor: cover ? "#ffffff" : "#1d1e20",
-    accentColor: palette.accent,
-    backgroundMode:
-      cover && card.source_image_src ? "image-gradient" : cover ? "gradient" : "solid",
-    overlay: 72,
-    titleSize: cover ? 100 : 80,
-    bodySize: cover ? 50 : 45,
-    subtitleSize: 50,
-    titleLines: cover ? 3 : 2,
-    imagePosition: cover ? "background" : "bottom",
-    imageSrc: card.source_image_src || "",
-    imageFit: "cover",
-    eyebrow: plainCardText(card.eyebrow_ko),
-    headline: plainCardText(card.headline_ko),
-    body: plainCardText(card.body_ko),
-    signature: "네카라쿠배 디자이너, 피그마스터",
-    visualizationMethod,
-  };
 }
 
 function DraftWorkspace({ slug }) {
@@ -216,8 +178,8 @@ function DraftWorkspace({ slug }) {
 .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,${editor.overlay / 100}))}
 .content{position:absolute;inset:${cover ? "auto 84px 96px" : "72px 72px 84px"};z-index:2;display:flex;flex-direction:column;height:${cover ? "auto" : "calc(100% - 156px)"}}
 .signature,.eyebrow{font-size:${cover ? editor.subtitleSize : 22}pt;font-weight:700;color:${cover ? editor.textColor : editor.accentColor}}
-h1{margin:${cover ? "30px 0 0" : "72px 0 0"};font-size:${editor.titleSize}pt;line-height:.96;letter-spacing:-.06em;display:-webkit-box;-webkit-line-clamp:${editor.titleLines};-webkit-box-orient:vertical;overflow:hidden}
-p{margin:34px 0 0;font-size:${editor.bodySize}pt;line-height:1.38;letter-spacing:-.035em}
+h1{margin:${cover ? "30px 0 0" : "72px 0 0"};font-size:${editor.titleSize}pt;line-height:.96;letter-spacing:-.06em;font-weight:800;white-space:pre-line;word-break:keep-all;display:-webkit-box;-webkit-line-clamp:${editor.titleLines};-webkit-box-orient:vertical;overflow:hidden}
+p{margin:34px 0 0;font-size:${editor.bodySize}pt;line-height:1.38;letter-spacing:-.035em;white-space:pre-line}
 .body-image{width:100%;height:38%;margin-top:auto;object-fit:cover;border-radius:24px}
 .middle .body-image{order:2;margin:38px 0 0}.middle p{order:3}
 .footer{position:absolute;right:32px;bottom:26px;z-index:3;font-size:14pt;opacity:.55}

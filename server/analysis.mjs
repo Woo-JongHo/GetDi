@@ -46,6 +46,7 @@ export function createAnalysisHandler({
           type: "object",
           properties: {
             statement_ko: { type: "string" },
+            reasoning_ko: { type: "string" },
             why_it_matters_ko: { type: "string" },
             evidence_excerpt: { type: "string" },
             source_block_ids: {
@@ -55,6 +56,7 @@ export function createAnalysisHandler({
           },
           required: [
             "statement_ko",
+            "reasoning_ko",
             "why_it_matters_ko",
             "evidence_excerpt",
             "source_block_ids",
@@ -70,6 +72,10 @@ export function createAnalysisHandler({
             properties: {
               title_ko: { type: "string" },
               claim_ko: { type: "string" },
+              // 인용이 왜 그 주장이 되는지의 연결 논리(CER의 Reasoning).
+              // 이 칸을 쓰다 보면 주장이 원문보다 센 경우가 드러난다.
+              // 계약: skills/article-refinement/references/summary-method.md
+              reasoning_ko: { type: "string" },
               why_it_matters_ko: { type: "string" },
               evidence_excerpt: { type: "string" },
               source_block_ids: {
@@ -80,6 +86,7 @@ export function createAnalysisHandler({
             required: [
               "title_ko",
               "claim_ko",
+              "reasoning_ko",
               "why_it_matters_ko",
               "evidence_excerpt",
               "source_block_ids",

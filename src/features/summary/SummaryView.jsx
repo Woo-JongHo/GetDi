@@ -13,6 +13,8 @@ import { formatDate } from "../../shared/format.js";
 
 import { EvidencePanel } from "../evidence/EvidencePanel.jsx";
 
+import { SourceBadges } from "../../shared/SourceBadges.jsx";
+
 /**
  * 화면 3 — 요약본.
  *
@@ -235,38 +237,12 @@ function SummaryView({ slug }) {
   }
 
   return (
-    <main className="reader-layout">
-      <aside className="outline-rail">
+    <main className="summary-layout">
+      <section className="reader-main">
         <a className="back-link" href="#/cards">
           <ArrowLeft size={16} /> 카드 리스트
         </a>
-        <div className="outline-title">이 화면에서</div>
-        <nav className="outline-nav">
-          <button
-            type="button"
-            className={tab === "summary" ? "active" : ""}
-            onClick={() => setTab("summary")}
-          >
-            요약
-          </button>
-          <button
-            type="button"
-            className={tab === "ko" ? "active" : ""}
-            onClick={() => setTab("ko")}
-          >
-            한국어 전문
-          </button>
-          <button
-            type="button"
-            className={tab === "original" ? "active" : ""}
-            onClick={() => setTab("original")}
-          >
-            원문
-          </button>
-        </nav>
-      </aside>
 
-      <section className="reader-main">
         <div className="eyebrow">
           <span>STEP 03</span>
           <span className="eyebrow-rule" />
@@ -292,6 +268,25 @@ function SummaryView({ slug }) {
             </a>
           </div>
         </header>
+
+        {/* 보기 방식은 본문 위에 둔다. 옆 레일에 두면 좁은 화면에서
+            레일이 접히면서 화면을 바꿀 방법이 사라진다. */}
+        <nav className="summary-tabs" aria-label="보기 방식">
+          {[
+            { id: "summary", label: "요약" },
+            { id: "ko", label: "한국어 전문" },
+            { id: "original", label: "원문" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={tab === item.id ? "active" : ""}
+              onClick={() => setTab(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
         {tab === "summary" && (
           <AnalysisSection
@@ -389,8 +384,14 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
         <div>
           <span>핵심 메시지</span>
           <h2>{analysis.core_message.statement_ko}</h2>
+          {analysis.core_message.reasoning_ko && (
+            <p className="summary-reasoning">
+              {analysis.core_message.reasoning_ko}
+            </p>
+          )}
           <p>{analysis.core_message.why_it_matters_ko}</p>
           <blockquote>“{analysis.core_message.evidence_excerpt}”</blockquote>
+          <SourceBadges ids={analysis.core_message.source_block_ids} />
         </div>
       </section>
 
@@ -399,6 +400,8 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
           <span>핵심 주장</span>
           <strong>{analysis.key_insights.length}개</strong>
         </div>
+        {/* 카드 하나가 네 칸이다 — 주장 / 증거 / 연결 / 가치.
+            계약: skills/article-refinement/references/summary-method.md */}
         <div className="insight-analysis-grid">
           {analysis.key_insights.map((insight, index) => (
             <article key={`${insight.title_ko}-${index}`}>
@@ -407,11 +410,21 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
               </span>
               <h3>{insight.title_ko}</h3>
               <p>{insight.claim_ko}</p>
+
+              <blockquote>“{insight.evidence_excerpt}”</blockquote>
+              <SourceBadges ids={insight.source_block_ids} />
+
+              {insight.reasoning_ko && (
+                <div className="why-block reasoning">
+                  <span>이 인용이 왜 그 주장이 되는가</span>
+                  <p>{insight.reasoning_ko}</p>
+                </div>
+              )}
+
               <div className="why-block">
                 <span>왜 중요한가</span>
                 <p>{insight.why_it_matters_ko}</p>
               </div>
-              <blockquote>“{insight.evidence_excerpt}”</blockquote>
             </article>
           ))}
         </div>
