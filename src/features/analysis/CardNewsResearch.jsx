@@ -182,7 +182,7 @@ function CardNewsResearch() {
   );
 
   return (
-    <main className="research-page reference-library-page">
+    <section className="research-page reference-library-page">
       <header className="research-header reference-library-header">
         <div>
           <div className="eyebrow">
@@ -336,7 +336,7 @@ function CardNewsResearch() {
           </article>
         </div>
       </section>
-    </main>
+    </section>
   );
 }
 

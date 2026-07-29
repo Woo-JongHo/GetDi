@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { ArrowLeft, ArrowUpRight, CircleHelp, Image as ImageIcon, MessageSquare } from "lucide-react";
 
-import { SourceBadges } from "../reader/Reader.jsx";
+import { SourceBadges } from "../../shared/SourceBadges.jsx";
 
 function plainCardText(value = "") {
   return value.replace(/\*\*/g, "").trim();
@@ -64,45 +64,22 @@ function DraftWorkspace({ slug }) {
   const [selectedCard, setSelectedCard] = useState(1);
   const [instruction, setInstruction] = useState("");
   const [editor, setEditor] = useState(null);
-  const [generationState, setGenerationState] = useState(null);
   const editorCache = useRef(new Map());
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([
-      fetch(`/api/drafts/${encodeURIComponent(slug)}`),
-      fetch("/api/generation-state", { cache: "no-store" }),
-    ])
-      .then(async ([draftResponse, stateResponse]) => {
-        const [payload, statePayload] = await Promise.all([
-          draftResponse.json(),
-          stateResponse.json(),
-        ]);
-        if (!draftResponse.ok) {
-          throw new Error(payload.error || "Draft를 찾지 못했습니다.");
+    fetch(`/api/drafts/${encodeURIComponent(slug)}`)
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.error || "초안을 찾지 못했습니다.");
         }
-        if (!stateResponse.ok) {
-          throw new Error(statePayload.error || "생성 단계를 찾지 못했습니다.");
-        }
-        return { payload, statePayload };
+        return payload;
       })
-      .then(({ payload, statePayload }) => {
+      .then((payload) => {
         if (cancelled) return;
         setDocument(payload);
-        setGenerationState(statePayload);
-        const fableRevisions = new Set(
-          payload.model_runs
-            .filter((run) => run.model?.includes("fable"))
-            .map((run) => run.revision),
-        );
-        const latestVisible = [...payload.revisions]
-          .reverse()
-          .find(
-            (revision) =>
-              revision.created_at >= statePayload.visible_after ||
-              fableRevisions.has(revision.revision),
-          );
-        setSelectedRevision(latestVisible?.revision || null);
+        setSelectedRevision(payload.revisions.at(-1)?.revision ?? null);
         setStatus("ready");
       })
       .catch((requestError) => {
@@ -163,32 +140,19 @@ function DraftWorkspace({ slug }) {
         {status === "loading" ? <span className="spinner dark" /> : <CircleHelp size={24} />}
         <strong>{status === "loading" ? "Draft를 불러오는 중" : "생성된 Draft가 없습니다."}</strong>
         {error && <p>{error}</p>}
-        <a href="#/">Library로 돌아가기</a>
+        <a href="#/cards">카드 리스트로 돌아가기</a>
       </main>
     );
   }
 
-  const fableRevisions = new Set(
-    document.model_runs
-      .filter((run) => run.model?.includes("fable"))
-      .map((run) => run.revision),
-  );
-  const latestFableRevision = Math.max(...fableRevisions, -1);
-  const visibleRevisions = generationState
-    ? document.revisions.filter(
-        (revision) =>
-          revision.created_at >= generationState.visible_after ||
-          revision.revision === latestFableRevision,
-      )
-    : [];
+  const visibleRevisions = document.revisions;
 
   if (!visibleRevisions.length) {
     return (
       <main className="analysis-loading">
         <ImageIcon size={26} />
-        <strong>실제 이미지 생성 결과를 준비 중입니다.</strong>
-        <p>이전 텍스트·도형 초안은 숨겼습니다.</p>
-        <a href="#/logs">새 생성 로그 보기</a>
+        <strong>아직 만들어진 초안이 없습니다.</strong>
+        <a href="#/cards">카드 리스트로 돌아가기</a>
       </main>
     );
   }
@@ -285,8 +249,8 @@ ${useBackgroundImage ? '<div class="overlay"></div>' : ""}
   return (
     <main className="draft-layout">
       <aside className="draft-card-rail">
-        <a className="back-link" href="#/">
-          <ArrowLeft size={16} /> Library
+        <a className="back-link" href={`#/summary/${encodeURIComponent(slug)}`}>
+          <ArrowLeft size={16} /> 요약본
         </a>
         <div className="draft-source-title">
           <span>DRAFT FROM</span>

@@ -2,81 +2,58 @@ import React, { useEffect, useState } from "react";
 
 import { createRoot } from "react-dom/client";
 
-import { LayoutGrid, Menu } from "lucide-react";
-
-import { ArticleAnalysis } from "./features/analysis/ArticleAnalysis.jsx";
+import { CircleHelp } from "lucide-react";
 
 import { CardNewsResearch } from "./features/analysis/CardNewsResearch.jsx";
 
-import { InstagramAnalysis } from "./features/analysis/InstagramAnalysis.jsx";
+import { CardList } from "./features/cards/CardList.jsx";
+
+import { CrawlWorkspace } from "./features/crawl/CrawlWorkspace.jsx";
 
 import { DraftWorkspace } from "./features/draft/DraftWorkspace.jsx";
 
 import { GuidePage } from "./features/guide/GuidePage.jsx";
 
-import { Library } from "./features/library/Library.jsx";
+import { SummaryView } from "./features/summary/SummaryView.jsx";
 
-import { Presentation } from "./features/presentation/Presentation.jsx";
-
-import { Reader } from "./features/reader/Reader.jsx";
-
-import { ModelLogs } from "./features/usage/ModelLogs.jsx";
-
-import { UsageDashboard } from "./features/usage/UsageDashboard.jsx";
+import { Drawer } from "./shared/Drawer.jsx";
 
 import "./styles.css";
 
 import "./research.css";
 
+/**
+ * 화면은 일하는 순서와 같은 4단계다.
+ *
+ *   1 크롤링   → 2 카드 리스트 → 3 요약본 → 4 인스타 초안
+ *
+ * 메뉴를 왼쪽에서 오른쪽으로 읽으면 데이터가 흐르는 순서를 읽은 것이 된다.
+ * 도움말은 그 흐름의 일부가 아니므로 단계에 넣지 않고 오른쪽 끝에 둔다.
+ */
+const STEPS = [
+  { id: "crawl", label: "크롤링", href: "#/", step: "01" },
+  { id: "cards", label: "카드 리스트", href: "#/cards", step: "02" },
+  { id: "summary", label: "요약본", href: "#/cards", step: "03" },
+  { id: "draft", label: "인스타 초안", href: "#/cards", step: "04" },
+];
+
 function getRoute() {
-  if (window.location.hash === "#/logs") {
-    return { name: "logs" };
+  const hash = window.location.hash;
+
+  if (hash === "#/cards") return { name: "cards" };
+  if (hash === "#/guide") return { name: "guide" };
+
+  const summaryMatch = hash.match(/^#\/summary\/(.+)$/);
+  if (summaryMatch) {
+    return { name: "summary", slug: decodeURIComponent(summaryMatch[1]) };
   }
-  if (window.location.hash === "#/presentation") {
-    return { name: "presentation" };
-  }
-  if (window.location.hash === "#/guide") {
-    return { name: "guide" };
-  }
-  if (window.location.hash === "#/usage") {
-    return { name: "usage" };
-  }
-  if (
-    window.location.hash === "#/analysis" ||
-    window.location.hash === "#/analysis/research"
-  ) {
-    return { name: "cardnews-research" };
-  }
-  const draftMatch = window.location.hash.match(/^#\/draft\/(.+)$/);
+
+  const draftMatch = hash.match(/^#\/draft\/(.+)$/);
   if (draftMatch) {
     return { name: "draft", slug: decodeURIComponent(draftMatch[1]) };
   }
-  const articleAnalysisMatch = window.location.hash.match(
-    /^#\/analysis\/article\/(.+)$/,
-  );
-  if (articleAnalysisMatch) {
-    return {
-      name: "article-analysis",
-      slug: decodeURIComponent(articleAnalysisMatch[1]),
-    };
-  }
-  if (window.location.hash === "#/analysis/instagram") {
-    return { name: "cardnews-research" };
-  }
-  const formattedArticleMatch = window.location.hash.match(
-    /^#\/article\/(article|video)\/(.+)$/,
-  );
-  if (formattedArticleMatch) {
-    return {
-      name: "article",
-      format: formattedArticleMatch[1],
-      slug: decodeURIComponent(formattedArticleMatch[2]),
-    };
-  }
-  const match = window.location.hash.match(/^#\/article\/(.+)$/);
-  return match
-    ? { name: "article", slug: decodeURIComponent(match[1]) }
-    : { name: "library" };
+
+  return { name: "crawl" };
 }
 
 function App() {
@@ -91,24 +68,22 @@ function App() {
   return (
     <div className="app-shell">
       <Header route={route} />
-      {route.name === "article" ? (
-        <Reader slug={route.slug} formatHint={route.format} />
-      ) : route.name === "logs" ? (
-        <ModelLogs />
-      ) : route.name === "presentation" ? (
-        <Presentation />
+      {route.name === "cards" ? (
+        <CardList />
+      ) : route.name === "summary" ? (
+        <SummaryView slug={route.slug} />
+      ) : route.name === "draft" ? (
+        <>
+          <DraftWorkspace slug={route.slug} />
+          {/* 카드 문구의 근거가 되는 레퍼런스 분석. 초안을 의심할 때 편다. */}
+          <Drawer label="참고한 인스타 게시물 분석 보기">
+            <CardNewsResearch />
+          </Drawer>
+        </>
       ) : route.name === "guide" ? (
         <GuidePage />
-      ) : route.name === "draft" ? (
-        <DraftWorkspace slug={route.slug} />
-      ) : route.name === "usage" ? (
-        <UsageDashboard />
-      ) : route.name === "article-analysis" ? (
-        <ArticleAnalysis slug={route.slug} />
-      ) : route.name === "cardnews-research" ? (
-        <CardNewsResearch />
       ) : (
-        <Library />
+        <CrawlWorkspace />
       )}
     </div>
   );
@@ -122,40 +97,25 @@ function Header({ route }) {
         <span className="brand-name">GetDi</span>
       </a>
 
-      <nav className="topnav" aria-label="주요 메뉴">
-        <a
-          className={route.name === "library" ? "active" : ""}
-          href="#/"
-        >
-          Library
-        </a>
-        <a
-          className={
-            route.name === "cardnews-research" ||
-            route.name === "article-analysis"
-              ? "active"
-              : ""
-          }
-          href="#/analysis/research"
-        >
-          Analysis
-        </a>
-        <a className={route.name === "usage" ? "active" : ""} href="#/usage">
-          Usage
-        </a>
-        <a className={route.name === "logs" ? "active" : ""} href="#/logs">
-          Log
-        </a>
-        <a
-          className={route.name === "presentation" ? "active" : ""}
-          href="#/presentation"
-        >
-          Present
-        </a>
-        <a className={route.name === "guide" ? "active" : ""} href="#/guide">
-          Guide
-        </a>
+      <nav className="topnav steps" aria-label="작업 단계">
+        {STEPS.map((item) => (
+          <a
+            className={route.name === item.id ? "active" : ""}
+            href={item.href}
+            key={item.id}
+          >
+            <span className="step-number">{item.step}</span>
+            {item.label}
+          </a>
+        ))}
       </nav>
+
+      <a
+        className={`help-link ${route.name === "guide" ? "active" : ""}`}
+        href="#/guide"
+      >
+        <CircleHelp size={16} /> 사용법
+      </a>
     </header>
   );
 }

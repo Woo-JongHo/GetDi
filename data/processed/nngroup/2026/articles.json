@@ -1,0 +1,549 @@
+{
+  "schema_version": 1,
+  "source": {
+    "name": "Nielsen Norman Group",
+    "url": "https://www.nngroup.com"
+  },
+  "selection": {
+    "year": 2026,
+    "format": "article"
+  },
+  "collection": {
+    "retrieved_at": "2026-07-28T23:37:19.433Z",
+    "item_count": 59,
+    "pages_fetched": 11
+  },
+  "items": [
+    {
+      "format": "article",
+      "title": "UX-Context Design: Using UX Knowledge to Inform AI-Generated Design",
+      "url": "https://www.nngroup.com/articles/ux-context-design/",
+      "slug": "ux-context-design",
+      "published_date": "2026-07-24",
+      "summary": "As more interface work is AI-generated, the output of research and design shifts from documents written for humans to curated context that guides AI.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "A Concrete Definition of “Product Sense” (and How to Build It)",
+      "url": "https://www.nngroup.com/articles/product-sense-definition/",
+      "slug": "product-sense-definition",
+      "published_date": "2026-07-24",
+      "summary": "Product sense means predicting which product decisions will succeed based on patterns learned through experimentation — and knowing when those patterns apply.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Don’t Outsource the Learning: Why Human-Led Research Still Matters in the Age of AI",
+      "url": "https://www.nngroup.com/articles/human-led-research-still-matters/",
+      "slug": "human-led-research-still-matters",
+      "published_date": "2026-07-17",
+      "summary": "Even if AI matches researcher-output quality, human-led research will remain essential — the team learning from observing users can't be outsourced.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Does Your Form Really Need a Dropdown List?",
+      "url": "https://www.nngroup.com/articles/dropdown-list/",
+      "slug": "dropdown-list",
+      "published_date": "2026-07-17",
+      "summary": "Dropdown lists can be used in narrow, specific scenarios, but misuse can cause more harm than alternatives.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The 5 Qualities of Site-Specific AI Chatbots",
+      "url": "https://www.nngroup.com/articles/dimensions-of-ai-chatbots/",
+      "slug": "dimensions-of-ai-chatbots",
+      "published_date": "2026-07-10",
+      "summary": "Handoff willingness, flexibility, proactivity, emotional responsiveness, and transparency help you build trustworthy AI chatbots that guide users well.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Design-System Maturity: A 6-Dimension Framework",
+      "url": "https://www.nngroup.com/articles/design-system-maturity/",
+      "slug": "design-system-maturity",
+      "published_date": "2026-07-10",
+      "summary": "Use this maturity model to assess your design system’s health and identify where to focus next.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Stop Reporting UX Activity and Report Business Outcomes",
+      "url": "https://www.nngroup.com/articles/reporting-ux-business-outcomes/",
+      "slug": "reporting-ux-business-outcomes",
+      "published_date": "2026-07-03",
+      "summary": "UX teams should report business outcomes — not activity or UX metrics — to show impact on revenue, cost, risk, speed, retention, and to secure resources.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Crafting AI Explanations for Every Role in Your Enterprise",
+      "url": "https://www.nngroup.com/articles/crafting-ai-explanations/",
+      "slug": "crafting-ai-explanations",
+      "published_date": "2026-07-03",
+      "summary": "Different enterprise roles need different types of explanations for AI outputs.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Your New UX Habit: Establishing Baselines for Impact",
+      "url": "https://www.nngroup.com/articles/establishing-baselines/",
+      "slug": "establishing-baselines",
+      "published_date": "2026-06-26",
+      "summary": "Gather baseline metrics before starting a project so your team can demonstrate its impact.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Kick the Bots Out of Your Survey Data",
+      "url": "https://www.nngroup.com/articles/survey-bots/",
+      "slug": "survey-bots",
+      "published_date": "2026-06-26",
+      "summary": "Learn to spot and filter out survey bots’ responses before analysis so fake data doesn’t distort your findings.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Vibe Architects: Agentic Vibe Coders",
+      "url": "https://www.nngroup.com/articles/vibe-architects/",
+      "slug": "vibe-architects",
+      "published_date": "2026-06-19",
+      "summary": "Nondevelopers are building complex agentic AI systems on intuition developed through many hours of experimentation, YouTube videos, and Reddit threads.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Incentive Structures for Diary Studies",
+      "url": "https://www.nngroup.com/articles/diary-study-incentives/",
+      "slug": "diary-study-incentives",
+      "published_date": "2026-06-19",
+      "summary": "A mindful incentive structure can keep diary study participants engaged and responding, without overloading you with low-quality responses.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The Core Skill of Design in the AI Era: Critique",
+      "url": "https://www.nngroup.com/articles/ai-era-critique/",
+      "slug": "ai-era-critique",
+      "published_date": "2026-06-12",
+      "summary": "To build useful and usable AI-powered systems, our understanding of users’ needs and our design judgement must be encoded into well-defined evaluation criteria.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Context Architecture",
+      "url": "https://www.nngroup.com/articles/context-architecture/",
+      "slug": "context-architecture",
+      "published_date": "2026-06-12",
+      "summary": "Context architecture applies information architecture principles to AI systems, helping agents interpret information and produce better, user aligned responses.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The Hidden Why: Behavioral Economics for UX",
+      "url": "https://www.nngroup.com/articles/behavioral-economics-for-ux/",
+      "slug": "behavioral-economics-for-ux",
+      "published_date": "2026-06-05",
+      "summary": "Use behavioral-economics frameworks to uncover hidden friction in your experience and design UX solutions that better support user action.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The Four Design Jobs AI Created (So Far)",
+      "url": "https://www.nngroup.com/articles/design-jobs-ai-created/",
+      "slug": "design-jobs-ai-created",
+      "published_date": "2026-06-05",
+      "summary": "\"AI design\" is one label but has forked into four different types of work.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Using RAS to Guide UX Research Resource Allocation and Strategy",
+      "url": "https://www.nngroup.com/articles/ras-research-resource-allocation/",
+      "slug": "ras-research-resource-allocation",
+      "published_date": "2026-05-29",
+      "summary": "RAS helps managers allocate resources based on actual impact, shifting focus from outputs to outcomes and enabling data-driven UX strategies.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "How to Get Research Recommendations on the Roadmap",
+      "url": "https://www.nngroup.com/articles/research-recommendations-roadmap/",
+      "slug": "research-recommendations-roadmap",
+      "published_date": "2026-05-29",
+      "summary": "To influence the roadmap: join planning early, learn constraints, tie research to PM metrics, and give clear recommendations at the right time.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The Case for Design Disposables",
+      "url": "https://www.nngroup.com/articles/design-disposables/",
+      "slug": "design-disposables",
+      "published_date": "2026-05-22",
+      "summary": "Design disposables are rough artifacts you make to think, not to deliver. Learn to tell them apart from deliverables and avoid the sunk-cost trap.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Closing the Loop: What to Do After a Design Critique Ends",
+      "url": "https://www.nngroup.com/articles/after-design-critique/",
+      "slug": "after-design-critique",
+      "published_date": "2026-05-22",
+      "summary": "Most designers invest in running critiques but skip the followup. That missing step is often why feedback culture breaks down.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "What Designers Actually Struggle with on Product Teams",
+      "url": "https://www.nngroup.com/articles/designers-product-teams/",
+      "slug": "designers-product-teams",
+      "published_date": "2026-05-15",
+      "summary": "Designers' top struggles aren't about design skills. They're about alignment, influence, and navigating org complexity — the work no one taught them to do.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Small by Design: The Strength of Lean Design-System Teams",
+      "url": "https://www.nngroup.com/articles/lean-design-system-teams/",
+      "slug": "lean-design-system-teams",
+      "published_date": "2026-05-15",
+      "summary": "Lean design-system teams, when strategically planned, can move faster, prioritize sharply, and scale impact beyond their size.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "UX Writing: FAQs from Practitioners",
+      "url": "https://www.nngroup.com/articles/ux-writing-faqs/",
+      "slug": "ux-writing-faqs",
+      "published_date": "2026-05-08",
+      "summary": "Get answers to frequently asked questions about UX writing from attendees of NN/G’s Writing Compelling Digital Copy course.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Designing AI Agents: 4 Lessons from China’s Qwen Agent",
+      "url": "https://www.nngroup.com/articles/designing-ai-agents/",
+      "slug": "designing-ai-agents",
+      "published_date": "2026-05-08",
+      "summary": "A study of Qwen's AI agent reveals 4 design lessons: support discoverability, reuse familiar patterns, handle personal data carefully, and protect user autonomy.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Selection Criteria: How to Pick Your Participants",
+      "url": "https://www.nngroup.com/articles/selection-criteria/",
+      "slug": "selection-criteria",
+      "published_date": "2026-05-01",
+      "summary": "Rigorous selection criteria protect study validity. Learn how to define inclusion, exclusion, and diversity criteria to avoid costly misrecruits.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Information Seeking in China: A Different Ecosystem, Familiar Behavior",
+      "url": "https://www.nngroup.com/articles/information-seeking-china/",
+      "slug": "information-seeking-china",
+      "published_date": "2026-05-01",
+      "summary": "Information seeking in China is driven by mobile social-media apps. But how users prompt and engage with genAI mirrors what we've seen in the West.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Why User Panels Fail",
+      "url": "https://www.nngroup.com/articles/user-panels-fail/",
+      "slug": "user-panels-fail",
+      "published_date": "2026-04-24",
+      "summary": "User panels can deteriorate in predictable ways, introducing bias and reducing their effectiveness for ongoing research.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "10 Guidelines for Designing Your Site’s AI Chatbots",
+      "url": "https://www.nngroup.com/articles/ai-chatbots-design-guidelines/",
+      "slug": "ai-chatbots-design-guidelines",
+      "published_date": "2026-04-24",
+      "summary": "Helpful site-specific AI chatbots clearly state their capabilities, offer relevant prompt suggestions, and quickly signal they know what users are looking at.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Less Chat, More Answer: Site AI Chatbots Need to Get to the Point",
+      "url": "https://www.nngroup.com/articles/less-chat-more-answer/",
+      "slug": "less-chat-more-answer",
+      "published_date": "2026-04-17",
+      "summary": "Users turn to site-specific chatbots for quick answers, not a conversation. Design responses that are direct, scannable, and easy to expand when needed.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Boost Design Autonomy with an Information Pipeline",
+      "url": "https://www.nngroup.com/articles/information-pipeline/",
+      "slug": "information-pipeline",
+      "published_date": "2026-04-17",
+      "summary": "A four-step framework for building influence over product direction by closing the information gaps that large, complex organizations create.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Handmade Designs: The New Trust Signal",
+      "url": "https://www.nngroup.com/articles/handmade-designs/",
+      "slug": "handmade-designs",
+      "published_date": "2026-04-10",
+      "summary": "In an era of AI-generated-everything, AI-fatigued users want designs that look like they were made by a person.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "AI Agents as Users",
+      "url": "https://www.nngroup.com/articles/ai-agents-as-users/",
+      "slug": "ai-agents-as-users",
+      "published_date": "2026-04-10",
+      "summary": "AI agents now interact with digital interfaces alongside humans. Designing for both requires rethinking what \"user\" means and prioritizing accessibility.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "AI Can Help with Survey Writing, But It Still Requires Human Expertise",
+      "url": "https://www.nngroup.com/articles/ai-survey-writing/",
+      "slug": "ai-survey-writing",
+      "published_date": "2026-04-03",
+      "summary": "AI can produce polished survey drafts quickly, but experienced human review is still needed to catch subtle survey-design flaws that weaken data quality.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "A Concrete Definition of an AI Agent",
+      "url": "https://www.nngroup.com/articles/definition-ai-agent/",
+      "slug": "definition-ai-agent",
+      "published_date": "2026-04-03",
+      "summary": "An AI agent pursues a goal by iteratively taking actions, evaluating progress, and deciding next steps. Useful agents must be reliable, adaptive, and accurate.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Minimum Viable Product (MVP): Definition",
+      "url": "https://www.nngroup.com/articles/mvp-definition/",
+      "slug": "mvp-definition",
+      "published_date": "2026-03-27",
+      "summary": "MVPs are learning tools that test whether an idea is valuable to users.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "GenUI vs. Vibe Coding: Who’s Designing?",
+      "url": "https://www.nngroup.com/articles/genui-vs-vibe/",
+      "slug": "genui-vs-vibe",
+      "published_date": "2026-03-27",
+      "summary": "With generative UI, the AI system decides to generate an interactive element or entire product in response to a user need. Vibe coding is when users request the AI to build it.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "What Is Your Site's AI Chatbot for? Users Can't Tell",
+      "url": "https://www.nngroup.com/articles/site-ai-chatbot/",
+      "slug": "site-ai-chatbot",
+      "published_date": "2026-03-20",
+      "summary": "Users see little reason to use site AI chatbots. To prove their value, chatbots must solve problems that existing site features don't.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The 3 C’s of Informational Microcopy",
+      "url": "https://www.nngroup.com/articles/3-cs-microcopy/",
+      "slug": "3-cs-microcopy",
+      "published_date": "2026-03-20",
+      "summary": "Well-written informational microcopy should be clear, concise, and have character.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The Methodological Problems Hiding in Your Research Tools",
+      "url": "https://www.nngroup.com/articles/research-tool-problems/",
+      "slug": "research-tool-problems",
+      "published_date": "2026-03-13",
+      "summary": "The methodological blind spots in UX research tools have always been a problem. Now that AI is planning and analyzing research, it's gotten worse.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Design Process Isn't Dead, It’s Compressed",
+      "url": "https://www.nngroup.com/articles/design-process-isnt-dead/",
+      "slug": "design-process-isnt-dead",
+      "published_date": "2026-03-13",
+      "summary": "As AI speeds up design work, the argument to \"throw out the process\" misrepresents how experienced designers work.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "The Most Exciting Development in GenUI: Buttons and Checkboxes",
+      "url": "https://www.nngroup.com/articles/genui-buttons-and-checkboxes/",
+      "slug": "genui-buttons-and-checkboxes",
+      "published_date": "2026-03-06",
+      "summary": "AI chats generate simple UI elements to gather context, reduce typing and memory load, and produce more useful, personalized results.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Statistical Significance Isn’t the Same as Practical Significance",
+      "url": "https://www.nngroup.com/articles/practical-significance/",
+      "slug": "practical-significance",
+      "published_date": "2026-03-06",
+      "summary": "Statistical significance helps establish whether a result is reliable, while practical significance helps determine whether it is worth acting on.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Project Postmortems for UX Teams: Learning from Success and Failure",
+      "url": "https://www.nngroup.com/articles/ux-postmortems/",
+      "slug": "ux-postmortems",
+      "published_date": "2026-02-27",
+      "summary": "Although postmortems are one of the most powerful learning tools in product development, most teams haven't yet discovered how to use them effectively.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "GenAI for Complex Questions, Search for Critical Facts",
+      "url": "https://www.nngroup.com/articles/ai-search-infoseeking/",
+      "slug": "ai-search-infoseeking",
+      "published_date": "2026-02-27",
+      "summary": "Users choose AI to explore and synthesize information; but they rely on traditional search when accuracy and trust are critical.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Tracking Adoption of Research Recommendations: The Recommendation-Adoption Score",
+      "url": "https://www.nngroup.com/articles/recommendation-adoption-score/",
+      "slug": "recommendation-adoption-score",
+      "published_date": "2026-02-20",
+      "summary": "Use the RAS (Recommendation-Adoption Score) to track how much research value reaches your user.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Designing Useful Smart Home Notifications",
+      "url": "https://www.nngroup.com/articles/smart-home-notifications/",
+      "slug": "smart-home-notifications",
+      "published_date": "2026-02-20",
+      "summary": "Smart-home notifications should be timely, relevant, specific, and personalized to avoid overwhelming users and causing distrust or disengagement.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "What UX Consulting Clients Expect in the Age of AI",
+      "url": "https://www.nngroup.com/articles/ux-consulting-ai/",
+      "slug": "ux-consulting-ai",
+      "published_date": "2026-02-13",
+      "summary": "Clients still seek strong judgment and critical thinking, research rigor, and respect for real-world and user constraints from UX consultants.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "UX Research with Minors: Consent vs. Assent",
+      "url": "https://www.nngroup.com/articles/research-minors-consent/",
+      "slug": "research-minors-consent",
+      "published_date": "2026-02-13",
+      "summary": "When conducting UX research with minors, you must obtain consent from a parent or legal guardian and assent from the minor participant.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Your Design System Needs an Enforcer",
+      "url": "https://www.nngroup.com/articles/design-system-enforcer/",
+      "slug": "design-system-enforcer",
+      "published_date": "2026-02-06",
+      "summary": "Although design systems promise consistency, most still fail without someone actively enforcing the rules and making teams follow them.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "How AI Literacy Shapes GenAI Use",
+      "url": "https://www.nngroup.com/articles/ai-literacy/",
+      "slug": "ai-literacy",
+      "published_date": "2026-02-06",
+      "summary": "Using generative AI often doesn’t mean using it well. AI literacy requires both prompt fluency and the ability to assess outputs.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Demand Accuracy in Your AI Tools: Lessons from Baymard Institute",
+      "url": "https://www.nngroup.com/articles/baymard-ai-tool-accuracy/",
+      "slug": "baymard-ai-tool-accuracy",
+      "published_date": "2026-01-30",
+      "summary": "Most AI-powered tools for UX lack reliability and accountability in their outputs. Demand transparency and proven accuracy, or don't buy it.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "AI-Moderated Interviews: If, When, and How to Use Them",
+      "url": "https://www.nngroup.com/articles/ai-interviewers/",
+      "slug": "ai-interviewers",
+      "published_date": "2026-01-30",
+      "summary": "AI interviews offer faster feedback at scale, but they're not a replacement for in-depth, human-led semistructured interviews.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Why So Many Info Tips Are Bad (and How to Make Them Better)",
+      "url": "https://www.nngroup.com/articles/info-tips-bad/",
+      "slug": "info-tips-bad",
+      "published_date": "2026-01-23",
+      "summary": "Information tips can clarify complex UIs, but they should not hide essential information, trigger redundant information, or disrupt the current workflow.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "User Panels 101",
+      "url": "https://www.nngroup.com/articles/user-panels-101/",
+      "slug": "user-panels-101",
+      "published_date": "2026-01-23",
+      "summary": "A well-built internal user panel saves time, reduces costs, and strengthens your organization’s connection to real users.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "UX Hiring: Insights from a Design Recruiter",
+      "url": "https://www.nngroup.com/articles/ux-hiring-insights/",
+      "slug": "ux-hiring-insights",
+      "published_date": "2026-01-16",
+      "summary": "Design recruiter Hang Xu shares why UX job applications get rejected, what craft means to hiring teams, and the shifting power dynamics in the job market.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "State of UX 2026: Design Deeper to Differentiate",
+      "url": "https://www.nngroup.com/articles/state-of-ux-2026/",
+      "slug": "state-of-ux-2026",
+      "published_date": "2026-01-16",
+      "summary": "UX faced instability in 2025 from layoffs, hiring freezes, and AI hype; now, the field is stabilizing, but differentiation and business impact are vital.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Why Most Product Teams Aren't Really Empowered",
+      "url": "https://www.nngroup.com/articles/teams-arent-empowered/",
+      "slug": "teams-arent-empowered",
+      "published_date": "2026-01-09",
+      "summary": "Although product teams say they're empowered, many still function as feature factories and must follow orders.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "Humanizing AI Is a Trap",
+      "url": "https://www.nngroup.com/articles/humanizing-ai/",
+      "slug": "humanizing-ai",
+      "published_date": "2026-01-09",
+      "summary": "LLMs humanize by design. Adding personality/emotion amplifies risk. Design real tools, not fake friends.",
+      "thumbnail_url": null
+    },
+    {
+      "format": "article",
+      "title": "UX Quiz: 2025 Year in Review",
+      "url": "https://www.nngroup.com/articles/ux-quiz/",
+      "slug": "ux-quiz",
+      "published_date": "2026-01-02",
+      "summary": "Test your usability knowledge by taking our quiz. All questions and answers are based on articles that we published last year.",
+      "thumbnail_url": null
+    }
+  ]
+}

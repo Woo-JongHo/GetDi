@@ -111,7 +111,7 @@ function ModelLogs() {
   const outputCards = selected?.output?.cards || [];
 
   return (
-    <main className="model-log-page">
+    <section className="model-log-page">
       <header className="model-log-heading">
         <div>
           <span>MODEL TRACE</span>
@@ -309,7 +309,7 @@ function ModelLogs() {
           )}
         </section>
       </div>
-    </main>
+    </section>
   );
 }
 

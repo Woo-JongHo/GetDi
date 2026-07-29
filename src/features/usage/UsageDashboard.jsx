@@ -39,7 +39,7 @@ function UsageDashboard() {
 
   if (!data) {
     return (
-      <main className="analysis-loading">
+      <section className="analysis-loading">
         {status === "loading" ? (
           <span className="spinner dark" />
         ) : (
@@ -47,7 +47,7 @@ function UsageDashboard() {
         )}
         <strong>현재 대화 사용량을 읽는 중</strong>
         {error && <p>{error}</p>}
-      </main>
+      </section>
     );
   }
 
@@ -75,7 +75,7 @@ function UsageDashboard() {
   ];
 
   return (
-    <main className="usage-page">
+    <section className="usage-page">
       <header className="usage-header">
         <div>
           <div className="eyebrow">
@@ -210,7 +210,7 @@ function UsageDashboard() {
           ))}
         </div>
       </section>
-    </main>
+    </section>
   );
 }
 

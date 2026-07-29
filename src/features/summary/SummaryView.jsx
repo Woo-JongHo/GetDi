@@ -1,0 +1,515 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  CircleHelp,
+  Languages,
+  ShieldAlert,
+  Sparkles,
+} from "lucide-react";
+
+import { formatDate } from "../../shared/format.js";
+
+import { EvidencePanel } from "../evidence/EvidencePanel.jsx";
+
+/**
+ * 화면 3 — 요약본.
+ *
+ * 한 기사에 대해 "무슨 말인지"를 세 가지 깊이로 본다.
+ *   요약  — 모델이 뽑은 핵심 메시지·주장·카드 구성 후보
+ *   한국어 — 문단과 이미지 순서를 원문 그대로 둔 번역
+ *   원문  — 손대지 않은 영어 본문
+ *
+ * 세 가지를 별도 화면으로 나누지 않은 이유는, 요약을 의심할 때
+ * 곧바로 원문을 확인할 수 있어야 하기 때문이다. 화면을 옮기면
+ * 그 확인이 일어나지 않는다.
+ */
+function SummaryView({ slug }) {
+  const [detail, setDetail] = useState(null);
+  const [detailStatus, setDetailStatus] = useState("loading");
+  const [tab, setTab] = useState("summary");
+  const [translation, setTranslation] = useState(null);
+  const [translationStatus, setTranslationStatus] = useState("idle");
+  const [translationError, setTranslationError] = useState("");
+  const [analysis, setAnalysis] = useState(null);
+  const [analysisStatus, setAnalysisStatus] = useState("checking");
+  const [analysisError, setAnalysisError] = useState("");
+  const [draftStatus, setDraftStatus] = useState("checking");
+  const [draftError, setDraftError] = useState("");
+  const [selectedEvidence, setSelectedEvidence] = useState(null);
+  const articleRef = useRef(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setDetail(null);
+    setDetailStatus("loading");
+    fetch(`/api/details/article/${encodeURIComponent(slug)}`, {
+      cache: "no-store",
+    })
+      .then(async (response) => {
+        if (response.status === 404) return null;
+        if (!response.ok) throw new Error("본문을 불러오지 못했습니다.");
+        return response.json();
+      })
+      .then((payload) => {
+        if (cancelled) return;
+        setDetail(payload);
+        setDetailStatus(payload ? "ready" : "queued");
+      })
+      .catch(() => {
+        if (!cancelled) setDetailStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
+
+  useEffect(() => {
+    if (!detail) return undefined;
+    let cancelled = false;
+    fetch(`/api/translations/${encodeURIComponent(slug)}`)
+      .then(async (response) => (response.status === 404 ? null : response.json()))
+      .then((cached) => {
+        if (cancelled) return;
+        setTranslation(cached);
+        setTranslationStatus(cached ? "ready" : "idle");
+      })
+      .catch(() => {
+        if (!cancelled) setTranslationStatus("idle");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [detail, slug]);
+
+  useEffect(() => {
+    if (!detail) return undefined;
+    let cancelled = false;
+    fetch(`/api/analyses/${encodeURIComponent(slug)}`, { cache: "no-store" })
+      .then(async (response) => (response.status === 404 ? null : response.json()))
+      .then((cached) => {
+        if (cancelled) return;
+        setAnalysis(cached);
+        setAnalysisStatus(cached ? "ready" : "idle");
+      })
+      .catch(() => {
+        if (!cancelled) setAnalysisStatus("idle");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [detail, slug]);
+
+  useEffect(() => {
+    if (!detail) return undefined;
+    let cancelled = false;
+    fetch(`/api/drafts/${encodeURIComponent(slug)}`)
+      .then((response) => {
+        if (!cancelled) setDraftStatus(response.ok ? "ready" : "idle");
+      })
+      .catch(() => {
+        if (!cancelled) setDraftStatus("idle");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [detail, slug]);
+
+  const originalHtml = useMemo(
+    () => cleanArticleHtml(detail?.content_html),
+    [detail],
+  );
+  const translatedHtml = useMemo(
+    () => cleanArticleHtml(translation?.content_html_ko),
+    [translation],
+  );
+
+  async function translate() {
+    setTranslationStatus("translating");
+    setTranslationError("");
+    try {
+      const response = await fetch(
+        `/api/translations/${encodeURIComponent(slug)}`,
+        { method: "POST" },
+      );
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "번역에 실패했습니다.");
+      setTranslation(body);
+      setTranslationStatus("ready");
+    } catch (error) {
+      setTranslationStatus("error");
+      setTranslationError(error.message);
+    }
+  }
+
+  async function analyze() {
+    setAnalysisStatus("running");
+    setAnalysisError("");
+    try {
+      const response = await fetch(`/api/analyses/${encodeURIComponent(slug)}`, {
+        method: "POST",
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "분석에 실패했습니다.");
+      setAnalysis(body);
+      setAnalysisStatus("ready");
+    } catch (error) {
+      setAnalysisStatus("error");
+      setAnalysisError(error.message);
+    }
+  }
+
+  async function generateDraft() {
+    if (draftStatus === "ready") {
+      window.location.hash = `#/draft/${encodeURIComponent(slug)}`;
+      return;
+    }
+    setDraftStatus("generating");
+    setDraftError("");
+    try {
+      const response = await fetch(`/api/drafts/${encodeURIComponent(slug)}`, {
+        method: "POST",
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "초안 생성에 실패했습니다.");
+      setDraftStatus("ready");
+      window.location.hash = `#/draft/${encodeURIComponent(slug)}`;
+    } catch (error) {
+      setDraftStatus("error");
+      setDraftError(error.message);
+    }
+  }
+
+  function selectBlock(event) {
+    const node = event.target.closest(
+      "p, li, h2, h3, blockquote, figure, img, figcaption",
+    );
+    if (!node || !articleRef.current?.contains(node)) return;
+
+    if (node.tagName === "IMG") {
+      setSelectedEvidence({
+        type: "image",
+        label: "본문 이미지",
+        excerpt: node.alt || "대체 텍스트 없음",
+        source: node.currentSrc || node.src,
+        caption: node
+          .closest("figure")
+          ?.querySelector("figcaption")
+          ?.textContent?.trim(),
+      });
+      return;
+    }
+
+    const siblings = [
+      ...articleRef.current.querySelectorAll(
+        "p, li, h2, h3, blockquote, figure, figcaption",
+      ),
+    ];
+    setSelectedEvidence({
+      type: "block",
+      label: node.tagName.toLowerCase(),
+      excerpt: node.textContent.trim().slice(0, 360),
+      index: siblings.indexOf(node) + 1,
+    });
+  }
+
+  if (detailStatus === "loading") {
+    return (
+      <main className="analysis-loading">
+        <span className="spinner dark" />
+        <strong>본문을 불러오는 중</strong>
+      </main>
+    );
+  }
+
+  if (!detail) {
+    return (
+      <main className="not-found">
+        <CircleHelp size={28} />
+        <h1>이 기사는 아직 본문을 받지 않았습니다.</h1>
+        <p>크롤링 화면에서 수집을 마치면 여기에서 읽을 수 있습니다.</p>
+        <a href="#/cards">카드 리스트로 돌아가기</a>
+      </main>
+    );
+  }
+
+  return (
+    <main className="reader-layout">
+      <aside className="outline-rail">
+        <a className="back-link" href="#/cards">
+          <ArrowLeft size={16} /> 카드 리스트
+        </a>
+        <div className="outline-title">이 화면에서</div>
+        <nav className="outline-nav">
+          <button
+            type="button"
+            className={tab === "summary" ? "active" : ""}
+            onClick={() => setTab("summary")}
+          >
+            요약
+          </button>
+          <button
+            type="button"
+            className={tab === "ko" ? "active" : ""}
+            onClick={() => setTab("ko")}
+          >
+            한국어 전문
+          </button>
+          <button
+            type="button"
+            className={tab === "original" ? "active" : ""}
+            onClick={() => setTab("original")}
+          >
+            원문
+          </button>
+        </nav>
+      </aside>
+
+      <section className="reader-main">
+        <div className="eyebrow">
+          <span>STEP 03</span>
+          <span className="eyebrow-rule" />
+          <span>{formatDate(detail.published_date)}</span>
+        </div>
+
+        <header className="article-header">
+          <h1>
+            {tab === "ko" && translation?.title_ko
+              ? translation.title_ko
+              : detail.title}
+          </h1>
+          <p className="article-summary">
+            {analysis?.core_message?.statement_ko ||
+              translation?.summary_ko ||
+              detail.summary}
+          </p>
+          <div className="article-meta">
+            <span>{detail.authors?.join(", ") || "NN/g"}</span>
+            {detail.duration_minutes && <span>{detail.duration_minutes}분</span>}
+            <a href={detail.source_url} target="_blank" rel="noopener noreferrer">
+              원문 열기 <ArrowUpRight size={14} />
+            </a>
+          </div>
+        </header>
+
+        {tab === "summary" && (
+          <AnalysisSection
+            analysis={analysis}
+            error={analysisError}
+            onAnalyze={analyze}
+            status={analysisStatus}
+          />
+        )}
+
+        {tab === "ko" &&
+          (translatedHtml ? (
+            <article
+              className="source-article translated"
+              ref={articleRef}
+              onClick={selectBlock}
+              dangerouslySetInnerHTML={{ __html: translatedHtml }}
+            />
+          ) : (
+            <TranslationEmpty
+              error={translationError}
+              onTranslate={translate}
+              status={translationStatus}
+            />
+          ))}
+
+        {tab === "original" && (
+          <article
+            className="source-article"
+            ref={articleRef}
+            onClick={selectBlock}
+            dangerouslySetInnerHTML={{ __html: originalHtml }}
+          />
+        )}
+      </section>
+
+      <EvidencePanel
+        detail={detail}
+        draftError={draftError}
+        draftStatus={draftStatus}
+        item={detail}
+        onClear={() => setSelectedEvidence(null)}
+        onGenerate={generateDraft}
+        selected={selectedEvidence}
+        summary={
+          analysis?.core_message?.statement_ko ||
+          translation?.summary_ko ||
+          detail.summary
+        }
+        translation={translation}
+      />
+    </main>
+  );
+}
+
+/** 분석 결과. 아직 없으면 비용이 드는 작업이라는 사실을 밝히고 버튼만 둔다. */
+function AnalysisSection({ analysis, error, onAnalyze, status }) {
+  if (!analysis) {
+    const running = status === "running";
+    return (
+      <div className="translation-empty">
+        <div className="translation-icon">
+          <Sparkles size={24} />
+        </div>
+        <span className="empty-kicker">ANALYSIS</span>
+        <h2>{running ? "분석하는 중" : "아직 분석하지 않았습니다"}</h2>
+        <p>
+          모델을 호출하는 작업이라 자동으로 돌리지 않는다. 눌러야 시작한다.
+        </p>
+        {error && <div className="translation-error">{error}</div>}
+        <button
+          className="translate-button"
+          type="button"
+          disabled={running}
+          onClick={onAnalyze}
+        >
+          {running ? (
+            <>
+              <span className="spinner" /> 분석 중
+            </>
+          ) : (
+            <>
+              <Sparkles size={16} /> 이 기사 분석하기
+            </>
+          )}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="summary-analysis">
+      <section className="core-message-card">
+        <div className="section-number">00</div>
+        <div>
+          <span>핵심 메시지</span>
+          <h2>{analysis.core_message.statement_ko}</h2>
+          <p>{analysis.core_message.why_it_matters_ko}</p>
+          <blockquote>“{analysis.core_message.evidence_excerpt}”</blockquote>
+        </div>
+      </section>
+
+      <section className="insight-analysis-section">
+        <div className="analysis-section-heading">
+          <span>핵심 주장</span>
+          <strong>{analysis.key_insights.length}개</strong>
+        </div>
+        <div className="insight-analysis-grid">
+          {analysis.key_insights.map((insight, index) => (
+            <article key={`${insight.title_ko}-${index}`}>
+              <span className="insight-index">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3>{insight.title_ko}</h3>
+              <p>{insight.claim_ko}</p>
+              <div className="why-block">
+                <span>왜 중요한가</span>
+                <p>{insight.why_it_matters_ko}</p>
+              </div>
+              <blockquote>“{insight.evidence_excerpt}”</blockquote>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="card-plan-section">
+        <div className="analysis-section-heading">
+          <span>카드 구성 후보</span>
+          <strong>{analysis.card_plan.length}장</strong>
+        </div>
+        <div className="card-plan-track">
+          {analysis.card_plan.map((card) => (
+            <article key={card.position}>
+              <div className="plan-card-top">
+                <span>{String(card.position).padStart(2, "0")}</span>
+                <em>{card.role}</em>
+              </div>
+              <h3>{card.headline_ko}</h3>
+              <p>{card.purpose_ko}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {analysis.caveats_ko?.length > 0 && (
+        <section className="summary-caveats">
+          <div className="analysis-section-heading">
+            <span>주의할 점</span>
+          </div>
+          {analysis.caveats_ko.map((caveat) => (
+            <p key={caveat}>
+              <ShieldAlert size={13} /> {caveat}
+            </p>
+          ))}
+        </section>
+      )}
+    </div>
+  );
+}
+
+function TranslationEmpty({ error, onTranslate, status }) {
+  const translating = status === "translating";
+  return (
+    <div className="translation-empty">
+      <div className="translation-icon">
+        <Languages size={24} />
+      </div>
+      <span className="empty-kicker">TRANSLATION</span>
+      <h2>{translating ? "번역하는 중" : "한국어 번역"}</h2>
+      <p>처음 한 번만 시간이 걸린다. 번역한 글은 저장되어 다음엔 바로 뜬다.</p>
+      {error && <div className="translation-error">{error}</div>}
+      <button
+        className="translate-button"
+        type="button"
+        disabled={translating}
+        onClick={onTranslate}
+      >
+        {translating ? (
+          <>
+            <span className="spinner" /> 번역 중
+          </>
+        ) : (
+          <>
+            <Languages size={16} /> 한국어 번역 시작
+          </>
+        )}
+      </button>
+    </div>
+  );
+}
+
+/** 저장된 본문을 화면에 넣기 전 마지막으로 한 번 더 거른다. */
+function cleanArticleHtml(html) {
+  if (!html || typeof window === "undefined") return "";
+  const parsed = new DOMParser().parseFromString(html, "text/html");
+  parsed
+    .querySelectorAll("script, style, iframe, form, input, button")
+    .forEach((node) => node.remove());
+
+  parsed.querySelectorAll("*").forEach((node) => {
+    [...node.attributes].forEach((attribute) => {
+      if (attribute.name.toLowerCase().startsWith("on")) {
+        node.removeAttribute(attribute.name);
+      }
+    });
+  });
+
+  parsed.querySelectorAll("a").forEach((anchor) => {
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+  });
+
+  parsed.querySelectorAll("img").forEach((image) => {
+    image.loading = "lazy";
+    image.decoding = "async";
+  });
+
+  return parsed.body.innerHTML;
+}
+
+export { SummaryView };

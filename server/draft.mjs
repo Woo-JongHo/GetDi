@@ -20,10 +20,6 @@ export function createDraftHandler({
     rootDir,
     "skills/article-refinement/references/html-card-production-prompt.md",
   );
-  const generationStatePath = path.join(
-    rootDir,
-    "data/private/generation-state.json",
-  );
   const productionPromptPath = path.join(
     rootDir,
     "skills/article-refinement/references/cardnews-production-prompt.md",
@@ -758,26 +754,6 @@ export function createDraftHandler({
     return document;
   }
 
-  async function handleGenerationState(request, response, url) {
-    if (
-      url.pathname === "/api/generation-state" &&
-      request.method === "GET"
-    ) {
-      try {
-        sendJson(
-          response,
-          200,
-          JSON.parse(await readFile(generationStatePath, "utf8")),
-        );
-      } catch (error) {
-        sendJson(response, 500, { error: error.message });
-      }
-      return true;
-    }
-
-    return false;
-  }
-
   async function handleDraft(request, response, url) {
     const draftMatch = url.pathname.match(
       /^\/api\/drafts\/([a-z0-9-]+)(\/revise)?$/,
@@ -907,5 +883,5 @@ export function createDraftHandler({
     return false;
   }
 
-  return { handleDraft, handleGenerationState };
+  return { handleDraft };
 }

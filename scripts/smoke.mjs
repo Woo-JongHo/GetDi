@@ -11,6 +11,8 @@ const slugArgument = process.argv.find((argument) =>
 );
 const translationSlug =
   slugArgument?.slice("--slug=".length) || "product-sense-definition";
+// 어느 단계에서 죽든 실패로 남기고, 끝까지 간 경우에만 0으로 바꾼다.
+let exitCode = 1;
 const server = await createServer({
   server: {
     host: "localhost",
@@ -168,6 +170,13 @@ try {
       }),
     );
   }
-} finally {
-  await server.close();
+  exitCode = 0;
+} catch (error) {
+  console.error(error);
 }
+
+// Vite dev 서버의 close()는 남아 있는 의존성 스캔 작업 때문에 돌아오지 않을
+// 수 있다. 기다리면 검사가 다 끝난 뒤에도 프로세스가 매달린다. 검사 결과는
+// 이미 나왔으므로 종료를 요청만 하고 결과 코드를 들고 나간다.
+server.close();
+process.exit(exitCode);

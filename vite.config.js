@@ -7,6 +7,7 @@ import {
   DRAFT_COPY_LIMITS,
   DRAFT_VISUALIZATION_METHODS,
 } from "./server/analysis.mjs";
+import { createCrawlHandler } from "./server/crawl.mjs";
 import { createDetailsHandler } from "./server/details.mjs";
 import { createDraftHandler } from "./server/draft.mjs";
 import { createModelHandler } from "./server/model.mjs";
@@ -37,7 +38,7 @@ const {
   imageSources,
   runCodexStructured,
 });
-const { handleDraft, handleGenerationState } = createDraftHandler({
+const { handleDraft } = createDraftHandler({
   rootDir,
   DRAFT_COPY_LIMITS,
   DRAFT_VISUALIZATION_METHODS,
@@ -56,10 +57,11 @@ const handleTranslation = createTranslationHandler({
   runCodexStructured,
 });
 const handleUsage = createUsageHandler({ rootDir });
+const handleCrawl = createCrawlHandler({ rootDir });
 const handlers = [
+  handleCrawl,
   handleUsage,
   handleModel,
-  handleGenerationState,
   handleDetails,
   handleReferences,
   handleDraft,
@@ -84,6 +86,11 @@ function translationApi() {
 
 export default defineConfig({
   plugins: [react(), translationApi()],
+  // data/private에는 수집한 NN/g 원본 HTML이 수백 개 쌓인다. 지정하지 않으면
+  // Vite가 그것들까지 앱 진입점 후보로 스캔하다 실패한다. 진입점은 하나뿐이다.
+  optimizeDeps: {
+    entries: ["index.html"],
+  },
   server: {
     host: "localhost",
     port: 5545,
