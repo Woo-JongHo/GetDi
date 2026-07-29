@@ -3,7 +3,7 @@ import {
   plainCardText,
 } from "./cardLayout.js";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { ArrowLeft, ArrowUpRight, CircleHelp, Image as ImageIcon, MessageSquare } from "lucide-react";
 
@@ -28,14 +28,23 @@ function useFitScale(width, height, maxScale = 0.46) {
   const holderRef = useRef(null);
   const [scale, setScale] = useState(maxScale);
 
-  useEffect(() => {
+  // useEffect가 아니라 useLayoutEffect다. 그려지기 전에 재야 첫 프레임부터
+  // 맞는 크기로 나온다. useEffect는 페인트 뒤라 좁은 화면에서 카드가
+  // 한 번 삐져나왔다가 줄어든다.
+  useLayoutEffect(() => {
     const holder = holderRef.current;
-    if (!holder || typeof ResizeObserver === "undefined") return undefined;
-    const observer = new ResizeObserver(([entry]) => {
-      const available = entry.contentRect.width;
+    if (!holder) return undefined;
+
+    const measure = (available) => {
       if (!available) return;
       setScale(Math.min(maxScale, available / width, 640 / height));
-    });
+    };
+
+    // ResizeObserver가 없는 환경에서도 최소 한 번은 실제 폭에 맞춘다.
+    measure(holder.getBoundingClientRect().width);
+    if (typeof ResizeObserver === "undefined") return undefined;
+
+    const observer = new ResizeObserver(([entry]) => measure(entry.contentRect.width));
     observer.observe(holder);
     return () => observer.disconnect();
   }, [height, maxScale, width]);

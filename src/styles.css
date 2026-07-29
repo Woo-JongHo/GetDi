@@ -2949,6 +2949,51 @@ a {
   }
 }
 
+/* 초안은 세 트랙(레일·미리보기·편집)이라 900px까지 버티면 가운데가
+   과하게 눌린다. 901px에서 미리보기가 0.30배까지 줄어 읽을 수 없었다.
+   더 이른 지점에서 통째로 눕힌다. */
+@media (max-width: 1120px) {
+  .draft-layout {
+    display: block;
+  }
+
+  .draft-card-rail {
+    position: static;
+    height: auto;
+    padding: 16px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .draft-card-rail .draft-card-list {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .draft-card-rail .draft-card-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .draft-card-rail .draft-card-list > button {
+    display: block;
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 44px;
+    min-width: 132px;
+    max-width: 210px;
+    padding: 8px 12px;
+  }
+
+  /* 썸네일 칸을 숨기면 그 43px 트랙도 같이 없애야 한다.
+     안 그러면 남은 글자가 43px 안에 갇힌다. */
+  .draft-card-rail .mini-card {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .topbar {
     grid-template-columns: 1fr auto;
@@ -2973,8 +3018,7 @@ a {
   }
 
   .analysis-layout,
-  .article-analysis-layout,
-  .draft-layout {
+  .article-analysis-layout {
     display: block;
   }
 
@@ -2985,46 +3029,23 @@ a {
     display: none;
   }
 
-  .draft-card-rail {
+  /* 목록 필터도 없애지 않고 눕힌다. 다만 눕히려면 데스크톱에서 붙어 있던
+     sticky·화면높이·세로방향·전체폭을 전부 풀어야 한다. padding만 바꾸면
+     레일이 화면 하나를 그대로 먹은 채 기사 목록을 아래로 밀어낸다. */
+  .filter-rail {
     position: static;
     height: auto;
-    padding: 16px 20px;
+    padding: 14px 24px 0;
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
 
-  .draft-card-rail .draft-card-list {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-
-  .draft-card-rail .draft-card-list::-webkit-scrollbar {
-    display: none;
-  }
-
-  .draft-card-rail .draft-card-list > button {
-    flex: 0 0 auto;
-    min-height: 44px;
-    min-width: 132px;
-  }
-
-  .draft-card-rail .mini-card {
-    display: none;
-  }
-
-  /* 목록 필터도 마찬가지다. 없애지 말고 칩으로 눕힌다. */
-  .filter-rail {
-    padding: 14px 24px 0;
-  }
-
   .filter-panel {
-    display: flex;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
     gap: 8px;
     overflow-x: auto;
-    align-items: center;
     scrollbar-width: none;
   }
 
@@ -3034,16 +3055,20 @@ a {
 
   .filter-list {
     display: flex;
+    flex: 0 0 auto;
     gap: 6px;
   }
 
-  .filter-list > button {
+  .filter-list button {
+    width: auto;
     flex: 0 0 auto;
-    min-height: 40px;
+    min-height: 44px;
+    gap: 8px;
     white-space: nowrap;
   }
 
-  .rail-title {
+  .rail-title,
+  .rail-title.second {
     flex: 0 0 auto;
     margin: 0;
   }
@@ -4042,11 +4067,16 @@ a {
   opacity: 0.8;
 }
 
-/* 카드 미리보기를 담는 자리. 이 폭을 재서 축소 비율을 정한다. */
+/* 카드 미리보기를 담는 자리. 이 폭을 재서 축소 비율을 정한다.
+   ResizeObserver가 처음 도는 것은 첫 페인트 뒤라, 그 한 프레임 동안은
+   기본 비율(0.46)로 그려진다. 좁은 화면에서 그 순간 카드가 밖으로
+   비어져 나오지 않도록 담는 쪽에서 잘라 둔다. */
 .html-card-fit {
   width: 100%;
+  max-width: 100%;
   display: flex;
   justify-content: center;
+  overflow: hidden;
 }
 
 /* ── 모바일 터치 타겟과 글씨 (UI 리뷰 지적 4·6·7·8번) ─────────── */
@@ -4056,6 +4086,9 @@ a {
      한 값에서 파생시켜 둘이 어긋나지 않게 한다. */
   .evidence-drawer {
     top: 60px;
+    /* dvh를 모르는 브라우저는 이 줄을 버리고 위 vh 값을 쓴다.
+       순서를 뒤집으면 폴백이 사라진다. */
+    height: calc(100vh - 60px);
     height: calc(100dvh - 60px);
   }
 
@@ -4068,15 +4101,21 @@ a {
 @media (max-width: 720px) {
   /* 헤더 요소는 모두 손가락으로 누를 수 있어야 한다. */
   .topnav.steps a {
-    min-height: 40px;
+    min-height: 44px;
     padding: 0 12px;
     font-size: 11px;
   }
 
   .help-link {
-    min-width: 40px;
-    min-height: 40px;
+    min-width: 44px;
+    min-height: 44px;
     justify-content: center;
+  }
+
+  /* 홈으로 가는 유일한 수단이라 아이콘 크기가 곧 누를 수 있는 크기다. */
+  .brand {
+    min-height: 44px;
+    padding-right: 4px;
   }
 
   /* 검색+정렬이 360px 내용 폭(312px)을 2px 넘겨 가로 스크롤이 생겼다. */
@@ -4094,9 +4133,8 @@ a {
     padding: 22px 18px 60px;
   }
 
-  .revision-selector button,
-  .revision-selector select {
-    min-height: 40px;
+  .revision-selector button {
+    min-height: 44px;
     font-size: 12px;
   }
 
@@ -4106,8 +4144,8 @@ a {
   }
 
   .tune-suggestions button {
-    min-height: 38px;
-    padding: 8px 12px;
+    min-height: 44px;
+    padding: 10px 14px;
     font-size: 12px;
   }
 

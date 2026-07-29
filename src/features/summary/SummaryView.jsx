@@ -45,6 +45,17 @@ function SummaryView({ slug }) {
   const [panelOpen, setPanelOpen] = useState(false);
   const articleRef = useRef(null);
 
+  // 덮는 패널은 Esc로 닫히는 것이 관례다. 없으면 키보드만 쓰는 사람은
+  // 열고 나서 닫을 방법을 찾아야 한다.
+  useEffect(() => {
+    if (!panelOpen) return undefined;
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setPanelOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [panelOpen]);
+
   useEffect(() => {
     let cancelled = false;
     setDetail(null);
@@ -350,7 +361,13 @@ function SummaryView({ slug }) {
           onClick={() => setPanelOpen(false)}
         />
       )}
-      <aside className={`evidence-drawer ${panelOpen ? "open" : ""}`}>
+      {/* 닫힌 드로어는 화면 밖으로 밀려 있을 뿐 여전히 문서에 있다.
+          inert를 걸지 않으면 보이지도 않는 버튼에 탭이 들어간다. */}
+      <aside
+        className={`evidence-drawer ${panelOpen ? "open" : ""}`}
+        inert={panelOpen ? undefined : ""}
+        aria-hidden={panelOpen ? undefined : "true"}
+      >
         <div className="evidence-drawer-head">
           <strong>근거·출처</strong>
           <button
