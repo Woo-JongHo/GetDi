@@ -2031,7 +2031,9 @@ a {
 .evidence-panel {
   position: sticky;
   top: 68px;
-  height: calc(100vh - 68px);
+  /* 화면 높이에 딱 맞추면 내용이 조금만 길어도 아래가 잘린 채
+     스크롤 밖으로 밀린다. 내용에 맞추되 화면을 넘지만 않게 한다. */
+  max-height: calc(100vh - 68px);
   overflow-y: auto;
   padding: 30px clamp(22px, 3vw, 42px);
   background: #ecebe6;
@@ -2047,14 +2049,14 @@ a {
 
 .evidence-heading span {
   color: #8d8f89;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
 }
 
 .evidence-heading h2 {
   margin: 7px 0 0;
-  font-size: 17px;
+  font-size: 19px;
   letter-spacing: -0.04em;
 }
 
@@ -2073,7 +2075,7 @@ a {
 
 .reader-summary-card span {
   color: var(--purple);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.11em;
 }
@@ -2081,7 +2083,7 @@ a {
 .reader-summary-card p {
   margin: 13px 0 0;
   color: #3f413d;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.75;
 }
 
@@ -2158,7 +2160,7 @@ a {
 .selected-evidence blockquote {
   margin: 15px 0 9px;
   color: #4d4e4b;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.65;
 }
 
@@ -2167,7 +2169,7 @@ a {
   align-items: center;
   gap: 3px;
   color: var(--purple);
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -2193,7 +2195,7 @@ a {
   padding-top: 12px;
   border-top: 1px solid #ded8fa;
   color: #4d9a62;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -2206,7 +2208,7 @@ a {
   display: block;
   margin-bottom: 14px;
   color: #8d8f89;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.13em;
 }
@@ -2227,7 +2229,7 @@ a {
 .evidence-list dt,
 .evidence-list dd {
   margin: 0;
-  font-size: 9px;
+  font-size: 12.5px;
 }
 
 .evidence-list dt {
@@ -2691,14 +2693,14 @@ a {
 
 .core-message-card > div:last-child > span {
   color: #999c94;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.12em;
 }
 
 .core-message-card h2 {
   margin: 12px 0;
-  font-size: 25px;
+  font-size: 30px;
   line-height: 1.3;
   letter-spacing: -0.045em;
 }
@@ -2706,7 +2708,7 @@ a {
 .core-message-card p {
   margin: 0;
   color: #c1c2bd;
-  font-size: 10px;
+  font-size: 15px;
   line-height: 1.7;
 }
 
@@ -2715,7 +2717,7 @@ a {
   padding-left: 13px;
   border-left: 1px solid #60615c;
   color: #aaa;
-  font-size: 9px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -2733,7 +2735,7 @@ a {
   color: #777974;
   background: #f1f0eb;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 7px;
+  font-size: 10px;
 }
 
 .core-message-card .source-badges span {
@@ -2771,71 +2773,76 @@ a {
 
 .insight-analysis-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* 연결 칸이 늘면서 3열로는 글씨를 7~9px까지 줄여야 읽을 자리가 났다.
+     2열로 넓히고 글씨를 읽을 수 있는 크기로 되돌린다. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
   border-left: 1px solid var(--line);
   background: var(--line);
 }
 
 .insight-analysis-grid > article {
-  min-height: 390px;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 26px 24px;
   background: #fff;
 }
 
 .insight-index {
   color: var(--purple);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
 }
 
 .insight-analysis-grid h3 {
-  margin: 28px 0 10px;
-  font-size: 17px;
+  margin: 14px 0 10px;
+  font-size: 20px;
   line-height: 1.35;
   letter-spacing: -0.035em;
 }
 
 .insight-analysis-grid > article > p {
   margin: 0;
-  color: #686a65;
-  font-size: 9px;
-  line-height: 1.7;
+  color: #4a4c47;
+  font-size: 14.5px;
+  line-height: 1.65;
 }
 
 .why-block {
-  margin-top: 17px;
-  padding: 10px;
-  border-radius: 7px;
+  margin-top: 16px;
+  padding: 13px 15px;
+  border-radius: 9px;
   background: var(--purple-soft);
 }
 
 .why-block span {
   color: #7a68ca;
-  font-size: 7px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .why-block p {
-  margin: 5px 0 0;
-  color: #5f587c;
-  font-size: 8px;
-  line-height: 1.55;
+  margin: 6px 0 0;
+  color: #524b6e;
+  font-size: 13.5px;
+  line-height: 1.62;
 }
 
 .insight-analysis-grid blockquote {
-  margin: auto 0 0;
-  padding-top: 17px;
-  color: #969892;
-  font-size: 8px;
-  line-height: 1.55;
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: #7c7e78;
+  font-size: 12.5px;
+  line-height: 1.6;
 }
 
 .card-plan-track {
   display: grid;
-  grid-auto-columns: minmax(190px, 1fr);
+  /* 글씨를 키운 만큼 칸도 넓혀야 제목이 서너 줄로 무너지지 않는다. */
+  grid-auto-columns: minmax(250px, 1fr);
   grid-auto-flow: column;
   gap: 9px;
   padding: 13px 0 8px;
@@ -2861,7 +2868,7 @@ a {
 .plan-card-top span {
   color: #8f918b;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 8px;
+  font-size: 11px;
 }
 
 .plan-card-top em {
@@ -2869,14 +2876,14 @@ a {
   border-radius: 999px;
   color: #654ec9;
   background: var(--purple-soft);
-  font-size: 7px;
+  font-size: 10px;
   font-style: normal;
   text-transform: uppercase;
 }
 
 .card-plan-track h3 {
   margin: 28px 0 8px;
-  font-size: 15px;
+  font-size: 17px;
   line-height: 1.35;
   letter-spacing: -0.035em;
 }
@@ -2884,7 +2891,7 @@ a {
 .card-plan-track p {
   margin: 0;
   color: #777974;
-  font-size: 8px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
@@ -2926,8 +2933,11 @@ a {
   }
 
 
+  /* 중앙 트랙에 최소 500px을 박으면 세 트랙 합이 985px이 되어,
+     901~984px 구간에서 페이지 전체가 가로로 넘친다. 미리보기는 이제
+     담긴 폭에 맞춰 축소되므로 중앙이 줄어들 수 있게 둔다. */
   .draft-layout {
-    grid-template-columns: 185px minmax(500px, 1fr) 300px;
+    grid-template-columns: 185px minmax(0, 1fr) 300px;
   }
 
   .insight-analysis-grid {
@@ -2935,7 +2945,7 @@ a {
   }
 
   .insight-analysis-grid > article {
-    min-height: 310px;
+    padding: 22px 20px;
   }
 }
 
@@ -2947,10 +2957,6 @@ a {
 
   .library-layout {
     display: block;
-  }
-
-  .filter-rail {
-    display: none;
   }
 
   .library-content {
@@ -2972,10 +2978,74 @@ a {
     display: block;
   }
 
+  /* 이 레일에는 카드 선택 버튼이 들어 있다. 숨기면 첫 카드에 갇혀
+     나머지를 볼 방법이 없어지므로, 가로로 눕혀 남긴다. */
   .analysis-set-rail,
-  .article-analysis-source,
-  .draft-card-rail {
+  .article-analysis-source {
     display: none;
+  }
+
+  .draft-card-rail {
+    position: static;
+    height: auto;
+    padding: 16px 20px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .draft-card-rail .draft-card-list {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .draft-card-rail .draft-card-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .draft-card-rail .draft-card-list > button {
+    flex: 0 0 auto;
+    min-height: 44px;
+    min-width: 132px;
+  }
+
+  .draft-card-rail .mini-card {
+    display: none;
+  }
+
+  /* 목록 필터도 마찬가지다. 없애지 말고 칩으로 눕힌다. */
+  .filter-rail {
+    padding: 14px 24px 0;
+  }
+
+  .filter-panel {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    align-items: center;
+    scrollbar-width: none;
+  }
+
+  .filter-panel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-list {
+    display: flex;
+    gap: 6px;
+  }
+
+  .filter-list > button {
+    flex: 0 0 auto;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+
+  .rail-title {
+    flex: 0 0 auto;
+    margin: 0;
   }
 
   .analysis-inspector,
@@ -3776,31 +3846,40 @@ a {
 
 /* ── 화면 3 요약본 레이아웃 ─────────────────────────────────── */
 
-/* Reader의 3열(목차·본문·근거)에서 목차를 뺀 2열이다. 보기 방식 탭이
-   본문 위로 올라갔기 때문에 옆 레일이 더 필요하지 않다. */
+/* 근거·출처는 늘 보는 것이 아니라 확인할 때만 여는 것이다.
+   옆자리를 상시로 내주는 대신 본문이 폭을 다 쓰고, 패널은 덮어서 연다. */
 .summary-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  display: block;
   min-height: calc(100vh - 68px);
 }
 
 .summary-layout .reader-main {
-  padding: 34px 48px 96px;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 34px 44px 96px;
+  border-right: 0;
 }
 
 .summary-layout .back-link {
   margin-bottom: 22px;
 }
 
+.summary-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 30px 0 34px;
+}
+
 .summary-tabs {
   display: flex;
   gap: 4px;
-  margin: 30px 0 34px;
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: #ecebe6;
-  width: max-content;
   max-width: 100%;
   overflow-x: auto;
   scrollbar-width: none;
@@ -3828,42 +3907,112 @@ a {
   box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
 }
 
-@media (max-width: 1180px) {
-  .summary-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
-  }
+.evidence-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
 
-  .summary-layout .reader-main {
-    padding: 32px 36px 88px;
-  }
+.evidence-toggle.active {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.evidence-scrim {
+  position: fixed;
+  z-index: 39;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(24 25 24 / 26%);
+  cursor: default;
+}
+
+.evidence-drawer {
+  position: fixed;
+  z-index: 40;
+  top: 68px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(460px, 94vw);
+  height: calc(100vh - 68px);
+  background: #ecebe6;
+  box-shadow: -18px 0 44px rgb(24 25 24 / 16%);
+  transform: translateX(102%);
+  transition: transform 0.22s ease;
+}
+
+.evidence-drawer.open {
+  transform: none;
+}
+
+.evidence-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid #d5d3cb;
+}
+
+.evidence-drawer-head strong {
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+
+.evidence-drawer-head button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.evidence-drawer-head button:hover {
+  color: var(--ink);
+  background: rgb(255 255 255 / 62%);
+}
+
+/* 드로어 안에서는 패널이 스스로 붙을 필요가 없다. 드로어가 이미 고정이다. */
+.evidence-drawer .evidence-panel {
+  position: static;
+  flex: 1;
+  max-height: none;
+  padding: 24px 22px 40px;
+  overflow-y: auto;
 }
 
 @media (max-width: 900px) {
-  /* 근거 패널을 본문 아래로 내린다. 좁은 폭에서 2열은 둘 다 못 읽는다.
-     내려간 패널은 sticky를 풀어야 화면 높이를 통째로 차지하지 않는다. */
-  .summary-layout {
-    display: block;
-  }
-
   .summary-layout .reader-main {
-    padding: 28px 24px 40px;
-  }
-
-  .summary-layout .evidence-panel {
-    position: static;
-    height: auto;
-    padding: 28px 24px 72px;
+    padding: 28px 24px 60px;
   }
 }
 
 @media (max-width: 720px) {
   .summary-layout .reader-main {
-    padding: 22px 16px 32px;
+    padding: 22px 16px 48px;
+  }
+
+  .summary-toolbar {
+    margin: 24px 0 28px;
   }
 
   .summary-tabs {
-    width: 100%;
-    margin: 24px 0 28px;
+    flex: 1;
   }
 
   .summary-tabs button {
@@ -3882,4 +4031,88 @@ a {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.7;
+}
+
+/* 카드에 한국어 제목이 뜰 때, 원제를 아래 작게 남긴다. */
+.card-original-title {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  opacity: 0.8;
+}
+
+/* 카드 미리보기를 담는 자리. 이 폭을 재서 축소 비율을 정한다. */
+.html-card-fit {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── 모바일 터치 타겟과 글씨 (UI 리뷰 지적 4·6·7·8번) ─────────── */
+
+@media (max-width: 900px) {
+  /* 헤더 높이가 60px로 줄어드는데 드로어는 68px에서 시작해 틈이 생겼다.
+     한 값에서 파생시켜 둘이 어긋나지 않게 한다. */
+  .evidence-drawer {
+    top: 60px;
+    height: calc(100dvh - 60px);
+  }
+
+  .evidence-drawer-head button {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 720px) {
+  /* 헤더 요소는 모두 손가락으로 누를 수 있어야 한다. */
+  .topnav.steps a {
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 11px;
+  }
+
+  .help-link {
+    min-width: 40px;
+    min-height: 40px;
+    justify-content: center;
+  }
+
+  /* 검색+정렬이 360px 내용 폭(312px)을 2px 넘겨 가로 스크롤이 생겼다. */
+  .library-tools {
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+
+  /* 초안 편집 패널은 폰에서도 주 편집 수단이다. 7~10px로 둘 수 없다. */
+  .draft-tune-panel {
+    padding: 22px 18px 60px;
+  }
+
+  .revision-selector button,
+  .revision-selector select {
+    min-height: 40px;
+    font-size: 12px;
+  }
+
+  .tune-box textarea {
+    min-height: 96px;
+    font-size: 14px;
+  }
+
+  .tune-suggestions button {
+    min-height: 38px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .revise-button {
+    min-height: 46px;
+    font-size: 14px;
+  }
 }

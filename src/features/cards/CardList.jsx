@@ -74,9 +74,12 @@ function CardList() {
   const visible = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     const filtered = items.filter((item) => {
+      // 한국어 제목으로도 영어 원제로도 찾을 수 있어야 한다.
       const matchesQuery =
         !normalized ||
-        `${item.title} ${item.summary}`.toLocaleLowerCase().includes(normalized);
+        `${item.title_ko || ""} ${item.summary_ko || ""} ${item.title} ${item.summary}`
+          .toLocaleLowerCase()
+          .includes(normalized);
       const matchesMonth =
         month === "all" || (item.published_date || "").startsWith(month);
       const ready = readySlugs.has(item.slug);
@@ -272,8 +275,13 @@ function ArticleCard({ item, index, ready }) {
       </div>
 
       <div className="card-index">{String(index + 1).padStart(3, "0")}</div>
-      <h2>{item.title}</h2>
-      <p>{item.summary || "목록에 등록된 기사입니다."}</p>
+      {/* 한국어가 있으면 그것이 제목이다. 원제는 아래에 작게 남겨
+          무엇을 옮긴 것인지 확인할 수 있게 한다. */}
+      <h2>{item.title_ko || item.title}</h2>
+      {item.title_ko && <p className="card-original-title">{item.title}</p>}
+      <p>
+        {item.summary_ko || item.summary || "목록에 등록된 기사입니다."}
+      </p>
 
       <div className="card-footer">
         <span>{formatDate(item.published_date)}</span>

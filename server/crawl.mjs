@@ -106,7 +106,31 @@ export function createCrawlHandler({ rootDir }) {
 
     if (url.pathname === "/api/crawl/items" && request.method === "GET") {
       const listing = await readJsonOrNull(listingPath(year));
-      sendJson(response, 200, listing ?? { items: [], collection: null });
+      if (!listing) {
+        sendJson(response, 200, { items: [], collection: null });
+        return true;
+      }
+
+      // 번역은 파생물이라 수집 정본과 따로 저장한다(AD-2). 화면에 줄 때만
+      // 합치고, 아직 안 옮긴 기사는 원문 그대로 내보낸다.
+      const korean = await readJsonOrNull(
+        path.join(rootDir, "data/private/listing-ko", `${year}.json`),
+      );
+      const translations = korean?.items ?? {};
+      sendJson(response, 200, {
+        ...listing,
+        translation: korean
+          ? {
+              translated_at: korean.translated_at,
+              count: Object.keys(translations).length,
+            }
+          : null,
+        items: listing.items.map((item) => ({
+          ...item,
+          title_ko: translations[item.slug]?.title_ko ?? null,
+          summary_ko: translations[item.slug]?.summary_ko ?? null,
+        })),
+      });
       return true;
     }
 

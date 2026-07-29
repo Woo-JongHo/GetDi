@@ -16,10 +16,12 @@
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createModelHandler } from "../server/model.mjs";
 import { downloadAsset, bodyImages } from "./assets.mjs";
 import { parseDetail } from "./detail.mjs";
 import { listingPageUrl, parseListing } from "./listing.mjs";
 import { resolveCrawlDelay, USER_AGENT } from "./robots.mjs";
+import { translateListing } from "./translate.mjs";
 
 const ROOT_DIR = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
@@ -277,7 +279,41 @@ export function createCrawler({
     return state;
   }
 
-  async function run({ limit = null, listingOnly = false } = {}) {
+  /**
+   * 목록을 한국어로 옮긴다. 수집이 끝난 뒤 이어서 돈다.
+   *
+   * 실패해도 수집 결과를 되돌리지 않는다 — 번역은 읽기 편하게 하는
+   * 부가 단계이고, 모델을 못 부르는 상황(로그인 만료 등)에서도
+   * 받아 둔 기사는 그대로 쓸 수 있어야 한다.
+   */
+  async function translate(items, collectionRetrievedAt) {
+    await saveState({ phase: "translating", current: null });
+    const { runCodexStructured } = createModelHandler({ rootDir });
+
+    try {
+      const result = await translateListing({
+        rootDir,
+        year,
+        items,
+        collectionRetrievedAt,
+        runStructured: runCodexStructured,
+        onProgress: ({ done, total }) =>
+          saveState({
+            current: { kind: "translation", done, total },
+          }),
+      });
+      await saveState({
+        translated_this_run: result.translated,
+        translation_failed: result.failed,
+      });
+      return result;
+    } catch (error) {
+      await saveState({ translation_error: error.message });
+      return { translated: 0, failed: items.length, error: error.message };
+    }
+  }
+
+  async function run({ limit = null, listingOnly = false, skipTranslate = false } = {}) {
     const previous = await readJsonOrNull(paths.state);
     const delay = await resolveCrawlDelay();
     await saveState({
@@ -297,8 +333,11 @@ export function createCrawler({
     const items = existing?.items?.length
       ? existing.items
       : await collectListing(delay.seconds);
+    const retrievedAt =
+      existing?.collection?.retrieved_at ?? new Date().toISOString();
 
     if (listingOnly) {
+      if (!skipTranslate) await translate(items, retrievedAt);
       return saveState({
         status: "complete",
         phase: "listing",
@@ -308,6 +347,8 @@ export function createCrawler({
     }
 
     await collectDetails(items, { limit });
+    if (!skipTranslate) await translate(items, retrievedAt);
+
     const remaining = await pendingItems(items);
     return saveState({
       status: remaining.length ? "partial" : "complete",
@@ -316,14 +357,29 @@ export function createCrawler({
     });
   }
 
-  return { collectDetails, collectListing, paths, run, get state() { return state; } };
+  return {
+    collectDetails,
+    collectListing,
+    paths,
+    run,
+    translate,
+    get state() {
+      return state;
+    },
+  };
 }
 
 function parseArguments(argv) {
-  const options = { limit: null, listingOnly: false, year: 2026 };
+  const options = {
+    limit: null,
+    listingOnly: false,
+    skipTranslate: false,
+    year: 2026,
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
     if (flag === "--limit") options.limit = Number(argv[++index]);
+    else if (flag === "--no-translate") options.skipTranslate = true;
     else if (flag === "--year") options.year = Number(argv[++index]);
     else if (flag === "--listing-only") options.listingOnly = true;
   }
@@ -338,6 +394,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       if (current.phase === "listing" && current.current?.page) {
         console.log(
           `목록 ${current.current.page}페이지 — 지금까지 ${current.total_items}건`,
+        );
+      } else if (current.current?.kind === "translation") {
+        console.log(
+          `번역 ${current.current.done}/${current.current.total}건`,
         );
       } else if (current.current?.slug) {
         console.log(

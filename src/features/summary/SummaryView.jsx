@@ -3,10 +3,12 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
+  BookOpen,
   CircleHelp,
   Languages,
   ShieldAlert,
   Sparkles,
+  X,
 } from "lucide-react";
 
 import { formatDate } from "../../shared/format.js";
@@ -40,6 +42,7 @@ function SummaryView({ slug }) {
   const [draftStatus, setDraftStatus] = useState("checking");
   const [draftError, setDraftError] = useState("");
   const [selectedEvidence, setSelectedEvidence] = useState(null);
+  const [panelOpen, setPanelOpen] = useState(false);
   const articleRef = useRef(null);
 
   useEffect(() => {
@@ -200,6 +203,7 @@ function SummaryView({ slug }) {
           ?.querySelector("figcaption")
           ?.textContent?.trim(),
       });
+      setPanelOpen(true);
       return;
     }
 
@@ -214,6 +218,7 @@ function SummaryView({ slug }) {
       excerpt: node.textContent.trim().slice(0, 360),
       index: siblings.indexOf(node) + 1,
     });
+    setPanelOpen(true);
   }
 
   if (detailStatus === "loading") {
@@ -271,22 +276,34 @@ function SummaryView({ slug }) {
 
         {/* 보기 방식은 본문 위에 둔다. 옆 레일에 두면 좁은 화면에서
             레일이 접히면서 화면을 바꿀 방법이 사라진다. */}
-        <nav className="summary-tabs" aria-label="보기 방식">
-          {[
-            { id: "summary", label: "요약" },
-            { id: "ko", label: "한국어 전문" },
-            { id: "original", label: "원문" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={tab === item.id ? "active" : ""}
-              onClick={() => setTab(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
+        <div className="summary-toolbar">
+          <nav className="summary-tabs" aria-label="보기 방식">
+            {[
+              { id: "summary", label: "요약" },
+              { id: "ko", label: "한국어 전문" },
+              { id: "original", label: "원문" },
+            ].map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={tab === item.id ? "active" : ""}
+                onClick={() => setTab(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+
+          <button
+            type="button"
+            className={`evidence-toggle ${panelOpen ? "active" : ""}`}
+            aria-expanded={panelOpen}
+            onClick={() => setPanelOpen((current) => !current)}
+          >
+            <BookOpen size={15} />
+            근거·출처
+          </button>
+        </div>
 
         {tab === "summary" && (
           <AnalysisSection
@@ -323,21 +340,43 @@ function SummaryView({ slug }) {
         )}
       </section>
 
-      <EvidencePanel
-        detail={detail}
-        draftError={draftError}
-        draftStatus={draftStatus}
-        item={detail}
-        onClear={() => setSelectedEvidence(null)}
-        onGenerate={generateDraft}
-        selected={selectedEvidence}
-        summary={
-          analysis?.core_message?.statement_ko ||
-          translation?.summary_ko ||
-          detail.summary
-        }
-        translation={translation}
-      />
+      {/* 근거는 본문 옆자리를 상시로 차지하지 않는다. 확인할 때만 연다.
+          본문 위로 덮되, 열려 있는 동안 바깥을 눌러 닫을 수 있게 한다. */}
+      {panelOpen && (
+        <button
+          type="button"
+          className="evidence-scrim"
+          aria-label="근거 패널 닫기"
+          onClick={() => setPanelOpen(false)}
+        />
+      )}
+      <aside className={`evidence-drawer ${panelOpen ? "open" : ""}`}>
+        <div className="evidence-drawer-head">
+          <strong>근거·출처</strong>
+          <button
+            type="button"
+            onClick={() => setPanelOpen(false)}
+            aria-label="닫기"
+          >
+            <X size={17} />
+          </button>
+        </div>
+        <EvidencePanel
+          detail={detail}
+          draftError={draftError}
+          draftStatus={draftStatus}
+          item={detail}
+          onClear={() => setSelectedEvidence(null)}
+          onGenerate={generateDraft}
+          selected={selectedEvidence}
+          summary={
+            analysis?.core_message?.statement_ko ||
+            translation?.summary_ko ||
+            detail.summary
+          }
+          translation={translation}
+        />
+      </aside>
     </main>
   );
 }

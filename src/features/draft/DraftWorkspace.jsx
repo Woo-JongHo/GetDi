@@ -18,6 +18,31 @@ function escapeHtml(value = "") {
     .replaceAll("'", "&#039;");
 }
 
+/**
+ * 카드는 1080×1350 고정이고 화면에는 축소해서 보여준다.
+ * 축소 비율을 상수로 두면 폰에서 카드가 화면 밖으로 나간다 —
+ * 실제로 0.46 고정이라 390px 화면에서 497px짜리 미리보기가 나왔다.
+ * 그래서 담을 자리의 폭을 재서 비율을 정한다.
+ */
+function useFitScale(width, height, maxScale = 0.46) {
+  const holderRef = useRef(null);
+  const [scale, setScale] = useState(maxScale);
+
+  useEffect(() => {
+    const holder = holderRef.current;
+    if (!holder || typeof ResizeObserver === "undefined") return undefined;
+    const observer = new ResizeObserver(([entry]) => {
+      const available = entry.contentRect.width;
+      if (!available) return;
+      setScale(Math.min(maxScale, available / width, 640 / height));
+    });
+    observer.observe(holder);
+    return () => observer.disconnect();
+  }, [height, maxScale, width]);
+
+  return [holderRef, scale];
+}
+
 function DraftWorkspace({ slug }) {
   const [document, setDocument] = useState(null);
   const [status, setStatus] = useState("loading");
@@ -654,7 +679,7 @@ function GeneratedCardVisual({ method, position }) {
 }
 
 function ModelHtmlCanvas({ card, cardCount, css }) {
-  const scale = Math.min(0.46, 500 / 1080, 640 / 1350);
+  const [holderRef, scale] = useFitScale(1080, 1350);
   const replacements = {
     "{{EYEBROW}}": escapeHtml(card.eyebrow_ko || ""),
     "{{SIGNATURE}}": escapeHtml("네카라쿠배 디자이너, 피그마스터"),
@@ -684,20 +709,22 @@ ${css || ""}
 </html>`;
 
   return (
-    <div
-      className="html-card-viewport model-html-viewport"
-      style={{ width: 1080 * scale, height: 1350 * scale }}
-    >
-      <iframe
-        title={`${card.position}번 모델 HTML 카드`}
-        srcDoc={srcDoc}
-        sandbox=""
-        style={{
-          width: 1080,
-          height: 1350,
-          transform: `scale(${scale})`,
-        }}
-      />
+    <div className="html-card-fit" ref={holderRef}>
+      <div
+        className="html-card-viewport model-html-viewport"
+        style={{ width: 1080 * scale, height: 1350 * scale }}
+      >
+        <iframe
+          title={`${card.position}번 모델 HTML 카드`}
+          srcDoc={srcDoc}
+          sandbox=""
+          style={{
+            width: 1080,
+            height: 1350,
+            transform: `scale(${scale})`,
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -706,7 +733,7 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
   const cover = card.role === "cover";
   const visualizationMethod =
     card.visualization_method || editor.visualizationMethod || "statement";
-  const scale = Math.min(0.46, 500 / editor.width, 640 / editor.height);
+  const [holderRef, scale] = useFitScale(editor.width, editor.height);
   const useBackgroundImage =
     editor.backgroundMode === "image-gradient" &&
     editor.imagePosition === "background" &&
@@ -726,13 +753,14 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
   );
 
   return (
-    <div
-      className="html-card-viewport"
-      style={{
-        width: editor.width * scale,
-        height: editor.height * scale,
-      }}
-    >
+    <div className="html-card-fit" ref={holderRef}>
+      <div
+        className="html-card-viewport"
+        style={{
+          width: editor.width * scale,
+          height: editor.height * scale,
+        }}
+      >
       <article
         className={`html-card-canvas html-card-${cover ? "cover" : "body"} image-${editor.imagePosition} visual-${visualizationMethod} layout-${card.position % 2 ? "a" : "b"}`}
         style={{
@@ -799,6 +827,7 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
           {String(cardCount).padStart(2, "0")}
         </div>
       </article>
+      </div>
     </div>
   );
 }
