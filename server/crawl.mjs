@@ -79,7 +79,12 @@ export function createCrawlHandler({ rootDir }) {
   }
 
   return async function handleCrawl(request, response, url) {
-    if (!url.pathname.startsWith("/api/crawl")) return false;
+    if (
+      !url.pathname.startsWith("/api/crawl") &&
+      url.pathname !== "/api/usage-summary"
+    ) {
+      return false;
+    }
     const year = Number(url.searchParams.get("year") || 2026);
 
     if (url.pathname === "/api/crawl/state" && request.method === "GET") {
@@ -101,6 +106,16 @@ export function createCrawlHandler({ rootDir }) {
         log: child?.log ?? lastExit?.log ?? [],
         last_exit: child ? null : lastExit,
       });
+      return true;
+    }
+
+    // 서비스 지도가 "이 단계에 토큰이 얼마나 드는가"를 보여줄 때 쓴다.
+    // 숫자를 화면에 박아 두면 낡으므로 집계 파일을 그대로 읽어 준다.
+    if (url.pathname === "/api/usage-summary" && request.method === "GET") {
+      const summary = await readJsonOrNull(
+        path.join(rootDir, "data/private/usage-summary.json"),
+      );
+      sendJson(response, 200, summary ?? { operations: [], generated_at: null });
       return true;
     }
 

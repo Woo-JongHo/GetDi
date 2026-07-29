@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { createRoot } from "react-dom/client";
 
-import { CircleHelp } from "lucide-react";
+import { CircleHelp, Map } from "lucide-react";
 
 import { CardNewsResearch } from "./features/analysis/CardNewsResearch.jsx";
 
@@ -13,6 +13,8 @@ import { CrawlWorkspace } from "./features/crawl/CrawlWorkspace.jsx";
 import { DraftWorkspace } from "./features/draft/DraftWorkspace.jsx";
 
 import { GuidePage } from "./features/guide/GuidePage.jsx";
+
+import { ServiceMap } from "./features/map/ServiceMap.jsx";
 
 import { SummaryView } from "./features/summary/SummaryView.jsx";
 
@@ -42,6 +44,7 @@ function getRoute() {
 
   if (hash === "#/cards") return { name: "cards" };
   if (hash === "#/guide") return { name: "guide" };
+  if (hash === "#/map") return { name: "map" };
 
   const summaryMatch = hash.match(/^#\/summary\/(.+)$/);
   if (summaryMatch) {
@@ -80,6 +83,8 @@ function App() {
             <CardNewsResearch />
           </Drawer>
         </>
+      ) : route.name === "map" ? (
+        <ServiceMap />
       ) : route.name === "guide" ? (
         <GuidePage />
       ) : (
@@ -110,13 +115,23 @@ function Header({ route }) {
         ))}
       </nav>
 
-      <a
-        className={`help-link ${route.name === "guide" ? "active" : ""}`}
-        href="#/guide"
-      >
-        <CircleHelp size={16} />
-        <span className="help-link-label">사용법</span>
-      </a>
+      <div className="header-aux">
+        {/* 작업 단계가 아니라 참고 화면이라 번호를 주지 않는다. */}
+        <a
+          className={`help-link ${route.name === "map" ? "active" : ""}`}
+          href="#/map"
+        >
+          <Map size={16} />
+          <span className="help-link-label">구조</span>
+        </a>
+        <a
+          className={`help-link ${route.name === "guide" ? "active" : ""}`}
+          href="#/guide"
+        >
+          <CircleHelp size={16} />
+          <span className="help-link-label">사용법</span>
+        </a>
+      </div>
     </header>
   );
 }

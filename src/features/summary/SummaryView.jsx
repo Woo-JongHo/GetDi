@@ -467,12 +467,38 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
               <h3>{insight.title_ko}</h3>
               <p>{insight.claim_ko}</p>
 
-              <blockquote>“{insight.evidence_excerpt}”</blockquote>
-              <SourceBadges ids={insight.source_block_ids} />
+              {/* 근거는 갈래별로. 갈래마다 인용과 원문 위치를 함께 둔다. */}
+              {(insight.grounds_ko?.length
+                ? insight.grounds_ko
+                : insight.evidence_excerpt
+                  ? [
+                      {
+                        point_ko: null,
+                        evidence_excerpt: insight.evidence_excerpt,
+                        source_block_ids: insight.source_block_ids,
+                      },
+                    ]
+                  : []
+              ).map((ground, order) => (
+                <div className="ground" key={`${insight.title_ko}-g${order}`}>
+                  <span className="ground-index">
+                    근거 {String(order + 1).padStart(2, "0")}
+                  </span>
+                  {ground.point_ko && <p>{ground.point_ko}</p>}
+                  <blockquote>“{ground.evidence_excerpt}”</blockquote>
+                  <SourceBadges ids={ground.source_block_ids} />
+                </div>
+              ))}
+
+              {insight.grounds_shortfall_ko && (
+                <p className="ground-shortfall">
+                  원문이 주지 않은 것 — {insight.grounds_shortfall_ko}
+                </p>
+              )}
 
               {insight.reasoning_ko && (
                 <div className="why-block reasoning">
-                  <span>이 인용이 왜 그 주장이 되는가</span>
+                  <span>이 근거들이 왜 그 주장이 되는가</span>
                   <p>{insight.reasoning_ko}</p>
                 </div>
               )}

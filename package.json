@@ -9,7 +9,9 @@
     "preview": "vite preview --host localhost --port 5545 --strictPort",
     "crawl": "node crawler/run.mjs",
     "test": "node --test crawler/*.test.mjs",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "analyze": "node scripts/analyze_all.mjs",
+    "usage": "node scripts/usage_report.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.4.1",

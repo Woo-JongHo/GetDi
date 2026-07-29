@@ -1314,10 +1314,19 @@ a {
   min-height: 310px;
   margin-top: auto;
   overflow: hidden;
+  display: grid;
+  place-items: center;
   border: 2px solid color-mix(in srgb, var(--card-accent) 38%, transparent);
   border-radius: 28px;
   background: #191b1e;
-  color: #fff;
+  color: var(--card-accent);
+}
+
+/* 도형은 카드 폭에 맞춰 늘어나되 비율을 지킨다. */
+.card-visual-svg {
+  width: 78%;
+  height: auto;
+  color: var(--card-accent);
 }
 
 .generated-card-visual em {
@@ -1329,13 +1338,9 @@ a {
   font-style: normal;
   font-weight: 850;
   line-height: 0.8;
-  opacity: 0.24;
+  opacity: 0.16;
 }
 
-.visual-shape {
-  position: absolute;
-  display: block;
-}
 
 .generated-statement .one {
   width: 390px;
@@ -1366,22 +1371,7 @@ a {
   background: linear-gradient(90deg, var(--card-accent) 0 49.5%, #24262a 50%);
 }
 
-.visual-comparison-labels {
-  position: absolute;
-  inset: 38px;
-  display: flex;
-  justify-content: space-between;
-}
 
-.visual-comparison-labels b {
-  display: grid;
-  width: 94px;
-  height: 94px;
-  place-items: center;
-  border: 3px solid rgb(255 255 255 / 55%);
-  border-radius: 50%;
-  font-size: 34pt;
-}
 
 .generated-steps .one,
 .generated-steps .two,
@@ -1407,18 +1397,7 @@ a {
 .generated-cycle .two { width: 90px; height: 90px; top: 112px; left: 15%; }
 .generated-cycle .three { width: 90px; height: 90px; top: 112px; right: 15%; }
 
-.visual-checks {
-  position: absolute;
-  inset: 42px 180px 42px 42px;
-  display: grid;
-  gap: 18px;
-}
 
-.visual-checks i {
-  border-left: 38px solid #fff;
-  border-radius: 8px;
-  background: rgb(255 255 255 / 25%);
-}
 
 .generated-warning {
   background:
@@ -2677,7 +2656,9 @@ a {
 
 .core-message-card {
   display: grid;
-  grid-template-columns: 52px 1fr;
+  /* 그냥 1fr은 minmax(auto, 1fr)이라 안쪽 글이 길면 칸이 밀려 커진다.
+     그러면 카드가 본문 영역을 뚫고 화면 밖으로 나간다. */
+  grid-template-columns: 52px minmax(0, 1fr);
   gap: 18px;
   padding: 28px;
   border-radius: 14px;
@@ -4152,5 +4133,495 @@ a {
   .revise-button {
     min-height: 46px;
     font-size: 14px;
+  }
+}
+
+/* ── 요약본 본문이 폭을 넘지 않게 하는 최소 규칙 ─────────────── */
+
+/* grid/flex 자식은 기본 최소 크기가 '콘텐츠 크기'다. 이걸 풀지 않으면
+   긴 한 문장이 부모를 밀어내고 화면 밖까지 나간다. */
+.summary-analysis > *,
+.core-message-card > div,
+.insight-analysis-grid > article,
+.card-plan-track > article {
+  min-width: 0;
+}
+
+/* 원문 인용은 영어 장문이라 끊길 자리가 없으면 그대로 뻗는다. */
+.core-message-card h2,
+.core-message-card p,
+.core-message-card blockquote,
+.insight-analysis-grid h3,
+.insight-analysis-grid > article > p,
+.insight-analysis-grid blockquote,
+.why-block p,
+.card-plan-track h3,
+.card-plan-track p {
+  overflow-wrap: anywhere;
+}
+
+/* 원문 HTML은 우리가 쓴 게 아니라 NN/g에서 온 것이라 무엇이 들어올지 모른다.
+   표와 코드 블록은 자기 자리 안에서 스크롤하게 묶어 둔다.
+   안 묶으면 넓은 표 하나가 페이지 전체를 가로로 늘린다. */
+.source-article table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.source-article pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.source-article img,
+.source-article figure {
+  max-width: 100%;
+}
+
+/* 근거 갈래 — 갈래마다 설명·인용·원문 위치가 한 덩어리로 붙는다. */
+.ground {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+
+.ground-index {
+  color: var(--purple);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+
+.ground > p {
+  margin: 7px 0 0;
+  color: #4a4c47;
+  font-size: 14px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.ground blockquote {
+  margin: 10px 0 8px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.ground-shortfall {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f4f1e9;
+  color: #8a7a4d;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+/* ── 서비스 지도 (캔버스) ───────────────────────────────────── */
+
+.header-aux {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: calc(100vh - 68px);
+  background: #e9e8e2;
+}
+
+.map-topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.map-topbar span {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+}
+
+.map-topbar strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 17px;
+  letter-spacing: -0.03em;
+}
+
+.map-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.map-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--white);
+  font-family: inherit;
+  font-size: 11.5px;
+  letter-spacing: 0;
+}
+
+.map-legend .is-paid {
+  border-color: #ddc9a0;
+  background: #fdf6e7;
+  color: #8a6d2f;
+}
+
+/* 캔버스 — 드래그로 밀고 버튼으로 확대한다. */
+.map-viewport {
+  position: relative;
+  overflow: auto;
+  padding: 24px;
+  cursor: grab;
+  background-image: radial-gradient(#d3d2cb 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.map-viewport:active {
+  cursor: grabbing;
+}
+
+.map-scaled {
+  position: relative;
+}
+
+.map-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
+.map-wires path {
+  fill: none;
+  stroke: #b8b7ae;
+  stroke-width: 2;
+}
+
+.map-wires circle {
+  fill: #b8b7ae;
+}
+
+.map-wires .is-active path {
+  stroke: var(--purple);
+  stroke-width: 3;
+}
+
+.map-wires .is-active circle {
+  fill: var(--purple);
+}
+
+/* 왼쪽 — 실제 화면 프레임 */
+.map-frame {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 18px;
+  border: 1px solid #c9c8c0;
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: 0 2px 10px rgb(24 25 24 / 6%);
+}
+
+.map-frame-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.map-frame-head span {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--acid);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+}
+
+.map-frame-head strong {
+  font-size: 18px;
+  letter-spacing: -0.03em;
+}
+
+.map-frame code {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+.map-frame p {
+  margin: 8px 0 0;
+  color: #6c6e69;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 오른쪽 — 그 화면에서 일어나는 일 */
+.map-node {
+  position: absolute;
+  display: block;
+  padding: 15px 18px;
+  border: 1px solid #c9c8c0;
+  border-radius: 13px;
+  background: var(--white);
+  text-align: left;
+  cursor: pointer;
+}
+
+.map-node.is-paid {
+  border-color: #ddc9a0;
+  background: linear-gradient(180deg, #fdf8ec, var(--white) 60%);
+}
+
+.map-node.is-selected {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-soft);
+}
+
+.map-node-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.map-node-head strong {
+  font-size: 17px;
+  letter-spacing: -0.03em;
+}
+
+.map-node-cost,
+.map-node-free {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-style: normal;
+  white-space: nowrap;
+}
+
+.map-node-cost {
+  background: #f6ecd6;
+  color: #8a6d2f;
+}
+
+.map-node-free {
+  background: #eceae4;
+  color: #77796f;
+}
+
+.map-node p {
+  margin: 7px 0 0;
+  color: #5a5c57;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.map-node-files {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.map-node-files code {
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: var(--purple-soft);
+  color: #4a3f8f;
+  font-size: 10.5px;
+}
+
+/* 오른쪽 상세 패널 */
+.map-detail {
+  overflow-y: auto;
+  padding: 24px 22px 60px;
+  border-left: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.map-detail-kicker {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+}
+
+.map-detail h2 {
+  margin: 8px 0 8px;
+  font-size: 26px;
+  letter-spacing: -0.035em;
+}
+
+.map-detail > p {
+  margin: 0 0 20px;
+  color: #4a4c47;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.map-detail-block {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.map-detail-block > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.map-detail-block strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.map-detail-block strong.muted {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 13.5px;
+}
+
+.map-detail-block strong em {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-style: normal;
+  font-weight: 500;
+}
+
+.map-detail-block > p {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.map-detail-file {
+  margin-top: 10px;
+}
+
+.map-detail-file code {
+  display: block;
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: var(--purple-soft);
+  color: #4a3f8f;
+  font-size: 11.5px;
+  overflow-wrap: anywhere;
+}
+
+.map-detail-file p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.map-detail-meta {
+  color: #8a8c86;
+  font-size: 11.5px;
+  line-height: 1.7;
+}
+
+.map-detail-meta code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #e7e6e0;
+  font-size: 11px;
+}
+
+.map-zoom {
+  position: absolute;
+  right: 384px;
+  bottom: 20px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 3px 14px rgb(24 25 24 / 10%);
+}
+
+.map-zoom button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.map-zoom button:hover {
+  background: #eceae4;
+}
+
+.map-zoom strong {
+  min-width: 42px;
+  text-align: center;
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  .map-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(320px, 1fr) auto;
+    height: auto;
+  }
+
+  .map-viewport {
+    min-height: 60vh;
+  }
+
+  .map-detail {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .map-zoom {
+    right: 20px;
+    bottom: auto;
+    top: 96px;
   }
 }

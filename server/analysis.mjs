@@ -72,24 +72,41 @@ export function createAnalysisHandler({
             properties: {
               title_ko: { type: "string" },
               claim_ko: { type: "string" },
-              // 인용이 왜 그 주장이 되는지의 연결 논리(CER의 Reasoning).
-              // 이 칸을 쓰다 보면 주장이 원문보다 센 경우가 드러난다.
+              // 근거를 하나로 뭉뚱그리지 않고 갈래별로 나눈다. 각 갈래는
+              // 서술형 설명과 그 갈래를 뒷받침하는 원문 인용을 함께 갖는다.
               // 계약: skills/article-refinement/references/summary-method.md
+              grounds_ko: {
+                type: "array",
+                minItems: 2,
+                maxItems: 4,
+                items: {
+                  type: "object",
+                  properties: {
+                    point_ko: { type: "string" },
+                    evidence_excerpt: { type: "string" },
+                    source_block_ids: {
+                      type: "array",
+                      items: { type: "string" },
+                    },
+                  },
+                  required: ["point_ko", "evidence_excerpt", "source_block_ids"],
+                  additionalProperties: false,
+                },
+              },
+              // 갈래가 셋에 못 미칠 때 왜 그런지 적는다. 비워 두면 원문이
+              // 세 갈래를 준다는 뜻이다. 억지로 채우는 것보다 낫다.
+              grounds_shortfall_ko: { type: "string" },
+              // 근거들이 왜 그 주장이 되는지의 연결 논리(CER의 Reasoning).
               reasoning_ko: { type: "string" },
               why_it_matters_ko: { type: "string" },
-              evidence_excerpt: { type: "string" },
-              source_block_ids: {
-                type: "array",
-                items: { type: "string" },
-              },
             },
             required: [
               "title_ko",
               "claim_ko",
+              "grounds_ko",
+              "grounds_shortfall_ko",
               "reasoning_ko",
               "why_it_matters_ko",
-              "evidence_excerpt",
-              "source_block_ids",
             ],
             additionalProperties: false,
           },
@@ -211,9 +228,12 @@ export function createAnalysisHandler({
     return [
       ...new Set([
         ...(analysis.core_message?.source_block_ids || []),
-        ...(analysis.key_insights || []).flatMap(
-          (insight) => insight.source_block_ids || [],
-        ),
+        ...(analysis.key_insights || []).flatMap((insight) => [
+          ...(insight.source_block_ids || []),
+          ...(insight.grounds_ko || []).flatMap(
+            (ground) => ground.source_block_ids || [],
+          ),
+        ]),
         ...(analysis.card_plan || []).flatMap(
           (card) => card.source_block_ids || [],
         ),
@@ -252,9 +272,12 @@ export function createAnalysisHandler({
     );
     const citedIds = [
       ...(analyzed.core_message?.source_block_ids || []),
-      ...(analyzed.key_insights || []).flatMap(
-        (insight) => insight.source_block_ids || [],
-      ),
+      ...(analyzed.key_insights || []).flatMap((insight) => [
+        ...(insight.source_block_ids || []),
+        ...(insight.grounds_ko || []).flatMap(
+          (ground) => ground.source_block_ids || [],
+        ),
+      ]),
       ...(analyzed.card_plan || []).flatMap(
         (card) => card.source_block_ids || [],
       ),

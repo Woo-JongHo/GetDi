@@ -34,13 +34,29 @@ function parseArguments(argv) {
   return options;
 }
 
-/** 네 칸이 모두 채워졌는지 본다. 빈 칸은 그 자체로 결함이다. */
+/** 칸이 모두 채워졌는지 본다. 빈 칸은 그 자체로 결함이다. */
 function missingFields(analysis) {
   const gaps = [];
   if (!analysis?.core_message?.reasoning_ko) gaps.push("core.reasoning");
   for (const [index, insight] of (analysis?.key_insights || []).entries()) {
-    if (!insight.reasoning_ko) gaps.push(`insight${index + 1}.reasoning`);
-    if (!insight.source_block_ids?.length) gaps.push(`insight${index + 1}.source`);
+    const label = `insight${index + 1}`;
+    if (!insight.reasoning_ko) gaps.push(`${label}.reasoning`);
+
+    const grounds = insight.grounds_ko || [];
+    if (!grounds.length) {
+      gaps.push(`${label}.grounds`);
+      continue;
+    }
+    // 갈래가 셋에 못 미치면 왜 그런지가 있어야 한다. 없으면 그냥 덜 쓴 것이다.
+    if (grounds.length < 3 && !insight.grounds_shortfall_ko) {
+      gaps.push(`${label}.shortfall`);
+    }
+    for (const [order, ground] of grounds.entries()) {
+      if (!ground.point_ko) gaps.push(`${label}.g${order + 1}.point`);
+      if (!ground.source_block_ids?.length) {
+        gaps.push(`${label}.g${order + 1}.source`);
+      }
+    }
   }
   return gaps;
 }

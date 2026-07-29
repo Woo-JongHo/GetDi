@@ -9,6 +9,8 @@ import { ArrowLeft, ArrowUpRight, CircleHelp, Image as ImageIcon, MessageSquare 
 
 import { SourceBadges } from "../../shared/SourceBadges.jsx";
 
+import { CardVisual } from "./CardVisual.jsx";
+
 function escapeHtml(value = "") {
   return value
     .replaceAll("&", "&amp;")
@@ -670,23 +672,6 @@ function EditorSection({ title, wide = false, children }) {
   );
 }
 
-function GeneratedCardVisual({ method, position }) {
-  return (
-    <div className={`generated-card-visual generated-${method}`}>
-      <span className="visual-shape one" />
-      <span className="visual-shape two" />
-      <span className="visual-shape three" />
-      <em>{String(position).padStart(2, "0")}</em>
-      {method === "comparison" && (
-        <div className="visual-comparison-labels"><b>A</b><b>B</b></div>
-      )}
-      {method === "checklist" && (
-        <div className="visual-checks"><i /><i /><i /></div>
-      )}
-    </div>
-  );
-}
-
 function ModelHtmlCanvas({ card, cardCount, css }) {
   const [holderRef, scale] = useFitScale(1080, 1350);
   const replacements = {
@@ -825,7 +810,7 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
           )}
           {!cover && editor.imagePosition === "bottom" && image}
           {!cover && !editor.imageSrc && (
-            <GeneratedCardVisual
+            <CardVisual
               method={visualizationMethod}
               position={card.position}
             />
@@ -841,4 +826,4 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
   );
 }
 
-export { DraftWorkspace, EditorSection, GeneratedCardVisual, HtmlCardCanvas, ModelHtmlCanvas };
+export { DraftWorkspace, EditorSection, HtmlCardCanvas, ModelHtmlCanvas };
