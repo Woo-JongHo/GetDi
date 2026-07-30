@@ -52,9 +52,6 @@ function snapshotPath(pathname, params) {
     return `${SNAPSHOT_ROOT}/usage-summary.json`;
   }
   if (pathname === "/api/model-logs") return `${SNAPSHOT_ROOT}/model-logs.json`;
-  if (pathname === "/api/generation-state") {
-    return `${SNAPSHOT_ROOT}/generation-state.json`;
-  }
 
   // 상세는 format이 경로에 있을 수도 없을 수도 있다(server/details.mjs와 동일).
   // 스냅샷에는 기사만 있으므로 어느 쪽이든 같은 파일로 보낸다.

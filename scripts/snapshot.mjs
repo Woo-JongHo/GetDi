@@ -381,18 +381,6 @@ async function main() {
     usageSummary ?? { operations: [], generated_at: null },
   );
 
-  const generationState = await readJsonOrNull(
-    path.join(rootDir, "data/private/generation-state.json"),
-  );
-  bytes += await writeJson(
-    "generation-state.json",
-    generationState ?? {
-      phase: "unknown",
-      visible_after: "1970-01-01T00:00:00Z",
-      label: "전체",
-    },
-  );
-
   const logs = await buildModelLogs();
   bytes += await writeJson("model-logs.json", { runs: logs.runs });
 

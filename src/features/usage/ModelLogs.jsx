@@ -39,28 +39,18 @@ function ModelLogs() {
     let cancelled = false;
     const refresh = async () => {
       try {
-        const [response, stateResponse] = await Promise.all([
-          apiFetch("/api/model-logs", { cache: "no-store" }),
-          apiFetch("/api/generation-state", { cache: "no-store" }),
-        ]);
-        const [body, generationState] = await Promise.all([
-          response.json(),
-          stateResponse.json(),
-        ]);
+        // 실행 기록은 서버가 최근 100건으로 이미 잘라 준다. 여기서 더 거르지
+        // 않는다 — 하드코딩된 날짜로 과거를 가리던 발표용 장치가 있었고
+        // (`/api/generation-state`), Story 9.3이 그것을 걷어내기로 했다.
+        const response = await apiFetch("/api/model-logs", {
+          cache: "no-store",
+        });
+        const body = await response.json();
         if (!response.ok) throw new Error(body.error || "로그 조회 실패");
-        if (!stateResponse.ok) {
-          throw new Error(generationState.error || "생성 단계 조회 실패");
-        }
         if (cancelled) return;
-        const visibleRuns = (body.runs || []).filter(
-          (run) =>
-            run.started_at >= generationState.visible_after ||
-            (run.status === "completed" &&
-              run.operation === "draft_revision" &&
-              run.model?.includes("fable")),
-        );
-        setRuns(visibleRuns);
-        setSelectedId((current) => current || visibleRuns[0]?.id || null);
+        const runs = body.runs || [];
+        setRuns(runs);
+        setSelectedId((current) => current || runs[0]?.id || null);
         setError("");
       } catch (requestError) {
         if (!cancelled) setError(requestError.message);
