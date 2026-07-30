@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Coins, Maximize2, Minus, Plus, Wrench } from "lucide-react";
 
+import { apiFetch } from "../../shared/api.js";
+
 /**
  * 서비스 지도 — 디자이너가 "이게 어떻게 돌아가는가"를 한 화면에서 본다.
  *
@@ -170,6 +172,66 @@ const STAGES = [
 
 const compact = new Intl.NumberFormat("ko-KR");
 
+/**
+ * 작업 하나를 여러 모델로 돌렸으면 집계도 여러 행이다.
+ *
+ * `usage_report.mjs`는 작업명과 모델을 함께 기준으로 나누므로 같은 작업명이
+ * 두 번 나올 수 있다 — `draft_revision`은 SOL 8회와 Fable 4회 두 행이다.
+ * 작업명만 키로 잡아 넣으면 뒤의 행이 앞의 행을 덮어쓰고, Fable은 사용량을
+ * 돌려주지 않아 전부 0이라 실제로 쓴 179,943 토큰이 "기록 없음"으로 사라졌다.
+ *
+ * 그래서 합친다. **건당 평균은 사용량이 기록된 실행만으로 낸다** — 기록이
+ * 없는 실행을 분모에 넣으면 건당 값이 실제보다 낮아지고, 그것은 0을 "0을
+ * 썼다"로 읽는 것과 같은 오류다. 총 실행 횟수는 그대로 세고 몇 건이
+ * 집계됐는지를 따로 남긴다.
+ */
+function mergeUsageByOperation(operations) {
+  const merged = new Map();
+  for (const row of operations ?? []) {
+    const counted = row.usage_source === "actual";
+    const current = merged.get(row.operation);
+    if (!current) {
+      merged.set(row.operation, {
+        ...row,
+        models: [row.model],
+        runs: row.runs,
+        counted_runs: counted ? row.runs : 0,
+      });
+      continue;
+    }
+
+    const nextCounted = current.counted_runs + (counted ? row.runs : 0);
+    const sum = (field) =>
+      (current.usage_source === "actual" ? current.total[field] : 0) +
+      (counted ? row.total[field] : 0);
+    const total = {
+      input_tokens: sum("input_tokens"),
+      output_tokens: sum("output_tokens"),
+      reasoning_output_tokens: sum("reasoning_output_tokens"),
+      cached_input_tokens: sum("cached_input_tokens"),
+      duration_ms: sum("duration_ms"),
+    };
+
+    merged.set(row.operation, {
+      ...current,
+      models: [...current.models, row.model],
+      runs: current.runs + row.runs,
+      counted_runs: nextCounted,
+      usage_source: nextCounted > 0 ? "actual" : "unavailable",
+      total,
+      per_run: nextCounted
+        ? Object.fromEntries(
+            Object.entries(total).map(([field, value]) => [
+              field,
+              Math.round(value / nextCounted),
+            ]),
+          )
+        : current.per_run,
+    });
+  }
+  return merged;
+}
+
 function ServiceMap() {
   const [usage, setUsage] = useState(null);
   const [scale, setScale] = useState(0.62);
@@ -178,7 +240,7 @@ function ServiceMap() {
   const panRef = useRef(null);
 
   useEffect(() => {
-    fetch("/api/usage-summary", { cache: "no-store" })
+    apiFetch("/api/usage-summary", { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : null))
       .then(setUsage)
       .catch(() => setUsage(null));
@@ -226,9 +288,7 @@ function ServiceMap() {
     panRef.current = null;
   }
 
-  const byOperation = new Map(
-    (usage?.operations ?? []).map((row) => [row.operation, row]),
-  );
+  const byOperation = mergeUsageByOperation(usage?.operations);
   const active = STAGES.find((stage) => stage.id === selected) ?? STAGES[0];
   const screenOf = (id) => SCREENS.find((screen) => screen.id === id);
 
@@ -389,6 +449,11 @@ function ServiceMap() {
                 <em>
                   {Math.round(row.per_run.duration_ms / 1000)}초 · 지금까지{" "}
                   {row.runs}회
+                  {/* 사용량을 돌려주지 않는 모델로 돌린 실행이 섞여 있으면
+                      건당 값의 분모가 총 횟수와 다르다. 밝히지 않으면
+                      "전부 집계된 평균"으로 읽힌다. */}
+                  {row.counted_runs < row.runs &&
+                    ` (토큰이 기록된 ${row.counted_runs}회 기준)`}
                 </em>
               </strong>
             );

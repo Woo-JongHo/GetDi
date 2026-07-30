@@ -166,10 +166,46 @@ export function createUsageHandler({ rootDir }) {
     return value;
   }
 
+  /**
+   * 모델 로그 목록에서 어느 시점 이후를 보여줄지 정하는 기준.
+   *
+   * 화면(`ModelLogs.jsx`)이 이 값으로 옛 실행을 걸러 내는데, 파일은 있고
+   * 핸들러는 없어서 SPA fallback HTML이 돌아갔다 — 화면은 그 HTML을 JSON으로
+   * 파싱하려다 실패해 늘 오류 상태였다. 파일을 그대로 내보내 그것을 없앤다.
+   */
+  async function readGenerationState() {
+    try {
+      return JSON.parse(
+        await readFile(
+          path.join(rootDir, "data/private/generation-state.json"),
+          "utf8",
+        ),
+      );
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      // 기준이 없으면 전부 보인다 — 없는 것을 "아무것도 안 보임"으로
+      // 해석하면 로그가 통째로 사라진다.
+      return {
+        phase: "unknown",
+        visible_after: "1970-01-01T00:00:00Z",
+        label: "전체",
+      };
+    }
+  }
+
   return async function handleUsage(request, response, url) {
     if (url.pathname === "/api/session-usage" && request.method === "GET") {
       try {
         sendJson(response, 200, await readCurrentSessionUsage());
+      } catch (error) {
+        sendJson(response, 500, { error: error.message });
+      }
+      return true;
+    }
+
+    if (url.pathname === "/api/generation-state" && request.method === "GET") {
+      try {
+        sendJson(response, 200, await readGenerationState());
       } catch (error) {
         sendJson(response, 500, { error: error.message });
       }
