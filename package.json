@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host localhost --port 5545 --strictPort",
-    "build": "vite build",
+    "snapshot": "node scripts/snapshot.mjs",
+    "build": "node scripts/snapshot.mjs --if-available && vite build",
     "preview": "vite preview --host localhost --port 5545 --strictPort",
     "crawl": "node crawler/run.mjs",
     "test": "node --test crawler/*.test.mjs",

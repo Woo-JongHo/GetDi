@@ -2,6 +2,8 @@ import React from "react";
 
 import { ArrowUpRight, BookOpen, Check, Image as ImageIcon, Sparkles, X } from "lucide-react";
 
+import { READ_ONLY } from "../../shared/api.js";
+
 import { formatDate } from "../../shared/format.js";
 
 function EvidencePanel({
@@ -83,10 +85,14 @@ function EvidencePanel({
 
       {detail?.format === "article" && (
         <div className="reader-draft-action">
+          {/* 배포본에서 이미 만들어 둔 초안은 열 수 있다 — 그것은 읽기다.
+              없는 초안을 새로 만드는 것만 막는다. */}
           <button
             type="button"
             disabled={
-              draftStatus === "checking" || draftStatus === "generating"
+              draftStatus === "checking" ||
+              draftStatus === "generating" ||
+              (READ_ONLY && draftStatus !== "ready")
             }
             onClick={onGenerate}
           >
@@ -94,6 +100,8 @@ function EvidencePanel({
               <><span className="spinner" /> 생성 중</>
             ) : draftStatus === "ready" ? (
               <>생성 결과 열기 <ArrowUpRight size={14} /></>
+            ) : READ_ONLY ? (
+              <>초안 없음 · 로컬에서만 생성</>
             ) : (
               <>이 글로 카드 생성 <Sparkles size={14} /></>
             )}

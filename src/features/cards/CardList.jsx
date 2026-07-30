@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { Check, ChevronDown, Clock3, Search, X } from "lucide-react";
 
+import { apiFetch, READ_ONLY } from "../../shared/api.js";
+
 import { formatDate } from "../../shared/format.js";
 
 const YEAR = 2026;
@@ -32,8 +34,8 @@ function CardList() {
     const refresh = async () => {
       try {
         const [listing, details] = await Promise.all([
-          fetch(`/api/crawl/items?year=${YEAR}`, { cache: "no-store" }),
-          fetch("/api/details", { cache: "no-store" }),
+          apiFetch(`/api/crawl/items?year=${YEAR}`, { cache: "no-store" }),
+          apiFetch("/api/details", { cache: "no-store" }),
         ]);
         if (cancelled) return;
         if (listing.ok) {
@@ -50,6 +52,13 @@ function CardList() {
       }
     };
     refresh();
+    // 폴링의 목적은 "수집이 도는 동안 새 기사가 뜨는 것"이다. 배포본에서는
+    // 수집이 돌 수 없으므로 목록도 변하지 않는다 — 한 번만 읽는다.
+    if (READ_ONLY) {
+      return () => {
+        cancelled = true;
+      };
+    }
     const poll = window.setInterval(refresh, POLL_INTERVAL_MS);
     return () => {
       cancelled = true;

@@ -4625,3 +4625,40 @@ a {
     top: 96px;
   }
 }
+
+/* 읽기 전용 배포본 안내 — src/shared/ReadOnlyNotice.jsx */
+.read-only-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--purple-soft);
+  color: #4a37a8;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.read-only-notice svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+.read-only-notice a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* 스냅샷에서 원문을 뺀 실행, 또는 카드를 내지 않는 실행 — ModelLogs.jsx */
+.model-output-omitted {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}

@@ -25,3 +25,8 @@ data/state/*
 data/private/
 *.sqlite3
 *.db
+
+# 검토 과정에서 외부 도구가 뱉은 작업물. 저장소를 공개하므로 실수로
+# 딸려 올라가지 않게 막는다 — 정본은 커밋 메시지와 story Dev Record다.
+critical-review-artifacts/
+critical-review-task.md

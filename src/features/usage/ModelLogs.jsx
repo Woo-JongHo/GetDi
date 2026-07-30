@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Activity, Check, FileText, X } from "lucide-react";
 
+import { apiFetch, READ_ONLY } from "../../shared/api.js";
+
 import { uncachedInputTokens } from "../../shared/format.js";
 
 function modelLogTokens(run) {
@@ -38,8 +40,8 @@ function ModelLogs() {
     const refresh = async () => {
       try {
         const [response, stateResponse] = await Promise.all([
-          fetch("/api/model-logs", { cache: "no-store" }),
-          fetch("/api/generation-state", { cache: "no-store" }),
+          apiFetch("/api/model-logs", { cache: "no-store" }),
+          apiFetch("/api/generation-state", { cache: "no-store" }),
         ]);
         const [body, generationState] = await Promise.all([
           response.json(),
@@ -65,6 +67,13 @@ function ModelLogs() {
       }
     };
     refresh();
+    // 배포본의 로그는 스냅샷 파일이라 변하지 않는다. 2초마다 다시 받으면
+    // 서랍을 열어 둔 동안 수 MB짜리 같은 파일을 계속 내려받는다.
+    if (READ_ONLY) {
+      return () => {
+        cancelled = true;
+      };
+    }
     const interval = window.setInterval(refresh, 2_000);
     return () => {
       cancelled = true;
@@ -108,7 +117,19 @@ function ModelLogs() {
         },
       ]
     : [];
-  const outputCards = selected?.output?.cards || [];
+  // 초안 생성은 `cards`를, 기사 분석은 `card_plan`을 낸다. `cards`만 보면
+  // 분석 실행 99건이 전부 "결과를 기다리는 중"으로 보인다 — 완료된 실행에
+  // 스피너가 도는 것은 거짓 상태다. 같은 자리에 담을 수 있는 모양이므로
+  // 옮겨 준다.
+  const outputCards =
+    selected?.output?.cards ||
+    selected?.output?.card_plan?.map((entry) => ({
+      position: entry.position,
+      headline_ko: entry.headline_ko,
+      body_ko: entry.purpose_ko,
+      visualization_method: entry.visualization_method,
+    })) ||
+    [];
 
   return (
     <section className="model-log-page">
@@ -208,24 +229,34 @@ function ModelLogs() {
                       <span>01 · INPUT</span>
                       <h2>무엇을 함께 넣었나</h2>
                     </header>
-                    <div className="model-signal-grid">
-                      {inputSignals.map((signal) => (
-                        <article
-                          className={signal.included ? "included" : "missing"}
-                          key={signal.label}
-                        >
-                          {signal.included ? (
-                            <Check size={16} />
-                          ) : (
-                            <X size={16} />
-                          )}
-                          <div>
-                            <strong>{signal.label}</strong>
-                            <p>{signal.detail}</p>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
+                    {/* 신호는 프롬프트 원문을 훑어 판정한다. 원문이 없으면
+                        판정할 수 없다 — 그때 X를 찍으면 "안 넣었다"는 거짓이
+                        된다. 없다는 사실을 그대로 말한다. */}
+                    {selected.input_omitted ? (
+                      <p className="model-output-omitted">
+                        {selected.omitted_reason ||
+                          "이 실행의 프롬프트 원문은 스냅샷에 담지 않아, 무엇을 넣었는지 판정할 수 없습니다."}
+                      </p>
+                    ) : (
+                      <div className="model-signal-grid">
+                        {inputSignals.map((signal) => (
+                          <article
+                            className={signal.included ? "included" : "missing"}
+                            key={signal.label}
+                          >
+                            {signal.included ? (
+                              <Check size={16} />
+                            ) : (
+                              <X size={16} />
+                            )}
+                            <div>
+                              <strong>{signal.label}</strong>
+                              <p>{signal.detail}</p>
+                            </div>
+                          </article>
+                        ))}
+                      </div>
+                    )}
                   </section>
 
                   <div className="model-audience-arrow">
@@ -244,7 +275,9 @@ function ModelLogs() {
                       <h2>
                         {outputCards.length
                           ? `${outputCards.length}장의 카드 초안`
-                          : "결과를 기다리는 중"}
+                          : selected.status === "running"
+                            ? "결과를 기다리는 중"
+                            : "카드 목록이 없는 실행"}
                       </h2>
                     </header>
                     {outputCards.length ? (
@@ -260,32 +293,54 @@ function ModelLogs() {
                           </li>
                         ))}
                       </ol>
-                    ) : (
+                    ) : selected.status === "running" ? (
                       <div className="model-output-waiting">
                         <span className="spinner" />
                         <p>
                           완료되면 카드 제목과 시각화 방식이 여기에 표시됩니다.
                         </p>
                       </div>
+                    ) : (
+                      // 끝난 실행에 스피너를 돌리지 않는다. 왜 비어 있는지는
+                      // 원문을 뺐기 때문일 수도, 애초에 카드를 내지 않는
+                      // 작업이었기 때문일 수도 있다 — 구별해서 말한다.
+                      <p className="model-output-omitted">
+                        {selected.output_omitted
+                          ? selected.omitted_reason ||
+                            "이 실행의 응답 원문은 스냅샷에 담지 않았습니다."
+                          : selected.error ||
+                            "이 실행은 카드 목록을 내지 않는 작업입니다. 원문은 RAW 보기에서 확인합니다."}
+                      </p>
                     )}
                   </section>
                 </div>
               ) : (
                 <>
+                  {/* 배포용 스냅샷은 용량 때문에 최근 실행만 원문을 담는다.
+                      그때 `input_omitted`가 서 있다 — 없는 것과 아직 안 온 것을
+                      구별하지 않으면 "입력 준비 중"이라는 거짓 상태가 남는다. */}
                   <section className="model-io-panel input">
                     <header>
                       <span>MODEL INPUT</span>
                       <strong>실제 전달 프롬프트</strong>
                     </header>
-                    <pre>{selected.input?.prompt || "입력 준비 중"}</pre>
+                    <pre>
+                      {selected.input?.prompt ||
+                        (selected.input_omitted
+                          ? selected.omitted_reason ||
+                            "이 실행의 프롬프트 원문은 스냅샷에 담지 않았습니다."
+                          : "입력 준비 중")}
+                    </pre>
                   </section>
 
-                  <details className="model-schema-panel">
-                    <summary>STRUCTURED OUTPUT SCHEMA</summary>
-                    <pre>
-                      {JSON.stringify(selected.input?.schema || {}, null, 2)}
-                    </pre>
-                  </details>
+                  {!selected.input_omitted && (
+                    <details className="model-schema-panel">
+                      <summary>STRUCTURED OUTPUT SCHEMA</summary>
+                      <pre>
+                        {JSON.stringify(selected.input?.schema || {}, null, 2)}
+                      </pre>
+                    </details>
+                  )}
 
                   <section className="model-io-panel output">
                     <header>
@@ -295,7 +350,10 @@ function ModelLogs() {
                     <pre>
                       {selected.output
                         ? JSON.stringify(selected.output, null, 2)
-                        : selected.error || "모델 응답을 기다리는 중입니다."}
+                        : selected.output_omitted
+                          ? selected.omitted_reason ||
+                            "이 실행의 응답 원문은 스냅샷에 담지 않았습니다."
+                          : selected.error || "모델 응답을 기다리는 중입니다."}
                     </pre>
                   </section>
                 </>

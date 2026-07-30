@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Image as ImageIcon, ShieldAlert } from "lucide-react";
 
+import { apiFetch } from "../../shared/api.js";
+
 const CARDNEWS_RESEARCH = [
   {
     id: "FMT-01",
@@ -108,8 +110,8 @@ function CardNewsResearch() {
     setError("");
     try {
       const [libraryResponse, analysisResponse] = await Promise.all([
-        fetch("/api/references"),
-        fetch("/api/reference-analysis"),
+        apiFetch("/api/references"),
+        apiFetch("/api/reference-analysis"),
       ]);
       const library = await libraryResponse.json();
       if (!libraryResponse.ok) {
@@ -150,7 +152,7 @@ function CardNewsResearch() {
           reader.onerror = () => reject(reader.error);
           reader.readAsDataURL(file);
         });
-        const response = await fetch("/api/references", {
+        const response = await apiFetch("/api/references", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

@@ -9,7 +9,11 @@ import {
   Square,
 } from "lucide-react";
 
+import { apiFetch, READ_ONLY } from "../../shared/api.js";
+
 import { Drawer } from "../../shared/Drawer.jsx";
+
+import { ReadOnlyNotice } from "../../shared/ReadOnlyNotice.jsx";
 
 import { ModelLogs } from "../usage/ModelLogs.jsx";
 
@@ -36,7 +40,7 @@ function CrawlWorkspace() {
     let cancelled = false;
     const refresh = async () => {
       try {
-        const response = await fetch(`/api/crawl/state?year=${YEAR}`, {
+        const response = await apiFetch(`/api/crawl/state?year=${YEAR}`, {
           cache: "no-store",
         });
         if (!response.ok) return;
@@ -47,6 +51,13 @@ function CrawlWorkspace() {
       }
     };
     refresh();
+    // 배포본에서 상태는 스냅샷 파일이라 변하지 않는다. 2초마다 다시 읽는 것은
+    // 같은 답을 받으려고 요청을 쌓는 일이므로 한 번만 읽는다.
+    if (READ_ONLY) {
+      return () => {
+        cancelled = true;
+      };
+    }
     const poll = window.setInterval(refresh, POLL_INTERVAL_MS);
     const tick = window.setInterval(() => setNow(Date.now()), 1000);
     return () => {
@@ -74,7 +85,7 @@ function CrawlWorkspace() {
     setBusy(true);
     setNotice(null);
     try {
-      const response = await fetch(endpoint, {
+      const response = await apiFetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body ?? {}),
@@ -116,7 +127,7 @@ function CrawlWorkspace() {
           <button
             type="button"
             className="primary-button"
-            disabled={busy || running}
+            disabled={READ_ONLY || busy || running}
             onClick={() => post("/api/crawl/start", { year: YEAR })}
           >
             <Play size={16} /> 수집 시작
@@ -124,7 +135,7 @@ function CrawlWorkspace() {
           <button
             type="button"
             className="ghost-button"
-            disabled={busy || !running || external}
+            disabled={READ_ONLY || busy || !running || external}
             onClick={() => post("/api/crawl/stop")}
           >
             <Square size={15} /> 중지
@@ -132,7 +143,7 @@ function CrawlWorkspace() {
           <button
             type="button"
             className="ghost-button"
-            disabled={busy || running}
+            disabled={READ_ONLY || busy || running}
             onClick={() =>
               post("/api/crawl/start", { year: YEAR, listingOnly: true })
             }
@@ -141,6 +152,8 @@ function CrawlWorkspace() {
           </button>
         </div>
       </div>
+
+      <ReadOnlyNotice what="수집" />
 
       {notice && <p className="crawl-notice">{notice}</p>}
 
@@ -218,9 +231,14 @@ function CrawlWorkspace() {
 
       {/* 모델 사용량과 실행 로그는 별도 메뉴로 두지 않는다. 평소에는 접혀 있고
           궁금할 때만 편다 — 작업 단계가 아니라 참고 정보이기 때문이다. */}
-      <Drawer label="AI를 얼마나 썼는지 보기">
-        <UsageDashboard />
-      </Drawer>
+      {/* 세션 사용량은 "지금 돌고 있는 이 세션"이 전제다. 배포본에는 그 세션이
+          없으므로 서랍째 감춘다 — 열면 빈 것보다 없는 것이 정직하다.
+          작업별 누적 토큰은 구조 화면(#/map)이 스냅샷에서 읽어 보여준다. */}
+      {!READ_ONLY && (
+        <Drawer label="AI를 얼마나 썼는지 보기">
+          <UsageDashboard />
+        </Drawer>
+      )}
       <Drawer label="모델이 주고받은 내용 보기">
         <ModelLogs />
       </Drawer>

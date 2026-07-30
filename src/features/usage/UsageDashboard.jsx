@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Activity, MessageSquare, RefreshCw, Sparkles } from "lucide-react";
 
+import { apiFetch } from "../../shared/api.js";
+
 import { uncachedInputTokens } from "../../shared/format.js";
 
 const compactNumber = new Intl.NumberFormat("ko-KR", {
@@ -18,7 +20,7 @@ function UsageDashboard() {
     setStatus((current) => (data ? "refreshing" : "loading"));
     setError("");
     try {
-      const response = await fetch("/api/session-usage");
+      const response = await apiFetch("/api/session-usage");
       const payload = await response.json();
       if (!response.ok) {
         throw new Error(payload.error || "세션 사용량을 읽지 못했습니다.");

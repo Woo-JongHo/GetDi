@@ -11,7 +11,11 @@ import {
   X,
 } from "lucide-react";
 
+import { apiFetch, READ_ONLY } from "../../shared/api.js";
+
 import { formatDate } from "../../shared/format.js";
+
+import { ReadOnlyNotice } from "../../shared/ReadOnlyNotice.jsx";
 
 import { EvidencePanel } from "../evidence/EvidencePanel.jsx";
 
@@ -60,7 +64,7 @@ function SummaryView({ slug }) {
     let cancelled = false;
     setDetail(null);
     setDetailStatus("loading");
-    fetch(`/api/details/article/${encodeURIComponent(slug)}`, {
+    apiFetch(`/api/details/article/${encodeURIComponent(slug)}`, {
       cache: "no-store",
     })
       .then(async (response) => {
@@ -84,7 +88,7 @@ function SummaryView({ slug }) {
   useEffect(() => {
     if (!detail) return undefined;
     let cancelled = false;
-    fetch(`/api/translations/${encodeURIComponent(slug)}`)
+    apiFetch(`/api/translations/${encodeURIComponent(slug)}`)
       .then(async (response) => (response.status === 404 ? null : response.json()))
       .then((cached) => {
         if (cancelled) return;
@@ -102,7 +106,7 @@ function SummaryView({ slug }) {
   useEffect(() => {
     if (!detail) return undefined;
     let cancelled = false;
-    fetch(`/api/analyses/${encodeURIComponent(slug)}`, { cache: "no-store" })
+    apiFetch(`/api/analyses/${encodeURIComponent(slug)}`, { cache: "no-store" })
       .then(async (response) => (response.status === 404 ? null : response.json()))
       .then((cached) => {
         if (cancelled) return;
@@ -120,7 +124,7 @@ function SummaryView({ slug }) {
   useEffect(() => {
     if (!detail) return undefined;
     let cancelled = false;
-    fetch(`/api/drafts/${encodeURIComponent(slug)}`)
+    apiFetch(`/api/drafts/${encodeURIComponent(slug)}`)
       .then((response) => {
         if (!cancelled) setDraftStatus(response.ok ? "ready" : "idle");
       })
@@ -145,7 +149,7 @@ function SummaryView({ slug }) {
     setTranslationStatus("translating");
     setTranslationError("");
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `/api/translations/${encodeURIComponent(slug)}`,
         { method: "POST" },
       );
@@ -163,7 +167,7 @@ function SummaryView({ slug }) {
     setAnalysisStatus("running");
     setAnalysisError("");
     try {
-      const response = await fetch(`/api/analyses/${encodeURIComponent(slug)}`, {
+      const response = await apiFetch(`/api/analyses/${encodeURIComponent(slug)}`, {
         method: "POST",
       });
       const body = await response.json();
@@ -184,7 +188,7 @@ function SummaryView({ slug }) {
     setDraftStatus("generating");
     setDraftError("");
     try {
-      const response = await fetch(`/api/drafts/${encodeURIComponent(slug)}`, {
+      const response = await apiFetch(`/api/drafts/${encodeURIComponent(slug)}`, {
         method: "POST",
       });
       const body = await response.json();
@@ -410,13 +414,15 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
         <span className="empty-kicker">ANALYSIS</span>
         <h2>{running ? "분석하는 중" : "아직 분석하지 않았습니다"}</h2>
         <p>
-          모델을 호출하는 작업이라 자동으로 돌리지 않는다. 눌러야 시작한다.
+          {READ_ONLY
+            ? "분석은 모델을 부르는 작업이라 로컬에서만 돌아갑니다."
+            : "모델을 호출하는 작업이라 자동으로 돌리지 않는다. 눌러야 시작한다."}
         </p>
         {error && <div className="translation-error">{error}</div>}
         <button
           className="translate-button"
           type="button"
-          disabled={running}
+          disabled={READ_ONLY || running}
           onClick={onAnalyze}
         >
           {running ? (
@@ -556,12 +562,16 @@ function TranslationEmpty({ error, onTranslate, status }) {
       </div>
       <span className="empty-kicker">TRANSLATION</span>
       <h2>{translating ? "번역하는 중" : "한국어 번역"}</h2>
-      <p>처음 한 번만 시간이 걸린다. 번역한 글은 저장되어 다음엔 바로 뜬다.</p>
+      <p>
+        {READ_ONLY
+          ? "이 기사는 아직 번역하지 않았습니다. 번역은 모델을 부르는 작업이라 로컬에서만 돌아갑니다."
+          : "처음 한 번만 시간이 걸린다. 번역한 글은 저장되어 다음엔 바로 뜬다."}
+      </p>
       {error && <div className="translation-error">{error}</div>}
       <button
         className="translate-button"
         type="button"
-        disabled={translating}
+        disabled={READ_ONLY || translating}
         onClick={onTranslate}
       >
         {translating ? (
@@ -574,6 +584,7 @@ function TranslationEmpty({ error, onTranslate, status }) {
           </>
         )}
       </button>
+      <ReadOnlyNotice what="번역" />
     </div>
   );
 }

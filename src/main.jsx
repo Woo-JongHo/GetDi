@@ -18,6 +18,8 @@ import { ServiceMap } from "./features/map/ServiceMap.jsx";
 
 import { SummaryView } from "./features/summary/SummaryView.jsx";
 
+import { READ_ONLY } from "./shared/api.js";
+
 import { Drawer } from "./shared/Drawer.jsx";
 
 import "./styles.css";
@@ -78,10 +80,15 @@ function App() {
       ) : route.name === "draft" ? (
         <>
           <DraftWorkspace slug={route.slug} />
-          {/* 카드 문구의 근거가 되는 레퍼런스 분석. 초안을 의심할 때 편다. */}
-          <Drawer label="참고한 인스타 게시물 분석 보기">
-            <CardNewsResearch />
-          </Drawer>
+          {/* 카드 문구의 근거가 되는 레퍼런스 분석. 초안을 의심할 때 편다.
+              배포본에서는 감춘다 — 여기 실리는 것은 직접 모은 남의 인스타
+              게시물 이미지라 공개 배포에 담지 않았고, 담지 않은 것을 여는
+              서랍을 남겨 두면 열었을 때 깨진 화면이 나온다. */}
+          {!READ_ONLY && (
+            <Drawer label="참고한 인스타 게시물 분석 보기">
+              <CardNewsResearch />
+            </Drawer>
+          )}
         </>
       ) : route.name === "map" ? (
         <ServiceMap />

@@ -7,6 +7,10 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { ArrowLeft, ArrowUpRight, CircleHelp, Image as ImageIcon, MessageSquare } from "lucide-react";
 
+import { apiFetch, READ_ONLY } from "../../shared/api.js";
+
+import { ReadOnlyNotice } from "../../shared/ReadOnlyNotice.jsx";
+
 import { SourceBadges } from "../../shared/SourceBadges.jsx";
 
 import { CardVisual } from "./CardVisual.jsx";
@@ -66,7 +70,7 @@ function DraftWorkspace({ slug }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/drafts/${encodeURIComponent(slug)}`)
+    apiFetch(`/api/drafts/${encodeURIComponent(slug)}`)
       .then(async (response) => {
         const payload = await response.json();
         if (!response.ok) {
@@ -109,7 +113,7 @@ function DraftWorkspace({ slug }) {
     setStatus("revising");
     setError("");
     try {
-      const response = await fetch(
+      const response = await apiFetch(
         `/api/drafts/${encodeURIComponent(slug)}/revise`,
         {
           method: "POST",
@@ -609,46 +613,53 @@ ${useBackgroundImage ? '<div class="overlay"></div>' : ""}
           <p>{revision.instruction}</p>
         </div>
 
-        <div className="tune-box">
-          <label htmlFor="draft-instruction">CUSTOM PROMPT</label>
-          <textarea
-            id="draft-instruction"
-            value={instruction}
-            onChange={(event) => setInstruction(event.target.value)}
-            placeholder="예: 글씨는 굵고 단단하게, 배경은 밝게, 전체 무드는 차분하게. 모든 본문은 더 짧게 줄여줘."
-            rows={6}
-            disabled={status === "revising" || isHistorical}
-          />
-          <div className="tune-suggestions">
-            {[
-              "글씨는 굵고 문구는 더 짧게",
-              "밝은 배경에 차분한 무드",
-              "이미지를 크게, 설명은 최소화",
-            ].map((text) => (
-              <button
-                type="button"
-                onClick={() => setInstruction(text)}
-                disabled={isHistorical}
-                key={text}
-              >
-                {text}
-              </button>
-            ))}
+        {/* 프롬프트 상자는 통째로 쓰기다 — 배포본에서는 입력칸만 회색으로
+            만드는 대신 감춘다. 대신 위의 리비전 선택은 남겨 둔다: 어떤
+            지시가 어떤 결과를 만들었는지 지난 개정을 넘겨 보는 것은 읽기다. */}
+        {READ_ONLY ? (
+          <ReadOnlyNotice what="초안 수정" />
+        ) : (
+          <div className="tune-box">
+            <label htmlFor="draft-instruction">CUSTOM PROMPT</label>
+            <textarea
+              id="draft-instruction"
+              value={instruction}
+              onChange={(event) => setInstruction(event.target.value)}
+              placeholder="예: 글씨는 굵고 단단하게, 배경은 밝게, 전체 무드는 차분하게. 모든 본문은 더 짧게 줄여줘."
+              rows={6}
+              disabled={status === "revising" || isHistorical}
+            />
+            <div className="tune-suggestions">
+              {[
+                "글씨는 굵고 문구는 더 짧게",
+                "밝은 배경에 차분한 무드",
+                "이미지를 크게, 설명은 최소화",
+              ].map((text) => (
+                <button
+                  type="button"
+                  onClick={() => setInstruction(text)}
+                  disabled={isHistorical}
+                  key={text}
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+            {error && <div className="translation-error">{error}</div>}
+            <button
+              className="revise-button"
+              type="button"
+              disabled={!instruction.trim() || status === "revising" || isHistorical}
+              onClick={revise}
+            >
+              {status === "revising" ? (
+                <><span className="spinner" /> 새 리비전 생성 중</>
+              ) : (
+                <>프롬프트 적용 <ArrowUpRight size={15} /></>
+              )}
+            </button>
           </div>
-          {error && <div className="translation-error">{error}</div>}
-          <button
-            className="revise-button"
-            type="button"
-            disabled={!instruction.trim() || status === "revising" || isHistorical}
-            onClick={revise}
-          >
-            {status === "revising" ? (
-              <><span className="spinner" /> 새 리비전 생성 중</>
-            ) : (
-              <>프롬프트 적용 <ArrowUpRight size={15} /></>
-            )}
-          </button>
-        </div>
+        )}
 
         <div className="evidence-section">
           <span className="section-label">SELECTED MODEL RUN</span>
