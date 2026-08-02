@@ -1,13 +1,41 @@
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { sendJson } from "./http.mjs";
+import { sourceId } from "../crawler/source-snapshot.mjs";
 
-export function createDetailsHandler({ detailDir, videoDetailDir }) {
+export function createDetailsHandler({ detailDir, videoDetailDir, rootDir }) {
+  const sourceStoreDir = path.join(rootDir, "data/private/source-snapshots");
+
+  async function readRevisionForDetail(detail) {
+    const id = detail.source_id || sourceId(detail.source_url);
+    try {
+      const pointer = JSON.parse(
+        await readFile(path.join(sourceStoreDir, "sources", `${id}.json`), "utf8"),
+      );
+      const revision = JSON.parse(
+        await readFile(
+          path.join(sourceStoreDir, "revisions", `${pointer.revision_id}.json`),
+          "utf8",
+        ),
+      );
+      return {
+        ...revision.metadata,
+        ...revision,
+        source_url: revision.canonical_url,
+        slug: new URL(revision.canonical_url).pathname.split("/").filter(Boolean).at(-1),
+      };
+    } catch (error) {
+      if (error.code === "ENOENT") return detail;
+      throw error;
+    }
+  }
+
   async function readDetailBySlug(slug, format = null) {
     if (format === "article") {
-      return JSON.parse(
+      const detail = JSON.parse(
         await readFile(path.join(detailDir, `${slug}.json`), "utf8"),
       );
+      return readRevisionForDetail(detail);
     }
     if (format === "video") {
       return JSON.parse(
@@ -15,9 +43,10 @@ export function createDetailsHandler({ detailDir, videoDetailDir }) {
       );
     }
     try {
-      return JSON.parse(
+      const detail = JSON.parse(
         await readFile(path.join(detailDir, `${slug}.json`), "utf8"),
       );
+      return readRevisionForDetail(detail);
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
       return JSON.parse(
@@ -55,6 +84,34 @@ export function createDetailsHandler({ detailDir, videoDetailDir }) {
   }
 
   return async function handleDetails(request, response, url) {
+    if (url.pathname.startsWith("/api/source-assets/") &&
+        !/^\/api\/source-assets\/[a-f0-9]{64}$/.test(url.pathname)) {
+      sendJson(response, 400, { error: "올바르지 않은 AssetBlob hash입니다." });
+      return true;
+    }
+    const assetMatch = url.pathname.match(/^\/api\/source-assets\/([a-f0-9]{64})$/);
+    if (assetMatch && request.method === "GET") {
+      try {
+        const [payload, metadata] = await Promise.all([
+          readFile(path.join(sourceStoreDir, "blobs", assetMatch[1])),
+          readFile(path.join(sourceStoreDir, "blobs", `${assetMatch[1]}.json`), "utf8")
+            .then(JSON.parse),
+        ]);
+        response.statusCode = 200;
+        response.setHeader("Content-Type", metadata.mime);
+        response.setHeader("Content-Length", payload.length);
+        response.setHeader("Cache-Control", "private, immutable, max-age=31536000");
+        response.end(payload);
+      } catch (error) {
+        sendJson(
+          response,
+          error.code === "ENOENT" ? 404 : 500,
+          error.code === "ENOENT" ? { error: "AssetBlob을 찾지 못했습니다." } : { error: error.message },
+        );
+      }
+      return true;
+    }
+
     if (url.pathname === "/api/details" && request.method === "GET") {
       try {
         sendJson(response, 200, await readDetailIndex());

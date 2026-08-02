@@ -9,7 +9,8 @@
     "build": "node scripts/snapshot.mjs --if-available && vite build",
     "preview": "vite preview --host localhost --port 5545 --strictPort",
     "crawl": "node crawler/run.mjs",
-    "test": "node --test crawler/*.test.mjs",
+    "source:import": "node scripts/import_source_snapshot.mjs",
+    "test": "node --test crawler/*.test.mjs scripts/*.test.mjs server/*.test.mjs",
     "smoke": "node scripts/smoke.mjs",
     "analyze": "node scripts/analyze_all.mjs",
     "usage": "node scripts/usage_report.mjs"
@@ -17,6 +18,7 @@
   "dependencies": {
     "@vitejs/plugin-react": "^4.4.1",
     "cheerio": "^1.2.0",
+    "image-size": "^2.0.2",
     "lucide-react": "^0.468.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

@@ -21,6 +21,7 @@ import { downloadAsset, bodyImages } from "./assets.mjs";
 import { parseDetail } from "./detail.mjs";
 import { listingPageUrl, parseListing } from "./listing.mjs";
 import { resolveCrawlDelay, USER_AGENT } from "./robots.mjs";
+import { buildSourceRevision, promoteSourceRevision } from "./source-snapshot.mjs";
 import { translateListing } from "./translate.mjs";
 
 const ROOT_DIR = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -74,7 +75,7 @@ export function createCrawler({
     state: path.join(rootDir, "data/state", `crawl-${year}.json`),
     detailDir: path.join(rootDir, "data/private/details/articles"),
     rawDir: path.join(rootDir, "data/private/raw-details/articles"),
-    assetDir: path.join(rootDir, "data/private/assets"),
+    sourceStoreDir: path.join(rootDir, "data/private/source-snapshots"),
   };
 
   let state = {
@@ -213,10 +214,7 @@ export function createCrawler({
       try {
         assets.push(
           await downloadAsset(image, {
-            assetDir: paths.assetDir,
-            format: detail.format,
-            slug: item.slug,
-            index: index + 1,
+            assetDir: path.join(paths.sourceStoreDir, "blobs"),
           }),
         );
       } catch (error) {
@@ -226,6 +224,10 @@ export function createCrawler({
 
     detail.assets = assets;
     detail.asset_failures = failures;
+    const revision = buildSourceRevision(detail, assets);
+    await promoteSourceRevision(revision, { storeDir: paths.sourceStoreDir });
+    detail.source_id = revision.source_id;
+    detail.revision_id = revision.revision_id;
     await writeAtomicJson(
       path.join(paths.detailDir, `${item.slug}.json`),
       detail,

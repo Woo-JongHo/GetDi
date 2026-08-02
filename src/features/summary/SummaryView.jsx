@@ -87,6 +87,11 @@ function SummaryView({ slug }) {
 
   useEffect(() => {
     if (!detail) return undefined;
+    setTranslation(null);
+    if (detail.source_snapshot_available === false) {
+      setTranslationStatus("local-only");
+      return undefined;
+    }
     let cancelled = false;
     apiFetch(`/api/translations/${encodeURIComponent(slug)}`)
       .then(async (response) => (response.status === 404 ? null : response.json()))
@@ -136,10 +141,18 @@ function SummaryView({ slug }) {
     };
   }, [detail, slug]);
 
-  const originalHtml = useMemo(
-    () => cleanArticleHtml(detail?.content_html),
-    [detail],
-  );
+  const originalHtml = useMemo(() => {
+    if (detail?.schema_version === 2 && detail.blocks) {
+      return detail.blocks
+        .map(
+          (block) =>
+            `<div data-source-block="${block.block_id}" data-source-revision="${detail.revision_id}">` +
+            `${cleanArticleHtml(block.html)}</div>`,
+        )
+        .join("");
+    }
+    return cleanArticleHtml(detail?.content_html);
+  }, [detail]);
   const translatedHtml = useMemo(
     () => cleanArticleHtml(translation?.content_html_ko),
     [translation],
@@ -207,6 +220,8 @@ function SummaryView({ slug }) {
     );
     if (!node || !articleRef.current?.contains(node)) return;
 
+    const sourceBlock = node.closest("[data-source-block]");
+    const blockId = sourceBlock?.dataset.sourceBlock ?? null;
     if (node.tagName === "IMG") {
       setSelectedEvidence({
         type: "image",
@@ -217,6 +232,8 @@ function SummaryView({ slug }) {
           .closest("figure")
           ?.querySelector("figcaption")
           ?.textContent?.trim(),
+        block_id: blockId,
+        revision_id: detail.revision_id ?? null,
       });
       setPanelOpen(true);
       return;
@@ -231,7 +248,9 @@ function SummaryView({ slug }) {
       type: "block",
       label: node.tagName.toLowerCase(),
       excerpt: node.textContent.trim().slice(0, 360),
-      index: siblings.indexOf(node) + 1,
+      index: blockId ? undefined : siblings.indexOf(node) + 1,
+      block_id: blockId,
+      revision_id: detail.revision_id ?? null,
     });
     setPanelOpen(true);
   }
@@ -302,6 +321,10 @@ function SummaryView({ slug }) {
                 key={item.id}
                 type="button"
                 className={tab === item.id ? "active" : ""}
+                disabled={
+                  detail.source_snapshot_available === false &&
+                  (item.id === "ko" || item.id === "original")
+                }
                 onClick={() => setTab(item.id)}
               >
                 {item.label}
@@ -319,6 +342,8 @@ function SummaryView({ slug }) {
             근거·출처
           </button>
         </div>
+
+        {detail.source_snapshot_available === false && <LocalOnlySource />}
 
         {tab === "summary" && (
           <AnalysisSection
@@ -346,12 +371,16 @@ function SummaryView({ slug }) {
           ))}
 
         {tab === "original" && (
-          <article
-            className="source-article"
-            ref={articleRef}
-            onClick={selectBlock}
-            dangerouslySetInnerHTML={{ __html: originalHtml }}
-          />
+          detail.source_snapshot_available === false ? (
+            <LocalOnlySource />
+          ) : (
+            <article
+              className="source-article"
+              ref={articleRef}
+              onClick={selectBlock}
+              dangerouslySetInnerHTML={{ __html: originalHtml }}
+            />
+          )
         )}
       </section>
 
@@ -399,6 +428,17 @@ function SummaryView({ slug }) {
         />
       </aside>
     </main>
+  );
+}
+
+function LocalOnlySource() {
+  return (
+    <div className="translation-empty">
+      <div className="translation-icon"><ShieldAlert size={24} /></div>
+      <span className="empty-kicker">LOCAL ONLY</span>
+      <h2>원문 스냅샷은 로컬 전용입니다</h2>
+      <p>공개 배포본에는 원문 전문·전체 번역·원본 이미지가 포함되지 않습니다.</p>
+    </div>
   );
 }
 

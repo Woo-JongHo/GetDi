@@ -117,6 +117,32 @@ function sanitize(value) {
   return value;
 }
 
+export function publicDetail(slug, detail) {
+  return {
+    schema_version: 2,
+    slug,
+    source_url: detail.source_url,
+    title: detail.title,
+    authors: detail.authors ?? [],
+    published_date: detail.published_date ?? null,
+    format: detail.format ?? "article",
+    summary: detail.summary ?? "",
+    source_snapshot_available: false,
+    unavailable_reason: "local_only",
+  };
+}
+
+export function redactPrivateModelPayload(run) {
+  if (!/translation|analysis|draft/.test(run.operation || "")) return run;
+  const { input, output, ...metadata } = run;
+  return {
+    ...metadata,
+    input_omitted: input !== undefined,
+    output_omitted: output !== undefined,
+    omitted_reason: "Source Snapshot과 전체 번역은 로컬 전용이다",
+  };
+}
+
 async function writeJson(relativePath, payload) {
   const target = path.join(outDir, relativePath);
   // 쓰는 자리 한 곳에서 걸러야 새는 곳이 없다 — 호출하는 쪽마다 기억해서
@@ -185,8 +211,9 @@ async function buildModelLogs() {
     .sort((a, b) => (b.started_at || "").localeCompare(a.started_at || ""))
     .slice(0, 100);
 
-  const trimmed = runs.map((run, index) => {
-    if (index < FULL_LOG_RUNS) return run;
+  const trimmed = runs.map((rawRun, index) => {
+    const run = redactPrivateModelPayload(rawRun);
+    if (index < FULL_LOG_RUNS || run.input_omitted) return run;
     const { input, output, ...meta } = run;
     return {
       ...meta,
@@ -198,8 +225,8 @@ async function buildModelLogs() {
 
   return {
     runs: trimmed,
-    fullCount: Math.min(FULL_LOG_RUNS, runs.length),
-    trimmedCount: Math.max(0, runs.length - FULL_LOG_RUNS),
+    fullCount: trimmed.filter((run) => run.input !== undefined).length,
+    trimmedCount: trimmed.filter((run) => run.input_omitted).length,
   };
 }
 
@@ -235,13 +262,16 @@ async function verifyCommittedSnapshot() {
  * 사실이다. 공개 URL에 올라가는 파일이므로 후자를 확인한다 — 하나라도
  * 걸리면 굽는 것을 실패로 끝내, 새는 스냅샷이 커밋되지 않게 한다.
  */
-async function auditOutput() {
+export async function auditOutput(targetDir = outDir) {
   const forbidden = [
     { pattern: /\/Users\/[^/"\s]+/, label: "개인 홈 경로" },
     { pattern: /sk-ant-[A-Za-z0-9-]{8,}/, label: "Anthropic API 키" },
     { pattern: /\bsk-[A-Za-z0-9]{20,}/, label: "OpenAI 형식 API 키" },
     { pattern: /\bghp_[A-Za-z0-9]{20,}/, label: "GitHub 토큰" },
     { pattern: /\bBearer\s+[A-Za-z0-9._-]{20,}/, label: "Bearer 토큰" },
+    { pattern: /"content_html(?:_ko)?"\s*:/, label: "로컬 전용 원문/전체 번역" },
+    { pattern: /"blocks"\s*:\s*\[\s*\{\s*"block_id"/, label: "SourceRevision block payload" },
+    { pattern: /data\/private\/source-snapshots/, label: "private Source Snapshot 경로" },
     // 레퍼런스 프로필은 manifest에서 제외를 선언한 자료다. 선언과 산출물이
     // 어긋나면 선언이 거짓이 된다 — 이 필드 이름들이 그 자료의 지문이다.
     // 프롬프트를 통해 실제로 새어 나간 적이 있어서 검사에 넣었다.
@@ -267,13 +297,13 @@ async function auditOutput() {
         const hit = text.match(pattern);
         if (hit) {
           found.push(
-            `${path.relative(outDir, target)} — ${label}: ${hit[0].slice(0, 60)}`,
+            `${path.relative(targetDir, target)} — ${label}: ${hit[0].slice(0, 60)}`,
           );
         }
       }
     }
   }
-  await walk(outDir);
+  await walk(targetDir);
 
   if (found.length) {
     throw new Error(
@@ -317,7 +347,7 @@ async function main() {
       path.join(rootDir, "data/private/details/articles", `${slug}.json`),
     );
     if (detail) {
-      bytes += await writeJson(`details/${slug}.json`, detail);
+      bytes += await writeJson(`details/${slug}.json`, publicDetail(slug, detail));
       counts.details += 1;
     } else {
       missing.details.push(slug);
@@ -326,7 +356,6 @@ async function main() {
     for (const [kind, sourceDir] of [
       ["analyses", "data/private/analyses"],
       ["drafts", "data/private/drafts"],
-      ["translations", "data/private/translations"],
     ]) {
       const document = await readJsonOrNull(
         path.join(rootDir, sourceDir, `${slug}.json`),
@@ -338,6 +367,7 @@ async function main() {
         missing[kind].push(slug);
       }
     }
+    missing.translations.push(slug);
   }
 
   // `/api/details` — 무엇이 수집됐는지의 색인. 스냅샷에 실제로 담은 것만
@@ -398,6 +428,10 @@ async function main() {
     missing,
     excluded: [
       {
+        what: "Source Snapshot block 원문·전체 번역·AssetBlob",
+        why: "원문 연구 자료는 local-only이며 공개본은 metadata와 새 분석 결과만 제공한다",
+      },
+      {
         what: "레퍼런스 이미지 18장과 그 분석 (/api/references, /api/reference-analysis)",
         why: "직접 수집한 남의 인스타 게시물이라 공개 배포에 담지 않는다",
       },
@@ -457,7 +491,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exitCode = 1;
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
+}

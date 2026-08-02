@@ -8,21 +8,9 @@
 
 import { createHash } from "node:crypto";
 import { mkdir, rename, writeFile } from "node:fs/promises";
-import path from "node:path";
 import * as cheerio from "cheerio";
+import { imageSize } from "image-size";
 import { USER_AGENT } from "./robots.mjs";
-
-const IMAGE_EXTENSIONS = new Set([
-  ".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg",
-]);
-const MIME_EXTENSIONS = {
-  "image/png": ".png",
-  "image/jpeg": ".jpg",
-  "image/webp": ".webp",
-  "image/gif": ".gif",
-  "image/svg+xml": ".svg",
-  "image/avif": ".avif",
-};
 
 function squish(text) {
   return (text || "").split(/\s+/).filter(Boolean).join(" ");
@@ -54,13 +42,6 @@ export function bodyImages(contentHtml) {
   return images;
 }
 
-function extensionFor(url, contentType) {
-  const suffix = path.extname(new URL(url).pathname).toLowerCase();
-  if (IMAGE_EXTENSIONS.has(suffix)) return suffix;
-  const mime = (contentType || "").split(";")[0].trim().toLowerCase();
-  return MIME_EXTENSIONS[mime] || ".bin";
-}
-
 async function writeAtomic(target, data) {
   await mkdir(path.dirname(target), { recursive: true });
   const temporary = `${target}.tmp`;
@@ -68,7 +49,7 @@ async function writeAtomic(target, data) {
   await rename(temporary, target);
 }
 
-export async function downloadAsset(image, { assetDir, format, slug, index }) {
+export async function downloadAsset(image, { assetDir }) {
   const response = await fetch(image.source_url, {
     headers: {
       "User-Agent": USER_AGENT,
@@ -81,25 +62,45 @@ export async function downloadAsset(image, { assetDir, format, slug, index }) {
 
   const payload = Buffer.from(await response.arrayBuffer());
   const contentType = response.headers.get("content-type");
-  const urlDigest = createHash("sha256")
-    .update(image.source_url)
-    .digest("hex")
-    .slice(0, 10);
-  const fileName = `${String(index).padStart(2, "0")}-${urlDigest}${extensionFor(
-    image.source_url,
-    contentType,
-  )}`;
-  const target = path.join(assetDir, `${format}s`, slug, fileName);
+  const blobSha256 = createHash("sha256").update(payload).digest("hex");
+  let dimensions;
+  try {
+    dimensions = imageSize(payload);
+  } catch {
+    throw new Error("이미지 dimensions를 판독하지 못했습니다.");
+  }
+  if (!dimensions.width || !dimensions.height) {
+    throw new Error("이미지 dimensions가 없습니다.");
+  }
+  const target = path.join(assetDir, blobSha256);
   await writeAtomic(target, payload);
+  await writeAtomic(
+    `${target}.json`,
+    Buffer.from(
+      `${JSON.stringify({
+        sha256: blobSha256,
+        bytes: payload.length,
+        mime: (contentType || "application/octet-stream").split(";")[0],
+        width: dimensions.width,
+        height: dimensions.height,
+      }, null, 2)}\n`,
+    ),
+  );
 
   return {
     kind: "body_image",
     source_url: image.source_url,
     local_path: target,
-    sha256: createHash("sha256").update(payload).digest("hex"),
+    sha256: blobSha256,
+    blob_sha256: blobSha256,
     bytes: payload.length,
     content_type: contentType,
+    mime: (contentType || "application/octet-stream").split(";")[0],
+    width: dimensions.width,
+    height: dimensions.height,
     alt: image.alt,
     caption: image.caption,
+    credit: null,
+    rights_status: "unknown",
   };
 }

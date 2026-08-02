@@ -50,7 +50,7 @@ const { handleDraft } = createDraftHandler({
   runClaudeStructured,
   runCodexStructured,
 });
-const handleDetails = createDetailsHandler({ detailDir, videoDetailDir });
+const handleDetails = createDetailsHandler({ detailDir, videoDetailDir, rootDir });
 const handleTranslation = createTranslationHandler({
   rootDir,
   imageSources,
