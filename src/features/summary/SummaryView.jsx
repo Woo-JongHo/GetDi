@@ -332,16 +332,42 @@ function SummaryView({ slug }) {
             ))}
           </nav>
 
-          <button
-            type="button"
-            className={`evidence-toggle ${panelOpen ? "active" : ""}`}
-            aria-expanded={panelOpen}
-            onClick={() => setPanelOpen((current) => !current)}
-          >
-            <BookOpen size={15} />
-            근거·출처
-          </button>
+          <div className="summary-toolbar-actions">
+            <button
+              type="button"
+              className={`evidence-toggle ${panelOpen ? "active" : ""}`}
+              aria-expanded={panelOpen}
+              onClick={() => setPanelOpen((current) => !current)}
+            >
+              <BookOpen size={15} />
+              근거·출처
+            </button>
+            {detail.format === "article" && (
+              <button
+                type="button"
+                className="summary-draft-cta"
+                disabled={
+                  draftStatus === "checking" ||
+                  draftStatus === "generating" ||
+                  (READ_ONLY && draftStatus !== "ready")
+                }
+                onClick={generateDraft}
+              >
+                {draftStatus === "generating" ? (
+                  <><span className="spinner" /> 초안 생성 중</>
+                ) : draftStatus === "ready" ? (
+                  <>04 인스타 초안 열기 <ArrowUpRight size={15} /></>
+                ) : READ_ONLY ? (
+                  <>04 초안 없음 · 로컬 전용</>
+                ) : (
+                  <>04 인스타 초안 만들기 <Sparkles size={15} /></>
+                )}
+              </button>
+            )}
+          </div>
         </div>
+
+        {draftError && <p className="summary-draft-error">{draftError}</p>}
 
         {detail.source_snapshot_available === false && <LocalOnlySource />}
 
