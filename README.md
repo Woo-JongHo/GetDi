@@ -6,7 +6,7 @@ Nielsen Norman Group의 **2026년 기사를 직접 수집해서**, 읽고, 요�
 디자이너가 코드를 읽으며 공부할 대상이기도 하다. 그래서 화면 수와 디렉터리
 깊이를 늘리는 결정은 그 학습 비용을 대가로 치른다 — 지금 화면은 넷뿐이다.
 
-**개발을 모른다면 [`docs/designer-guide.md`](docs/designer-guide.md)부터 본다.**
+**개발을 모른다면 Claude Code에서 `/designer-guide`를 입력하거나 [`docs/designer-guide.md`](docs/designer-guide.md)부터 본다.**
 Node 설치부터 순서대로 적어 두었다.
 
 ## 화면 넷 = 일하는 순서
@@ -46,7 +46,7 @@ node crawler/run.mjs --listing-only
 
 ```bash
 npm run build
-npm test      # 크롤러 파서 계약 테스트 22개
+npm test      # 크롤러·서버·스크립트·온보딩 진단 테스트
 npm run smoke
 ```
 

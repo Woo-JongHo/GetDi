@@ -1,0 +1,4 @@
+interface:
+  display_name: "Designer Guide"
+  short_description: "GetDi 설치와 모델 연결을 단계별로 안내합니다"
+  default_prompt: "/designer-guide로 GetDi 환경을 점검하고 다음 한 단계만 안내해 주세요."

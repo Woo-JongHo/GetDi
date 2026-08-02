@@ -9,6 +9,43 @@
 
 마지막 10장은 "코드를 읽고 싶을 때" 어디부터 보면 되는지다.
 
+## Claude Code로 안내받기
+
+Claude Code를 쓰고 있다면 이 문서를 처음부터 외울 필요가 없다.
+
+```bash
+cd ~/woo/00_project/18_GetDi
+claude
+```
+
+Claude Code가 열리면 아래처럼 입력한다.
+
+```text
+/designer-guide
+```
+
+현재 컴퓨터를 읽기 전용으로 점검한 뒤, 막힌 첫 단계의 명령 하나와
+성공했을 때 보일 문구를 차례로 알려준다. 모델 연결만 궁금하면
+`/designer-guide api`, 작업 순서는 `/designer-guide workflow`라고 입력한다.
+
+### 모델은 어떻게 연결되나
+
+```text
+브라우저 화면
+  → localhost:5545의 /api/*
+  → Vite 로컬 서버
+  → server/model.mjs
+  → 내 컴퓨터의 claude 또는 codex CLI
+  → 그 CLI에 로그인한 계정
+```
+
+GetDi 저장소에 API key를 붙여넣는 구조가 아니다. `claude`나 `codex`에
+로그인이 필요하면 각 CLI가 보여 주는 로그인 화면에서만 진행한다.
+채팅이나 `.env` 파일에 key·token·cookie를 적지 않는다.
+
+배포된 읽기 전용 화면은 모델을 호출하지 않고 미리 만든 `public/snapshot/`을 읽는다.
+번역·분석·초안 생성은 로컬에서만 된다.
+
 ---
 
 ## 1. 이 도구가 하는 일
@@ -275,7 +312,7 @@ Node가 안 깔렸거나, 깔고 나서 터미널을 새로 안 열었다. 2장�
 npm test
 ```
 
-`crawler/*.test.mjs`가 파서를 검사한다. 22개가 전부 통과해야 한다.
+크롤러·서버·스크립트·온보딩 진단 테스트가 전부 통과해야 한다.
 `crawler/VERIFICATION-REPORT.md`에 무엇을 어떤 기준으로 검사했는지 적혀 있다.
 
 ### 고쳐 보고 싶다면
