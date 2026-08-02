@@ -90,6 +90,7 @@ product code.
 | `cardnews-generation-prompt.md` | analysis and card planning | `runArticleAnalysis` |
 | `cardnews-production-prompt.md` | final card copy | `generateDraft`, `reviseDraft` |
 | `html-card-production-prompt.md` | archived HTML card rendering reference | not loaded by product code |
+| `summary-method.md` | analysis field definitions and checks | analysis schema, summary UI |
 | `output-contract.md` | JSON artifact shape for this skill | this SKILL.md only |
 | `cardnews-foundations.md` | research boundary notes | this SKILL.md only |
 
@@ -98,10 +99,6 @@ Runtime prompts hand the output structure to the caller's JSON Schema —
 they must not restate an output format of their own.
 `output-contract.md` governs saved artifacts validated by
 `scripts/validate_refinement.py`, not the runtime model calls.
-
-The variable that loads `cardnews-generation-prompt.md` is still named
-`analysisPromptPath`. The name predates the file rename and is scheduled
-for correction — do not infer file roles from variable names.
 
 Removed 2026-07-27: `cardnews-analysis-prompt.md` had zero references from
 code or docs and duplicated `cardnews-generation-prompt.md`.
