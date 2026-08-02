@@ -1,4 +1,5 @@
 import React from "react";
+import { CharacterPose } from "./character/CharacterPose.jsx";
 
 /**
  * 원문 이미지가 없는 카드에 들어가는 도형.
@@ -233,18 +234,22 @@ const SHAPES = {
   number: NumberShape,
 };
 
-function CardVisual({ method, position }) {
+function CardVisual({ method, position, characterPose = null }) {
   const Shape = SHAPES[method] || SHAPES.statement;
   return (
     <div className={`generated-card-visual generated-${method}`}>
-      <svg
-        className="card-visual-svg"
-        viewBox={VIEWBOX}
-        preserveAspectRatio="xMidYMid meet"
-        aria-hidden="true"
-      >
-        <Shape />
-      </svg>
+      {characterPose ? (
+        <CharacterPose pose={characterPose} className="card-visual-svg" />
+      ) : (
+        <svg
+          className="card-visual-svg"
+          viewBox={VIEWBOX}
+          preserveAspectRatio="xMidYMid meet"
+          aria-hidden="true"
+        >
+          <Shape />
+        </svg>
+      )}
       <em>{String(position).padStart(2, "0")}</em>
     </div>
   );
