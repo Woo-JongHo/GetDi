@@ -6,12 +6,33 @@ import { sourceId } from "../crawler/source-snapshot.mjs";
 export function createDetailsHandler({ detailDir, videoDetailDir, rootDir }) {
   const sourceStoreDir = path.join(rootDir, "data/private/source-snapshots");
 
+  async function readActiveRevisionId(sourceIdValue) {
+    try {
+      const active = JSON.parse(
+        await readFile(path.join(sourceStoreDir, "active-import.json"), "utf8"),
+      );
+      const manifest = JSON.parse(
+        await readFile(
+          path.join(sourceStoreDir, "imports", `${active.manifest_hash}.json`),
+          "utf8",
+        ),
+      );
+      return manifest.items.find((item) => item.source_id === sourceIdValue)?.revision_id;
+    } catch (error) {
+      if (error.code === "ENOENT") return null;
+      throw error;
+    }
+  }
+
   async function readRevisionForDetail(detail) {
     const id = detail.source_id || sourceId(detail.source_url);
     try {
-      const pointer = JSON.parse(
-        await readFile(path.join(sourceStoreDir, "sources", `${id}.json`), "utf8"),
-      );
+      const activeRevisionId = await readActiveRevisionId(id);
+      const pointer = activeRevisionId
+        ? { revision_id: activeRevisionId }
+        : JSON.parse(
+            await readFile(path.join(sourceStoreDir, "sources", `${id}.json`), "utf8"),
+          );
       const revision = JSON.parse(
         await readFile(
           path.join(sourceStoreDir, "revisions", `${pointer.revision_id}.json`),

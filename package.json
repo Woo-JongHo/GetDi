@@ -10,6 +10,7 @@
     "preview": "vite preview --host localhost --port 5545 --strictPort",
     "crawl": "node crawler/run.mjs",
     "source:import": "node scripts/import_source_snapshot.mjs",
+    "source:import:bundle": "node scripts/import_source_snapshot.mjs --bundle",
     "test": "node --test crawler/*.test.mjs scripts/*.test.mjs server/*.test.mjs .claude/skills/designer-guide/scripts/*.test.mjs src/features/draft/character/*.test.mjs",
     "smoke": "node scripts/smoke.mjs",
     "analyze": "node scripts/analyze_all.mjs",

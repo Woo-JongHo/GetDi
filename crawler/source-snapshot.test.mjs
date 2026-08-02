@@ -5,7 +5,9 @@ import path from "node:path";
 import test from "node:test";
 
 import {
+  buildImportManifest,
   buildSourceRevision,
+  promoteSourceBundle,
   promoteSourceRevision,
   sourceId,
   validateSourceRevision,
@@ -127,4 +129,58 @@ test("promotion writes immutable revision and changes the source pointer last", 
     await readFile(path.join(storeDir, "revisions", `${revision.revision_id}.json`), "utf8"),
   );
   assert.equal(stored.revision_id, revision.revision_id);
+});
+
+test("bundle import is idempotent and activates one manifest atomically", async () => {
+  const storeDir = await mkdtemp(path.join(os.tmpdir(), "getdi-bundle-"));
+  await mkdir(path.join(storeDir, "blobs"), { recursive: true });
+  await writeFile(path.join(storeDir, "blobs", blobSha256), PNG);
+  const first = buildSourceRevision(detail(), [asset()]);
+  const second = buildSourceRevision(
+    detail({ source_url: "https://www.nngroup.com/articles/second/", title: "Second" }),
+    [asset()],
+  );
+  const manifest = buildImportManifest([second, first]);
+  assert.equal(manifest.item_count, 2);
+  assert.deepEqual(manifest.items.map((item) => item.source_id), [...manifest.items.map((item) => item.source_id)].sort());
+
+  const promoted = await promoteSourceBundle([first, second], { storeDir });
+  assert.equal(promoted.changed, 2);
+  assert.equal(promoted.activated, true);
+  const repeated = await promoteSourceBundle([first, second], { storeDir });
+  assert.equal(repeated.changed, 0);
+  assert.equal(repeated.unchanged, 2);
+  assert.equal(repeated.activated, false);
+  const active = JSON.parse(await readFile(path.join(storeDir, "active-import.json"), "utf8"));
+  assert.equal(active.manifest_hash, manifest.manifest_hash);
+});
+
+test("failed bundle keeps the last-known-good active import", async () => {
+  const storeDir = await mkdtemp(path.join(os.tmpdir(), "getdi-bundle-fail-"));
+  await mkdir(path.join(storeDir, "blobs"), { recursive: true });
+  await writeFile(path.join(storeDir, "blobs", blobSha256), PNG);
+  const first = buildSourceRevision(detail(), [asset()]);
+  await promoteSourceBundle([first], { storeDir });
+  const before = await readFile(path.join(storeDir, "active-import.json"), "utf8");
+  const changed = buildSourceRevision(detail({ title: "Changed" }), [asset()]);
+  await assert.rejects(
+    promoteSourceBundle([changed], {
+      storeDir,
+      beforeActivate() {
+        throw new Error("simulated interruption");
+      },
+    }),
+    /simulated interruption/,
+  );
+  assert.equal(await readFile(path.join(storeDir, "active-import.json"), "utf8"), before);
+
+  const damaged = structuredClone(changed);
+  damaged.asset_occurrences[0].blob_sha256 = "0".repeat(64);
+  await assert.rejects(promoteSourceBundle([damaged], { storeDir }), /ENOENT/);
+  assert.equal(await readFile(path.join(storeDir, "active-import.json"), "utf8"), before);
+});
+
+test("bundle manifest rejects duplicate sources", () => {
+  const revision = buildSourceRevision(detail(), [asset()]);
+  assert.throws(() => buildImportManifest([revision, revision]), /중복/);
 });

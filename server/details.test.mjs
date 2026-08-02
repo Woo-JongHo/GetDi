@@ -76,6 +76,37 @@ test("SS-06/07: details use v2 pointer when present and preserve v1 fallback", a
   assert.equal(payload.schema_version, 2);
   assert.equal(payload.revision_id, revisionId);
   assert.equal(payload.blocks[0].block_id, "B001");
+
+  const activeRevisionId = "rev_" + "b".repeat(64);
+  const manifestHash = "c".repeat(64);
+  await mkdir(path.join(store, "imports"), { recursive: true });
+  await writeFile(
+    path.join(store, "revisions", `${activeRevisionId}.json`),
+    JSON.stringify({
+      schema_version: 2,
+      source_id: id,
+      revision_id: activeRevisionId,
+      canonical_url: sourceUrl,
+      metadata: { title: "Active bundle", authors: [], format: "article" },
+      blocks: [{ block_id: "B001", ordinal: 1, type: "paragraph", html: "<p>active</p>", asset_occurrence_ids: [] }],
+      asset_occurrences: [],
+    }),
+  );
+  await writeFile(
+    path.join(store, "imports", `${manifestHash}.json`),
+    JSON.stringify({ items: [{ source_id: id, revision_id: activeRevisionId }] }),
+  );
+  await writeFile(
+    path.join(store, "active-import.json"),
+    JSON.stringify({ manifest_hash: manifestHash }),
+  );
+  response = responseRecorder();
+  await context.handler(
+    { method: "GET" },
+    response,
+    new URL("http://local/api/details/article/example"),
+  );
+  assert.equal(JSON.parse(response.body).revision_id, activeRevisionId);
 });
 
 test("SS-10: malformed and missing AssetBlob requests return JSON errors", async () => {

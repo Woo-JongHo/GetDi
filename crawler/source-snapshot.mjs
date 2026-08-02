@@ -217,3 +217,97 @@ export async function promoteSourceRevision(revision, { storeDir }) {
   await rename(pointerTemp, pointer);
   return { source_id: revision.source_id, revision_id: revision.revision_id };
 }
+
+export function buildImportManifest(revisions) {
+  const items = revisions
+    .map(({ source_id, revision_id, canonical_url }) => ({
+      source_id,
+      revision_id,
+      canonical_url,
+    }))
+    .sort((left, right) => left.source_id.localeCompare(right.source_id));
+  const duplicate = items.find(
+    (item, index) => index > 0 && item.source_id === items[index - 1].source_id,
+  );
+  if (duplicate) throw new Error(`bundle source가 중복됩니다: ${duplicate.source_id}`);
+  const payload = { schema_version: 1, item_count: items.length, items };
+  return { ...payload, manifest_hash: digest(canonicalJson(payload)) };
+}
+
+async function readJsonIfPresent(target) {
+  try {
+    return JSON.parse(await readFile(target, "utf8"));
+  } catch (error) {
+    if (error.code === "ENOENT") return null;
+    throw error;
+  }
+}
+
+export async function promoteSourceBundle(
+  revisions,
+  { storeDir, beforeActivate = null } = {},
+) {
+  if (!revisions.length) throw new Error("빈 Source Snapshot bundle은 승격할 수 없습니다.");
+  for (const revision of revisions) {
+    await validateSourceRevision(revision, { blobDir: path.join(storeDir, "blobs") });
+  }
+
+  const manifest = buildImportManifest(revisions);
+  const importDir = path.join(storeDir, "imports");
+  const revisionDir = path.join(storeDir, "revisions");
+  const stagingDir = path.join(storeDir, "staging", `import-${manifest.manifest_hash}`);
+  const activePath = path.join(storeDir, "active-import.json");
+  const previousActive = await readJsonIfPresent(activePath);
+  const previousManifest = previousActive
+    ? await readJsonIfPresent(path.join(importDir, `${previousActive.manifest_hash}.json`))
+    : null;
+  const previousBySource = new Map(
+    (previousManifest?.items || []).map((item) => [item.source_id, item.revision_id]),
+  );
+  const changed = manifest.items.filter(
+    (item) => previousBySource.get(item.source_id) !== item.revision_id,
+  ).length;
+  const unchanged = manifest.items.length - changed;
+
+  await mkdir(stagingDir, { recursive: true });
+  await writeFile(
+    path.join(stagingDir, "manifest.json"),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+    "utf8",
+  );
+  await mkdir(revisionDir, { recursive: true });
+  for (const revision of revisions) {
+    const target = path.join(revisionDir, `${revision.revision_id}.json`);
+    const existing = await readJsonIfPresent(target);
+    if (existing && canonicalJson(existing) !== canonicalJson(revision)) {
+      throw new Error(`immutable revision 충돌: ${revision.revision_id}`);
+    }
+    if (!existing) {
+      await writeFile(target, `${JSON.stringify(revision, null, 2)}\n`, "utf8");
+    }
+  }
+
+  await mkdir(importDir, { recursive: true });
+  const manifestPath = path.join(importDir, `${manifest.manifest_hash}.json`);
+  const existingManifest = await readJsonIfPresent(manifestPath);
+  if (!existingManifest) {
+    await rename(path.join(stagingDir, "manifest.json"), manifestPath);
+  }
+  await rm(stagingDir, { recursive: true, force: true });
+  if (beforeActivate) await beforeActivate(manifest);
+
+  const activeTemp = `${activePath}.tmp`;
+  await writeFile(
+    activeTemp,
+    `${JSON.stringify({ manifest_hash: manifest.manifest_hash }, null, 2)}\n`,
+    "utf8",
+  );
+  await rename(activeTemp, activePath);
+  return {
+    manifest_hash: manifest.manifest_hash,
+    item_count: manifest.item_count,
+    changed,
+    unchanged,
+    activated: previousActive?.manifest_hash !== manifest.manifest_hash,
+  };
+}
