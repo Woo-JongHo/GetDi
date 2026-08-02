@@ -84,6 +84,52 @@ export function createDetailsHandler({ detailDir, videoDetailDir, rootDir }) {
   }
 
   return async function handleDetails(request, response, url) {
+    const articleAssetMatch = url.pathname.match(
+      /^\/api\/article-assets\/([a-z0-9-]+)$/,
+    );
+    if (articleAssetMatch && request.method === "GET") {
+      try {
+        const detail = JSON.parse(
+          await readFile(
+            path.join(detailDir, `${articleAssetMatch[1]}.json`),
+            "utf8",
+          ),
+        );
+        const sourceUrl = url.searchParams.get("source");
+        const asset = detail.assets?.find(
+          (candidate) => candidate.source_url === sourceUrl,
+        );
+        if (!asset) {
+          sendJson(response, 404, { error: "본문 이미지 asset을 찾지 못했습니다." });
+          return true;
+        }
+        const allowedRoot = path.resolve(rootDir, "data/private/assets");
+        const localPath = path.resolve(asset.local_path);
+        if (!localPath.startsWith(`${allowedRoot}${path.sep}`)) {
+          sendJson(response, 403, { error: "허용되지 않은 asset 경로입니다." });
+          return true;
+        }
+        const payload = await readFile(localPath);
+        const extension = path.extname(localPath) || ".bin";
+        response.statusCode = 200;
+        response.setHeader("Content-Type", asset.content_type || "application/octet-stream");
+        response.setHeader("Content-Length", payload.length);
+        response.setHeader(
+          "Content-Disposition",
+          `attachment; filename="${articleAssetMatch[1]}-${asset.sha256.slice(0, 10)}${extension}"`,
+        );
+        response.setHeader("Cache-Control", "private, immutable, max-age=31536000");
+        response.end(payload);
+      } catch (error) {
+        sendJson(
+          response,
+          error.code === "ENOENT" ? 404 : 500,
+          { error: error.code === "ENOENT" ? "본문 이미지 파일을 찾지 못했습니다." : error.message },
+        );
+      }
+      return true;
+    }
+
     if (url.pathname.startsWith("/api/source-assets/") &&
         !/^\/api\/source-assets\/[a-f0-9]{64}$/.test(url.pathname)) {
       sendJson(response, 400, { error: "올바르지 않은 AssetBlob hash입니다." });

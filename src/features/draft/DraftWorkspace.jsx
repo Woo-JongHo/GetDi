@@ -584,7 +584,7 @@ ${useBackgroundImage ? '<div class="overlay"></div>' : ""}
         </div>
 
         {editor?.imageSrc ? (
-          <a className="download-html-button" href={editor.imageSrc} download={`${slug}-source-image-${String(card.position).padStart(2, "0")}`}>
+          <a className="download-html-button" href={`/api/article-assets/${encodeURIComponent(slug)}?source=${encodeURIComponent(editor.imageSrc)}`} download>
             본문 이미지 다운로드 <ArrowUpRight size={15} />
           </a>
         ) : (
