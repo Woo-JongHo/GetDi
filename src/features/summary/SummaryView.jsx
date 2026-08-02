@@ -99,7 +99,7 @@ function SummaryView({ slug }) {
       .then((cached) => {
         if (cancelled) return;
         setTranslation(cached);
-        setTranslationStatus(cached ? "ready" : "idle");
+        setTranslationStatus(cached?.translation_status || (cached ? "ready" : "idle"));
       })
       .catch(() => {
         if (!cancelled) setTranslationStatus("idle");
@@ -154,10 +154,19 @@ function SummaryView({ slug }) {
     }
     return cleanArticleHtml(detail?.content_html);
   }, [detail]);
-  const translatedHtml = useMemo(
-    () => cleanArticleHtml(translation?.content_html_ko),
-    [translation],
-  );
+  const translatedHtml = useMemo(() => {
+    if (translationStatus !== "ready") return "";
+    if (translation?.schema_version === 2) {
+      return translation.blocks
+        .map(
+          (block) =>
+            `<div data-source-block="${block.block_id}" data-source-revision="${translation.source_revision_id}">` +
+            `${cleanArticleHtml(block.html_ko)}</div>`,
+        )
+        .join("");
+    }
+    return cleanArticleHtml(translation?.content_html_ko);
+  }, [translation, translationStatus]);
 
   async function translate() {
     setTranslationStatus("translating");
@@ -254,6 +263,18 @@ function SummaryView({ slug }) {
       revision_id: detail.revision_id ?? null,
     });
     setPanelOpen(true);
+  }
+
+  function openOriginalBlock() {
+    const blockId = selectedEvidence?.block_id;
+    if (!blockId) return;
+    setTab("original");
+    setPanelOpen(false);
+    window.requestAnimationFrame(() => {
+      articleRef.current
+        ?.querySelector(`[data-source-block="${blockId}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
   }
 
   if (detailStatus === "loading") {
@@ -438,6 +459,15 @@ function SummaryView({ slug }) {
             <X size={17} />
           </button>
         </div>
+        {tab === "ko" && selectedEvidence?.block_id && (
+          <button
+            type="button"
+            className="translate-button"
+            onClick={openOriginalBlock}
+          >
+            <BookOpen size={16} /> 원문 {selectedEvidence.block_id} 위치 보기
+          </button>
+        )}
         <EvidencePanel
           detail={detail}
           draftError={draftError}
@@ -622,17 +652,26 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
 
 function TranslationEmpty({ error, onTranslate, status }) {
   const translating = status === "translating";
+  const needsRefresh = status === "stale" || status === "invalid";
   return (
     <div className="translation-empty">
       <div className="translation-icon">
         <Languages size={24} />
       </div>
       <span className="empty-kicker">한국어 번역</span>
-      <h2>{translating ? "번역하는 중" : "한국어 번역"}</h2>
+      <h2>
+        {translating
+          ? "번역하는 중"
+          : needsRefresh
+            ? "원문이 바뀌어 번역을 다시 만들어야 합니다"
+            : "한국어 번역"}
+      </h2>
       <p>
         {READ_ONLY
           ? "이 기사는 아직 번역하지 않았습니다. 번역은 모델을 부르는 작업이라 로컬에서만 돌아갑니다."
-          : "처음 한 번만 시간이 걸린다. 번역한 글은 저장되어 다음엔 바로 뜬다."}
+          : needsRefresh
+            ? "이 번역은 현재 원문 revision과 맞지 않아 본문에 섞지 않았습니다."
+            : "처음 한 번만 시간이 걸린다. 번역한 글은 저장되어 다음엔 바로 뜬다."}
       </p>
       {error && <div className="translation-error">{error}</div>}
       <button
@@ -647,7 +686,7 @@ function TranslationEmpty({ error, onTranslate, status }) {
           </>
         ) : (
           <>
-            <Languages size={16} /> 한국어 번역 시작
+            <Languages size={16} /> {needsRefresh ? "현재 원문으로 다시 번역" : "한국어 번역 시작"}
           </>
         )}
       </button>

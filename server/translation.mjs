@@ -1,6 +1,29 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { sendJson } from "./http.mjs";
+import { sourceId } from "../crawler/source-snapshot.mjs";
+
+export function classifyTranslation(translation, source) {
+  if (source.schema_version !== 2) {
+    return translation.schema_version === 1 ? "ready" : "invalid";
+  }
+  if (
+    translation.schema_version !== 2 ||
+    translation.source_revision_id !== source.revision_id
+  ) {
+    return "stale";
+  }
+  const expected = source.blocks.map((block) => block.block_id);
+  const actual = translation.blocks?.map((block) => block.block_id) || [];
+  if (
+    expected.length !== actual.length ||
+    expected.some((blockId, index) => blockId !== actual[index]) ||
+    translation.blocks.some((block) => !block.html_ko)
+  ) {
+    return "invalid";
+  }
+  return "ready";
+}
 
 export function createTranslationHandler({
   rootDir,
@@ -10,33 +33,100 @@ export function createTranslationHandler({
   const detailDir = path.join(rootDir, "data/private/details/articles");
   const videoDetailDir = path.join(rootDir, "data/private/details/videos");
   const translationDir = path.join(rootDir, "data/private/translations");
+  const sourceStoreDir = path.join(rootDir, "data/private/source-snapshots");
   const runningTranslations = new Map();
 
+  async function readCurrentSource(slug) {
+    let detail;
+    try {
+      detail = JSON.parse(await readFile(path.join(detailDir, `${slug}.json`), "utf8"));
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      return JSON.parse(await readFile(path.join(videoDetailDir, `${slug}.json`), "utf8"));
+    }
+    if (detail.schema_version === 2) return detail;
+    const id = detail.source_id || sourceId(detail.source_url);
+    try {
+      let revisionId;
+      try {
+        const active = JSON.parse(
+          await readFile(path.join(sourceStoreDir, "active-import.json"), "utf8"),
+        );
+        const manifest = JSON.parse(
+          await readFile(
+            path.join(sourceStoreDir, "imports", `${active.manifest_hash}.json`),
+            "utf8",
+          ),
+        );
+        revisionId = manifest.items.find((item) => item.source_id === id)?.revision_id;
+      } catch (error) {
+        if (error.code !== "ENOENT") throw error;
+      }
+      if (!revisionId) {
+        const pointer = JSON.parse(
+          await readFile(path.join(sourceStoreDir, "sources", `${id}.json`), "utf8"),
+        );
+        revisionId = pointer.revision_id;
+      }
+      return JSON.parse(
+        await readFile(path.join(sourceStoreDir, "revisions", `${revisionId}.json`), "utf8"),
+      );
+    } catch (error) {
+      if (error.code === "ENOENT") return detail;
+      throw error;
+    }
+  }
+
   function runArticleTranslation(source, slug = source.slug) {
+    const revisionBound = source.schema_version === 2;
     const schema = {
       type: "object",
       properties: {
         title_ko: { type: "string" },
         summary_ko: { type: "string" },
-        content_html_ko: { type: "string" },
+        ...(revisionBound
+          ? {
+              source_revision_id: { type: "string" },
+              blocks: {
+                type: "array",
+                minItems: source.blocks.length,
+                maxItems: source.blocks.length,
+                items: {
+                  type: "object",
+                  properties: {
+                    block_id: { type: "string" },
+                    html_ko: { type: "string" },
+                  },
+                  required: ["block_id", "html_ko"],
+                  additionalProperties: false,
+                },
+              },
+            }
+          : { content_html_ko: { type: "string" } }),
       },
-      required: ["title_ko", "summary_ko", "content_html_ko"],
+      required: revisionBound
+        ? ["title_ko", "summary_ko", "source_revision_id", "blocks"]
+        : ["title_ko", "summary_ko", "content_html_ko"],
       additionalProperties: false,
     };
 
     const prompt = [
       "You are a precise English-to-Korean UX article translator.",
       "Translate the supplied title, summary, and HTML body into natural professional Korean.",
-      "For content_html_ko, preserve every HTML element, its nesting, ordering, id, href, src, width, height, and all other structural attributes.",
+      revisionBound
+        ? "Return every block once, in the supplied order, with the exact block_id and translated html_ko. Set source_revision_id to the supplied revision ID."
+        : "For content_html_ko, preserve every HTML element, its nesting, ordering, id, href, src, width, height, and all other structural attributes.",
       "Translate human-readable text, image alt text, and figcaptions only.",
       "Do not summarize, omit, add, reinterpret, or move any content.",
       "Keep URLs and proper nouns accurate. Return only the requested structured object.",
       "",
-      `TITLE:\n${source.title}`,
+      `TITLE:\n${source.metadata?.title || source.title}`,
       "",
-      `SUMMARY:\n${source.summary || ""}`,
+      `SUMMARY:\n${source.metadata?.summary || source.summary || ""}`,
       "",
-      `HTML:\n${source.content_html}`,
+      revisionBound
+        ? `SOURCE REVISION:\n${source.revision_id}\n\nBLOCKS:\n${JSON.stringify(source.blocks)}`
+        : `HTML:\n${source.content_html}`,
     ].join("\n");
 
     return runCodexStructured({
@@ -50,21 +140,24 @@ export function createTranslationHandler({
   }
 
   async function translateArticle(slug) {
-    let source;
-    try {
-      source = JSON.parse(
-        await readFile(path.join(detailDir, `${slug}.json`), "utf8"),
-      );
-    } catch (error) {
-      if (error.code !== "ENOENT") throw error;
-      source = JSON.parse(
-        await readFile(path.join(videoDetailDir, `${slug}.json`), "utf8"),
-      );
-    }
+    const source = await readCurrentSource(slug);
     const { translated, envelope } = await runArticleTranslation(source, slug);
 
-    const originalImages = imageSources(source.content_html);
-    const translatedImages = imageSources(translated.content_html_ko);
+    if (
+      source.schema_version === 2 &&
+      classifyTranslation({ ...translated, schema_version: 2 }, source) !== "ready"
+    ) {
+      throw new Error("번역 결과가 현재 SourceRevision의 block 계약과 일치하지 않습니다.");
+    }
+
+    const originalHtml = source.schema_version === 2
+      ? source.blocks.map((block) => block.html).join("")
+      : source.content_html;
+    const translatedHtml = source.schema_version === 2
+      ? translated.blocks.map((block) => block.html_ko).join("")
+      : translated.content_html_ko;
+    const originalImages = imageSources(originalHtml);
+    const translatedImages = imageSources(translatedHtml);
     if (
       originalImages.length !== translatedImages.length ||
       originalImages.some((sourceUrl, index) => sourceUrl !== translatedImages[index])
@@ -84,16 +177,22 @@ export function createTranslationHandler({
     );
 
     const result = {
-      schema_version: 1,
+      schema_version: source.schema_version === 2 ? 2 : 1,
       slug,
-      source_url: source.source_url,
+      source_url: source.canonical_url || source.source_url,
       translated_at: new Date().toISOString(),
       provider: envelope.provider,
       model: modelUsage.at(-1)?.model || "fable",
       usage_source: "actual",
       title_ko: translated.title_ko,
       summary_ko: translated.summary_ko,
-      content_html_ko: translated.content_html_ko,
+      ...(source.schema_version === 2
+        ? {
+            source_id: source.source_id,
+            source_revision_id: source.revision_id,
+            blocks: translated.blocks,
+          }
+        : { content_html_ko: translated.content_html_ko }),
       usage: {
         total_cost_usd: envelope.total_cost_usd ?? null,
         duration_ms: envelope.duration_ms ?? null,
@@ -121,7 +220,15 @@ export function createTranslationHandler({
 
     if (request.method === "GET") {
       try {
-        sendJson(response, 200, JSON.parse(await readFile(cachePath, "utf8")));
+        const [cached, source] = await Promise.all([
+          readFile(cachePath, "utf8").then(JSON.parse),
+          readCurrentSource(slug),
+        ]);
+        sendJson(response, 200, {
+          ...cached,
+          translation_status: classifyTranslation(cached, source),
+          current_revision_id: source.revision_id ?? null,
+        });
       } catch (error) {
         if (error.code === "ENOENT") {
           sendJson(response, 404, { status: "not_generated" });
@@ -135,9 +242,14 @@ export function createTranslationHandler({
     if (request.method === "POST") {
       try {
         try {
-          const cached = JSON.parse(await readFile(cachePath, "utf8"));
-          sendJson(response, 200, cached);
-          return true;
+          const [cached, source] = await Promise.all([
+            readFile(cachePath, "utf8").then(JSON.parse),
+            readCurrentSource(slug),
+          ]);
+          if (classifyTranslation(cached, source) === "ready") {
+            sendJson(response, 200, { ...cached, translation_status: "ready" });
+            return true;
+          }
         } catch (error) {
           if (error.code !== "ENOENT") throw error;
         }
