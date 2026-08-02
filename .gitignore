@@ -23,6 +23,12 @@ __pycache__/
 data/state/*
 !data/state/.gitkeep
 data/private/
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/reference-analysis.json
+public/snapshot/
 *.sqlite3
 *.db
 

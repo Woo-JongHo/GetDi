@@ -233,24 +233,18 @@ async function buildModelLogs() {
 /**
  * 원천 데이터가 있는지 본다.
  *
- * `data/private`는 gitignore라 Vercel 빌드 환경에는 없다 — 거기서 다시 구울
- * 수는 없고, 구울 필요도 없다(스냅샷은 커밋되어 함께 clone된다). 그래서
- * 빌드는 `--if-available`로 부르고, 원천이 없으면 이미 커밋된 스냅샷을
- * 확인하는 것으로 갈음한다.
- *
- * 원천도 없고 스냅샷도 없으면 멈춘다. 그대로 빌드하면 화면은 뜨지만 데이터가
- * 하나도 없는 껍데기가 배포된다.
+ * `data/private`와 `public/snapshot`은 모두 gitignore다. 그래서 새로 받은
+ * 저장소나 CI에는 둘 다 없을 수 있다. `--if-available` 빌드는 로컬 스냅샷이
+ * 있으면 확인하고, 없으면 코드 번들만 만들 수 있도록 생성을 건너뛴다.
  */
-async function verifyCommittedSnapshot() {
+async function reportLocalSnapshot() {
   const manifest = await readJsonOrNull(path.join(outDir, "manifest.json"));
   if (!manifest) {
-    throw new Error(
-      "원천 데이터(data/private)도 커밋된 스냅샷(public/snapshot)도 없다.\n" +
-        "로컬에서 `npm run snapshot`을 돌려 스냅샷을 만들고 커밋해야 한다.",
-    );
+    console.log("로컬 데이터가 없어 스냅샷 생성을 건너뛴다.");
+    return;
   }
   console.log(
-    `커밋된 스냅샷을 쓴다 — ${manifest.generated_at} 기준` +
+    `로컬 스냅샷을 쓴다 — ${manifest.generated_at} 기준` +
       ` (본문 ${manifest.counts?.details}건, 분석 ${manifest.counts?.analyses}건)`,
   );
 }
@@ -318,9 +312,8 @@ export async function auditOutput(targetDir = outDir) {
 
 async function main() {
   const ifAvailable = process.argv.includes("--if-available");
-  // 원천의 판별 기준은 `data/private`다. `data/processed`(목록)는 커밋되므로
-  // Vercel에도 있고, 그것으로 판별하면 본문이 0건인 스냅샷을 다시 구워
-  // 커밋된 것을 덮어쓴다.
+  // 원천의 판별 기준은 `data/private`다. 목록만 남은 상태에서 본문 0건짜리
+  // 스냅샷으로 기존 로컬 결과를 덮어쓰지 않는다.
   let sourceExists = true;
   try {
     await readdir(path.join(rootDir, "data/private/details/articles"));
@@ -328,7 +321,7 @@ async function main() {
     sourceExists = false;
   }
   if (ifAvailable && !sourceExists) {
-    await verifyCommittedSnapshot();
+    await reportLocalSnapshot();
     return;
   }
 

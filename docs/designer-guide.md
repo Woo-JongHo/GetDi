@@ -43,7 +43,7 @@ GetDi 저장소에 API key를 붙여넣는 구조가 아니다. `claude`나 `cod
 로그인이 필요하면 각 CLI가 보여 주는 로그인 화면에서만 진행한다.
 채팅이나 `.env` 파일에 key·token·cookie를 적지 않는다.
 
-배포된 읽기 전용 화면은 모델을 호출하지 않고 미리 만든 `public/snapshot/`을 읽는다.
+읽기 전용 화면용 `public/snapshot/`도 로컬에서 만들며 Git에는 올리지 않는다.
 번역·분석·초안 생성은 로컬에서만 된다.
 
 ---
