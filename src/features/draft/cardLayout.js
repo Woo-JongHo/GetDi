@@ -9,9 +9,9 @@
  * 화면 미리보기와 내려받는 HTML이 같은 값을 쓰도록 여기 한 곳에만 둔다.
  */
 
-/** 배경은 전부 검정이다. 카드마다 배경색이 다르면 한 시리즈로 안 읽힌다. */
-export const CARD_INK = "#0d0e10";
-export const CARD_PAPER = "#f5f4f0";
+/** 흰색은 편집 상태를 읽기 위한 중립 캔버스다. 생성되는 배경 자산이 아니다. */
+export const CARD_INK = "#111214";
+export const CARD_PAPER = "#ffffff";
 
 /** 유형 구분은 배경이 아니라 강조색이 한다. 검정 위라 밝고 채도가 있어야 읽힌다. */
 export const ACCENTS = {
@@ -110,21 +110,27 @@ export function createCardEditor(card) {
     max: cover ? 116 : 96,
   });
   const body = plainCardText(card.body_ko);
+  const typography = card.typography_assignment || {
+    title_zone: "top",
+    title_align: "left",
+    title_scale: cover ? "display" : "large",
+    body_zone: "middle",
+    body_max_lines: 5,
+  };
 
   return {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    background: CARD_INK,
-    textColor: CARD_PAPER,
+    background: CARD_PAPER,
+    textColor: CARD_INK,
     accentColor: accent,
-    backgroundMode: card.source_image_src && cover ? "image-gradient" : "solid",
-    // 검은 배경 위에 사진을 깔면 제목이 묻힌다. 오버레이를 세게 준다.
-    overlay: 82,
+    backgroundMode: "none",
+    overlay: 0,
     titleSize,
     bodySize: cover ? 46 : fitBodySize(body),
     subtitleSize: 44,
     titleLines: lines.length,
-    imagePosition: cover ? "background" : "bottom",
+    imagePosition: "bottom",
     imageSrc: card.source_image_src || "",
     imageFit: "cover",
     eyebrow: plainCardText(card.eyebrow_ko),
@@ -132,5 +138,17 @@ export function createCardEditor(card) {
     body,
     signature: "네카라쿠배 디자이너, 피그마스터",
     visualizationMethod,
+    typography,
+    characterAssignment:
+      card.character_assignment ||
+      (!cover && [2, 4, 6].includes(card.position)
+        ? {
+            pose: poseForVisualization(visualizationMethod),
+            position: "right",
+            scale: "medium",
+            reason_ko: "legacy draft preview fallback",
+          }
+        : null),
   };
 }
+import { poseForVisualization } from "./character/poseRegistry.js";

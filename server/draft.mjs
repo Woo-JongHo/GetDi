@@ -2,6 +2,11 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { readRequestJson, sendJson } from "./http.mjs";
 
+const CHARACTER_POSE_IDS = [
+  "thinking", "pointing", "comparing", "checking",
+  "warning", "celebrating", "confused", "reading",
+];
+
 export function createDraftHandler({
   rootDir,
   DRAFT_COPY_LIMITS,
@@ -85,6 +90,29 @@ export function createDraftHandler({
                     enum: [...allowedImages, null],
                   }
                 : { type: ["string", "null"], enum: [null] },
+              typography_assignment: {
+                type: "object",
+                properties: {
+                  title_zone: { type: "string", enum: ["top", "middle"] },
+                  title_align: { type: "string", enum: ["left", "center"] },
+                  title_scale: { type: "string", enum: ["display", "large", "medium"] },
+                  body_zone: { type: "string", enum: ["middle", "bottom"] },
+                  body_max_lines: { type: "integer", minimum: 2, maximum: 6 },
+                },
+                required: ["title_zone", "title_align", "title_scale", "body_zone", "body_max_lines"],
+                additionalProperties: false,
+              },
+              character_assignment: {
+                type: ["object", "null"],
+                properties: {
+                  pose: { type: "string", enum: CHARACTER_POSE_IDS },
+                  position: { type: "string", enum: ["left", "right", "bottom"] },
+                  scale: { type: "string", enum: ["small", "medium", "large"] },
+                  reason_ko: { type: "string", maxLength: 120 },
+                },
+                required: ["pose", "position", "scale", "reason_ko"],
+                additionalProperties: false,
+              },
               design_rule_ids: {
                 type: "array",
                 items: {
@@ -102,6 +130,8 @@ export function createDraftHandler({
               "visualization_method",
               "source_block_ids",
               "source_image_src",
+              "typography_assignment",
+              "character_assignment",
               "design_rule_ids",
             ],
             additionalProperties: false,
@@ -284,6 +314,17 @@ export function createDraftHandler({
     ) {
       throw new Error("Draft가 원문에 없는 이미지를 사용했습니다.");
     }
+    const assignedCharacters = draft.cards.filter(
+      (card) => card.character_assignment,
+    );
+    if (
+      assignedCharacters.length > 3 ||
+      assignedCharacters.some(
+        (card) => !CHARACTER_POSE_IDS.includes(card.character_assignment.pose),
+      )
+    ) {
+      throw new Error("Draft 캐릭터는 허용 pose로 최대 3장에만 배정할 수 있습니다.");
+    }
     if (
       draft.cards.some((card) =>
         card.design_rule_ids.some((id) => !allowedRules.has(id)),
@@ -308,6 +349,10 @@ export function createDraftHandler({
       `Return the same number of cards as GROUNDED ANALYSIS.card_plan (${analysis.card_plan?.length || "4-8"}), never more than 8.`,
       "Every card must cite source_block_ids already present in the analysis.",
       "Use source_image_src only when it appears in the analysis image recommendations; otherwise return null.",
+      "This is an editing blueprint, not finished artwork. Do not design or describe a background, gradient, decorative SVG, texture, or generated illustration.",
+      "Assign typography_assignment on every card. Keep title and body in separate readable zones.",
+      `Assign character_assignment to at most 3 cards, using poses only from: ${CHARACTER_POSE_IDS.join(", ")}. Return null when a mascot adds no meaning.`,
+      "Prefer a real source_image_src when it explains the card; the mascot must not replace or cover it.",
       `Use design_rule_ids only from this Reference Library allowlist: ${allowedRuleIds.join(", ")}.`,
       "Never copy the reference account mascot, people, creator identity, or logos.",
       "Do not invent facts. Keep rights and uncertainty notes in caveats_ko.",

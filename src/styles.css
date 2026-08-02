@@ -1185,6 +1185,23 @@ a {
   font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Noto Sans KR",
     sans-serif;
   transform-origin: top left;
+  border: 1px solid #deddd7;
+}
+
+.html-card-character-only {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  min-height: 300px;
+  margin-top: auto;
+}
+
+.html-card-character-only.character-left {
+  justify-content: flex-start;
+}
+
+.html-card-character-only .html-card-side-character {
+  width: 30%;
 }
 
 .html-card-background-art {
@@ -1314,6 +1331,10 @@ a {
   --character-fill: var(--card-accent);
   --character-accent: #ffcf2d;
 }
+
+.html-card-side-character.character-small { flex-basis: 19%; width: 19%; }
+.html-card-side-character.character-medium { flex-basis: 25%; width: 25%; }
+.html-card-side-character.character-large { flex-basis: 32%; width: 32%; }
 
 .image-middle .html-card-image-with-character {
   order: 2;
@@ -1589,6 +1610,41 @@ a {
 
 .download-html-button:hover {
   background: var(--purple);
+}
+
+a.download-html-button {
+  text-decoration: none;
+}
+
+.draft-assignment-summary {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid #d2d0c8;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.draft-assignment-summary span {
+  color: #858781;
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.draft-assignment-summary strong {
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.draft-no-source-image {
+  margin: 14px 0 0;
+  color: #858781;
+  font-size: 9px;
+  line-height: 1.5;
 }
 
 .prompt-customize-intro {

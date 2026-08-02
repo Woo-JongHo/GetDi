@@ -13,9 +13,7 @@ import { ReadOnlyNotice } from "../../shared/ReadOnlyNotice.jsx";
 
 import { SourceBadges } from "../../shared/SourceBadges.jsx";
 
-import { CardVisual } from "./CardVisual.jsx";
 import { CharacterPose } from "./character/CharacterPose.jsx";
-import { poseForVisualization } from "./character/poseRegistry.js";
 
 function escapeHtml(value = "") {
   return value
@@ -574,17 +572,24 @@ ${useBackgroundImage ? '<div class="overlay"></div>' : ""}
         )}
 
         <div className="prompt-customize-intro">
-          <span>글씨 · 배경 · 무드 · 문구</span>
-          <p>원하는 결과를 문장으로 적으면 새 리비전에 함께 반영합니다.</p>
+          <span>글씨 · 캐릭터 · 본문 이미지</span>
+          <p>배경을 만들지 않고 디자이너가 이어받을 배정 정보만 정리합니다.</p>
         </div>
 
-        <button
-          className="download-html-button"
-          type="button"
-          onClick={downloadHtml}
-        >
-          현재 HTML 결과 다운로드 <ArrowUpRight size={15} />
-        </button>
+        <div className="draft-assignment-summary">
+          <span>TYPOGRAPHY</span>
+          <strong>{editor?.typography.title_zone} · {editor?.typography.title_align} · {editor?.typography.title_scale}</strong>
+          <span>CHARACTER</span>
+          <strong>{editor?.characterAssignment ? `${editor.characterAssignment.pose} · ${editor.characterAssignment.position} · ${editor.characterAssignment.scale}` : "배정 없음"}</strong>
+        </div>
+
+        {editor?.imageSrc ? (
+          <a className="download-html-button" href={editor.imageSrc} download={`${slug}-source-image-${String(card.position).padStart(2, "0")}`}>
+            본문 이미지 다운로드 <ArrowUpRight size={15} />
+          </a>
+        ) : (
+          <p className="draft-no-source-image">이 카드에 배정된 본문 이미지가 없습니다.</p>
+        )}
 
         <div className="revision-selector">
           <span>REVISION HISTORY</span>
@@ -627,15 +632,15 @@ ${useBackgroundImage ? '<div class="overlay"></div>' : ""}
               id="draft-instruction"
               value={instruction}
               onChange={(event) => setInstruction(event.target.value)}
-              placeholder="예: 글씨는 굵고 단단하게, 배경은 밝게, 전체 무드는 차분하게. 모든 본문은 더 짧게 줄여줘."
+              placeholder="예: 제목은 위쪽 왼쪽에 크게, 캐릭터는 3번 카드 오른쪽에만 배정해줘."
               rows={6}
               disabled={status === "revising" || isHistorical}
             />
             <div className="tune-suggestions">
               {[
-                "글씨는 굵고 문구는 더 짧게",
-                "밝은 배경에 차분한 무드",
-                "이미지를 크게, 설명은 최소화",
+                "제목은 위쪽 왼쪽에 크게",
+                "캐릭터는 최대 두 장만",
+                "본문 이미지를 우선 배정",
               ].map((text) => (
                 <button
                   type="button"
@@ -741,16 +746,8 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
   const visualizationMethod =
     card.visualization_method || editor.visualizationMethod || "statement";
   const [holderRef, scale] = useFitScale(editor.width, editor.height);
-  const useBackgroundImage =
-    editor.backgroundMode === "image-gradient" &&
-    editor.imagePosition === "background" &&
-    editor.imageSrc;
-  const backgroundImage = useBackgroundImage
-    ? `url("${editor.imageSrc.replaceAll('"', '\\"')}")`
-    : editor.backgroundMode === "gradient"
-      ? `linear-gradient(135deg, ${editor.background}, ${editor.accentColor})`
-      : "none";
-  const image = editor.imageSrc && editor.imagePosition !== "background" && (
+  const character = editor.characterAssignment;
+  const image = editor.imageSrc && (
     <div className="html-card-image-with-character">
       <img
         className="html-card-image"
@@ -758,10 +755,12 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
         alt=""
         style={{ objectFit: editor.imageFit }}
       />
-      <CharacterPose
-        pose={poseForVisualization(visualizationMethod)}
-        className="html-card-side-character"
-      />
+      {character && (
+        <CharacterPose
+          pose={character.pose}
+          className={`html-card-side-character character-${character.position} character-${character.scale}`}
+        />
+      )}
     </div>
   );
 
@@ -781,24 +780,11 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
           height: editor.height,
           color: editor.textColor,
           backgroundColor: editor.background,
-          backgroundImage,
+          backgroundImage: "none",
           "--card-accent": editor.accentColor,
           transform: `scale(${scale})`,
         }}
       >
-        <div className="html-card-background-art" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </div>
-        {useBackgroundImage && (
-          <div
-            className="html-card-overlay"
-            style={{
-              background: `linear-gradient(180deg, rgb(0 0 0 / 8%), rgb(0 0 0 / ${editor.overlay}%))`,
-            }}
-          />
-        )}
         <div className="html-card-content">
           <div
             className={cover ? "html-card-subtitle" : "html-card-signature"}
@@ -828,11 +814,13 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
             </p>
           )}
           {!cover && editor.imagePosition === "bottom" && image}
-          {!cover && !editor.imageSrc && (
-            <CardVisual
-              method={visualizationMethod}
-              position={card.position}
-            />
+          {!cover && !editor.imageSrc && character && (
+            <div className={`html-card-character-only character-${character.position}`}>
+              <CharacterPose
+                pose={character.pose}
+                className={`html-card-side-character character-${character.scale}`}
+              />
+            </div>
           )}
         </div>
         <div className="html-card-footer">
