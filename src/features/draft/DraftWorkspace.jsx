@@ -14,6 +14,8 @@ import { ReadOnlyNotice } from "../../shared/ReadOnlyNotice.jsx";
 import { SourceBadges } from "../../shared/SourceBadges.jsx";
 
 import { CardVisual } from "./CardVisual.jsx";
+import { CharacterPose } from "./character/CharacterPose.jsx";
+import { poseForVisualization } from "./character/poseRegistry.js";
 
 function escapeHtml(value = "") {
   return value
@@ -749,12 +751,18 @@ function HtmlCardCanvas({ card, cardCount, editor }) {
       ? `linear-gradient(135deg, ${editor.background}, ${editor.accentColor})`
       : "none";
   const image = editor.imageSrc && editor.imagePosition !== "background" && (
-    <img
-      className="html-card-image"
-      src={editor.imageSrc}
-      alt=""
-      style={{ objectFit: editor.imageFit }}
-    />
+    <div className="html-card-image-with-character">
+      <img
+        className="html-card-image"
+        src={editor.imageSrc}
+        alt=""
+        style={{ objectFit: editor.imageFit }}
+      />
+      <CharacterPose
+        pose={poseForVisualization(visualizationMethod)}
+        className="html-card-side-character"
+      />
+    </div>
   );
 
   return (

@@ -20,6 +20,22 @@ const CHARACTER_POSES = Object.freeze({
   reading: { component: "ReadingPose", label: "자료를 읽는 GetDi 캐릭터" },
 });
 
+const VISUALIZATION_POSE = Object.freeze({
+  statement: "pointing",
+  comparison: "comparing",
+  steps: "checking",
+  cycle: "thinking",
+  checklist: "checking",
+  warning: "warning",
+  example: "reading",
+  quote: "reading",
+  number: "celebrating",
+});
+
+function poseForVisualization(method) {
+  return VISUALIZATION_POSE[method] || "thinking";
+}
+
 function validateCharacterPoseRegistry(registry = CHARACTER_POSES, ids = CHARACTER_POSE_IDS) {
   const errors = [];
   const idSet = new Set(ids);
@@ -43,4 +59,10 @@ function validateCharacterPoseRegistry(registry = CHARACTER_POSES, ids = CHARACT
   return errors;
 }
 
-export { CHARACTER_POSE_IDS, CHARACTER_POSES, validateCharacterPoseRegistry };
+export {
+  CHARACTER_POSE_IDS,
+  CHARACTER_POSES,
+  VISUALIZATION_POSE,
+  poseForVisualization,
+  validateCharacterPoseRegistry,
+};
