@@ -21,7 +21,7 @@ function EvidencePanel({
     <aside className="evidence-panel">
       <div className="evidence-heading">
         <div>
-          <span>ARTICLE SUMMARY</span>
+          <span>기사 요약</span>
           <h2>요약</h2>
         </div>
         <BookOpen size={19} />
@@ -47,37 +47,37 @@ function EvidencePanel({
             <span className="block-index">원문 블록 #{selected.index}</span>
           )}
           <div className="grounded-status">
-            <Check size={13} /> Grounded · 원문 스냅샷
+            <Check size={13} /> 근거 확인됨 · 원문 스냅샷
           </div>
         </div>
       ) : (
         <div className="reader-summary-card">
-          <span>ONE-LINE SUMMARY</span>
+          <span>한 줄 요약</span>
           <p>{summary || item?.summary || "요약이 준비되지 않았습니다."}</p>
         </div>
       )}
 
       <div className="evidence-section">
-        <span className="section-label">SOURCE</span>
+        <span className="section-label">출처</span>
         <dl className="evidence-list">
           <div>
-            <dt>Publisher</dt>
+            <dt>발행처</dt>
             <dd>{detail?.source || "Nielsen Norman Group"}</dd>
           </div>
           <div>
-            <dt>Snapshot</dt>
+            <dt>수집일</dt>
             <dd>{detail ? formatDate(detail.retrieved_at?.slice(0, 10)) : "대기 중"}</dd>
           </div>
           <div>
-            <dt>Detail data</dt>
+            <dt>본문 데이터</dt>
             <dd className={detail ? "positive" : "muted"}>
-              {detail ? "Available" : "Not collected"}
+              {detail ? "준비됨" : "수집되지 않음"}
             </dd>
           </div>
           <div>
-            <dt>Translation</dt>
+            <dt>번역</dt>
             <dd className={translation ? "positive" : "muted"}>
-              {translation ? "Generated" : "Not generated"}
+              {translation ? "생성됨" : "생성되지 않음"}
             </dd>
           </div>
         </dl>

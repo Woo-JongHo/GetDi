@@ -113,7 +113,7 @@ function CardList() {
       <aside className="filter-rail">
         <div className="filter-panel">
           <div className="rail-title">
-            <span>MONTH</span>
+            <span>월</span>
           </div>
           <div className="filter-list compact">
             <button
@@ -138,7 +138,7 @@ function CardList() {
           </div>
 
           <div className="rail-title second">
-            <span>CONTENT STATUS</span>
+            <span>본문 상태</span>
           </div>
           <div className="filter-list compact">
             {[
@@ -166,7 +166,7 @@ function CardList() {
 
       <section className="library-content">
         <div className="eyebrow">
-          <span>STEP 02</span>
+          <span>02단계</span>
           <span className="eyebrow-rule" />
           <span>Nielsen Norman Group · {YEAR}</span>
         </div>
@@ -271,7 +271,7 @@ function ArticleCard({ item, index, ready }) {
       }}
     >
       <div className="card-topline">
-        <span className="format-badge article">ARTICLE</span>
+        <span className="format-badge article">기사</span>
         <span className={`readiness ${ready ? "is-ready" : ""}`}>
           {ready ? (
             <>

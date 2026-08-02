@@ -142,6 +142,7 @@ export function createDraftContract({
     const positions = draft.cards.map((card) => card.position);
     const visibleLength = (value) =>
       Array.from((value || "").replace(/\s/g, "")).length;
+    const containsKorean = (value) => /[가-힣]/.test(value || "");
     if (
       draft.cards.length < 4 ||
       draft.cards.length > 8 ||
@@ -165,6 +166,18 @@ export function createDraftContract({
       )
     ) {
       throw new Error("Draft 문구가 카드의 글자 수 제한을 초과했습니다.");
+    }
+    if (
+      !containsKorean(draft.draft_title_ko) ||
+      !containsKorean(draft.caption_ko) ||
+      draft.cards.some(
+        (card) =>
+          !containsKorean(card.eyebrow_ko) ||
+          !containsKorean(card.headline_ko) ||
+          !containsKorean(card.body_ko),
+      )
+    ) {
+      throw new Error("한국어 필드에는 한국어 문구가 포함되어야 합니다.");
     }
     if (
       draft.cards.some(

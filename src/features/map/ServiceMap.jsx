@@ -296,7 +296,7 @@ function ServiceMap() {
     <main className="map-shell">
       <header className="map-topbar">
         <div>
-          <span>SERVICE MAP</span>
+          <span>서비스 구조</span>
           <strong>기사 하나가 카드 여덟 장이 되기까지</strong>
         </div>
         <div className="map-legend">
@@ -398,7 +398,7 @@ function ServiceMap() {
                       <i className="map-node-cost">
                         <Coins size={12} />
                         {row && !unknown
-                          ? `in ${compact.format(row.per_run.input_tokens)} · out ${compact.format(row.per_run.output_tokens)}`
+                          ? `입력 ${compact.format(row.per_run.input_tokens)} · 출력 ${compact.format(row.per_run.output_tokens)}`
                           : unknown
                             ? "기록 없음"
                             : "아직 돌린 적 없음"}
@@ -444,7 +444,7 @@ function ServiceMap() {
             }
             return (
               <strong>
-                건당 in {compact.format(row.per_run.input_tokens)} · out{" "}
+                건당 입력 {compact.format(row.per_run.input_tokens)} · 출력{" "}
                 {compact.format(row.per_run.output_tokens)}
                 <em>
                   {Math.round(row.per_run.duration_ms / 1000)}초 · 지금까지{" "}

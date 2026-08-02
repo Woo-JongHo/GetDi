@@ -106,7 +106,7 @@ function CrawlWorkspace() {
   return (
     <main className="crawl-layout">
       <div className="eyebrow">
-        <span>STEP 01</span>
+        <span>01단계</span>
         <span className="eyebrow-rule" />
         <span>Nielsen Norman Group · {YEAR}년 기사</span>
       </div>

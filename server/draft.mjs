@@ -150,7 +150,7 @@ export function createDraftHandler({
     const prompt = [
       productionPrompt,
       "",
-      "Revise the existing Korean Instagram carousel draft according to the user's instruction.",
+      "사용자의 지시에 따라 기존 한국어 인스타그램 카드 초안을 수정한다.",
       `Return exactly ${analysis.card_plan.length} cards, matching GROUNDED ANALYSIS.card_plan.`,
       "Discard source_block_ids from the current draft when they are not in the new grounded analysis.",
       `Use source_block_ids only from this exact allowlist: ${allowedBlockIds.join(", ")}.`,
@@ -303,7 +303,7 @@ export function createDraftHandler({
         return true;
       }
 
-      sendJson(response, 405, { error: "Method not allowed" });
+      sendJson(response, 405, { error: "허용되지 않은 요청 방식입니다." });
       return true;
     }
 

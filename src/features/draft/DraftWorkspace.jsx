@@ -13,6 +13,8 @@ import { ReadOnlyNotice } from "../../shared/ReadOnlyNotice.jsx";
 
 import { SourceBadges } from "../../shared/SourceBadges.jsx";
 
+import { ASSIGNMENT_LABELS, CARD_ROLE_LABELS, koreanLabel } from "../../shared/koreanLabels.js";
+
 import { HtmlCardCanvas, ModelHtmlCanvas } from "./DraftCanvases.jsx";
 
 function DraftWorkspace({ slug }) {
@@ -97,7 +99,7 @@ function DraftWorkspace({ slug }) {
     return (
       <main className="analysis-loading">
         {status === "loading" ? <span className="spinner dark" /> : <CircleHelp size={24} />}
-        <strong>{status === "loading" ? "Draft를 불러오는 중" : "생성된 Draft가 없습니다."}</strong>
+        <strong>{status === "loading" ? "초안을 불러오는 중" : "생성된 초안이 없습니다."}</strong>
         {error && <p>{error}</p>}
         <a href="#/cards">카드 리스트로 돌아가기</a>
       </main>
@@ -135,7 +137,7 @@ function DraftWorkspace({ slug }) {
           <ArrowLeft size={16} /> 요약본
         </a>
         <div className="draft-source-title">
-          <span>DRAFT FROM</span>
+          <span>초안의 원문</span>
           <strong>{document.source.title}</strong>
         </div>
         <div className="draft-card-list">
@@ -151,7 +153,7 @@ function DraftWorkspace({ slug }) {
                 <strong>{item.headline_ko}</strong>
               </span>
               <span>
-                <em>{item.role}</em>
+                <em>{koreanLabel(item.role, CARD_ROLE_LABELS)}</em>
                 <strong>{item.headline_ko}</strong>
               </span>
             </button>
@@ -163,20 +165,20 @@ function DraftWorkspace({ slug }) {
         <header className="draft-stage-header">
           <div>
             <div className="eyebrow">
-              <span>DRAFT WORKSPACE</span>
+              <span>초안 작업실</span>
               <span className="eyebrow-rule" />
-              <span>REV {revision.revision}</span>
+              <span>수정본 {revision.revision}</span>
             </div>
             <h1>{revision.draft_title_ko}</h1>
           </div>
           <div className="draft-status">
             <span className="draft-model-badge">
-              {selectedRun?.provider || "Provider"} ·{" "}
-              {selectedRun?.model || "model unavailable"}
+              {selectedRun?.provider || "제공자 정보 없음"} ·{" "}
+              {selectedRun?.model || "모델 정보 없음"}
             </span>
             <span>
               <span className="status-dot" />
-              {isHistorical ? "과거 리비전" : "Current"}
+              {isHistorical ? "이전 수정본" : "현재 수정본"}
             </span>
           </div>
         </header>
@@ -201,11 +203,11 @@ function DraftWorkspace({ slug }) {
 
         <div className="draft-evidence-row">
           <div>
-            <span>SOURCE BLOCKS</span>
+            <span>원문 근거</span>
             <SourceBadges ids={card.source_block_ids} />
           </div>
           <div>
-            <span>DESIGN RULES</span>
+            <span>디자인 규칙</span>
             <SourceBadges ids={card.design_rule_ids} />
           </div>
         </div>
@@ -214,7 +216,7 @@ function DraftWorkspace({ slug }) {
       <aside className="draft-tune-panel">
         <div className="evidence-heading">
           <div>
-            <span>PROMPT CUSTOMIZATION</span>
+            <span>수정 요청</span>
             <h2>말로 수정하기</h2>
           </div>
           <MessageSquare size={19} />
@@ -226,10 +228,10 @@ function DraftWorkspace({ slug }) {
         </div>
 
         <div className="draft-assignment-summary">
-          <span>TYPOGRAPHY</span>
-          <strong>{editor?.typography.title_zone} · {editor?.typography.title_align} · {editor?.typography.title_scale}</strong>
-          <span>CHARACTER</span>
-          <strong>{editor?.characterAssignment ? `${editor.characterAssignment.pose} · ${editor.characterAssignment.position} · ${editor.characterAssignment.scale}` : "배정 없음"}</strong>
+          <span>글씨 배정</span>
+          <strong>{editor ? `${koreanLabel(editor.typography.title_zone, ASSIGNMENT_LABELS)} · ${koreanLabel(editor.typography.title_align, ASSIGNMENT_LABELS)} · ${koreanLabel(editor.typography.title_scale, ASSIGNMENT_LABELS)}` : "정보 없음"}</strong>
+          <span>캐릭터 배정</span>
+          <strong>{editor?.characterAssignment ? `${koreanLabel(editor.characterAssignment.pose, ASSIGNMENT_LABELS)} · ${koreanLabel(editor.characterAssignment.position, ASSIGNMENT_LABELS)} · ${koreanLabel(editor.characterAssignment.scale, ASSIGNMENT_LABELS)}` : "배정 없음"}</strong>
         </div>
 
         {editor?.imageSrc ? (
@@ -241,7 +243,7 @@ function DraftWorkspace({ slug }) {
         )}
 
         <div className="revision-selector">
-          <span>REVISION HISTORY</span>
+          <span>수정 기록</span>
           <div>
             {visibleRevisions.map((item) => (
               (() => {
@@ -276,7 +278,7 @@ function DraftWorkspace({ slug }) {
           <ReadOnlyNotice what="초안 수정" />
         ) : (
           <div className="tune-box">
-            <label htmlFor="draft-instruction">CUSTOM PROMPT</label>
+            <label htmlFor="draft-instruction">수정 요청</label>
             <textarea
               id="draft-instruction"
               value={instruction}
@@ -318,11 +320,11 @@ function DraftWorkspace({ slug }) {
         )}
 
         <div className="evidence-section">
-          <span className="section-label">SELECTED MODEL RUN</span>
+          <span className="section-label">선택한 모델 실행</span>
           <dl className="evidence-list">
-            <div><dt>Provider</dt><dd>{selectedRun?.provider}</dd></div>
-            <div><dt>Model</dt><dd>{selectedRun?.model}</dd></div>
-            <div><dt>Usage</dt><dd className="positive">{selectedRun?.usage_source}</dd></div>
+            <div><dt>제공자</dt><dd>{selectedRun?.provider}</dd></div>
+            <div><dt>모델</dt><dd>{selectedRun?.model}</dd></div>
+            <div><dt>사용량 근거</dt><dd className="positive">{selectedRun?.usage_source === "actual" ? "실측" : selectedRun?.usage_source === "unavailable" ? "정보 없음" : selectedRun?.usage_source}</dd></div>
           </dl>
         </div>
       </aside>

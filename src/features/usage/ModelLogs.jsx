@@ -125,8 +125,8 @@ function ModelLogs() {
     <section className="model-log-page">
       <header className="model-log-heading">
         <div>
-          <span>MODEL TRACE</span>
-          <h1>Input / Output Log</h1>
+          <span>모델 실행 기록</span>
+          <h1>입력·출력 기록</h1>
         </div>
         <div className="model-log-view-toggle">
           <button
@@ -160,9 +160,9 @@ function ModelLogs() {
               >
                 <div>
                   <span className={`run-status ${run.status}`} />
-                  <strong>{run.operation || "model_run"}</strong>
+                  <strong>{run.operation || "모델 실행"}</strong>
                 </div>
-                <p>{run.slug || "global"}</p>
+                <p>{run.slug || "공통"}</p>
                 <small>
                   {run.model} ·{" "}
                   {new Date(run.started_at).toLocaleTimeString("ko-KR")}
@@ -183,31 +183,39 @@ function ModelLogs() {
             <>
               <div className="model-log-meta">
                 <div>
-                  <span>STATUS</span>
-                  <strong className={selected.status}>{selected.status}</strong>
+                  <span>상태</span>
+                  <strong className={selected.status}>
+                    {selected.status === "running"
+                      ? "실행 중"
+                      : selected.status === "completed"
+                        ? "완료"
+                        : selected.status === "failed"
+                          ? "실패"
+                          : selected.status}
+                  </strong>
                 </div>
                 <div>
-                  <span>MODEL</span>
+                  <span>모델</span>
                   <strong>{selected.model}</strong>
                 </div>
                 <div>
-                  <span>INPUT · CACHE EXCLUDED</span>
+                  <span>입력 · 캐시 제외</span>
                   <strong>{tokens.input.toLocaleString()}</strong>
                 </div>
                 <div>
-                  <span>CACHED</span>
+                  <span>캐시</span>
                   <strong>{tokens.cached.toLocaleString()}</strong>
                 </div>
                 <div>
-                  <span>OUTPUT</span>
+                  <span>출력</span>
                   <strong>{tokens.output.toLocaleString()}</strong>
                 </div>
                 <div>
-                  <span>DURATION</span>
+                  <span>소요 시간</span>
                   <strong>
                     {selected.duration_ms != null
                       ? `${(selected.duration_ms / 1000).toFixed(1)}s`
-                      : "running"}
+                      : "실행 중"}
                   </strong>
                 </div>
               </div>
@@ -216,7 +224,7 @@ function ModelLogs() {
                 <div className="model-audience-view">
                   <section className="model-audience-input">
                     <header>
-                      <span>01 · INPUT</span>
+                      <span>01 · 입력</span>
                       <h2>무엇을 함께 넣었나</h2>
                     </header>
                     {/* 신호는 프롬프트 원문을 훑어 판정한다. 원문이 없으면
@@ -250,7 +258,7 @@ function ModelLogs() {
                   </section>
 
                   <div className="model-audience-arrow">
-                    <span>02 · MODEL</span>
+                    <span>02 · 모델</span>
                     <strong>{selected.model}</strong>
                     <small>
                       {selected.status === "running"
@@ -261,7 +269,7 @@ function ModelLogs() {
 
                   <section className="model-audience-output">
                     <header>
-                      <span>03 · OUTPUT</span>
+                      <span>03 · 출력</span>
                       <h2>
                         {outputCards.length
                           ? `${outputCards.length}장의 카드 초안`
@@ -311,7 +319,7 @@ function ModelLogs() {
                       구별하지 않으면 "입력 준비 중"이라는 거짓 상태가 남는다. */}
                   <section className="model-io-panel input">
                     <header>
-                      <span>MODEL INPUT</span>
+                      <span>모델 입력</span>
                       <strong>실제 전달 프롬프트</strong>
                     </header>
                     <pre>
@@ -325,7 +333,7 @@ function ModelLogs() {
 
                   {!selected.input_omitted && (
                     <details className="model-schema-panel">
-                      <summary>STRUCTURED OUTPUT SCHEMA</summary>
+                      <summary>구조화 출력 스키마</summary>
                       <pre>
                         {JSON.stringify(selected.input?.schema || {}, null, 2)}
                       </pre>
@@ -334,7 +342,7 @@ function ModelLogs() {
 
                   <section className="model-io-panel output">
                     <header>
-                      <span>MODEL OUTPUT</span>
+                      <span>모델 출력</span>
                       <strong>구조화 응답 원문</strong>
                     </header>
                     <pre>
@@ -352,7 +360,7 @@ function ModelLogs() {
           ) : (
             <div className="model-log-placeholder">
               <FileText size={28} />
-              <strong>실행을 선택하면 Input과 Output이 표시됩니다.</strong>
+              <strong>실행을 선택하면 입력과 출력이 표시됩니다.</strong>
             </div>
           )}
         </section>

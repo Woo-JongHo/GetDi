@@ -78,3 +78,12 @@ test("캐릭터가 3장을 넘으면 거부한다", () => {
     /최대 3장/,
   );
 });
+
+test("한국어 필드가 영어로만 작성되면 거부한다", () => {
+  const invalid = draft();
+  invalid.cards[1].headline_ko = "English only";
+  assert.throws(
+    () => validateDraftOutput(invalid, analysis, source, ["RULE-1"]),
+    /한국어 문구/,
+  );
+});

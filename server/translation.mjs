@@ -159,7 +159,7 @@ export function createTranslationHandler({
       return true;
     }
 
-    sendJson(response, 405, { error: "Method not allowed" });
+    sendJson(response, 405, { error: "허용되지 않은 요청 방식입니다." });
     return true;
   };
 }

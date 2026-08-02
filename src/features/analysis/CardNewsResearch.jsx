@@ -188,11 +188,11 @@ function CardNewsResearch() {
       <header className="research-header reference-library-header">
         <div>
           <div className="eyebrow">
-            <span>LOCAL REFERENCE LIBRARY</span>
+            <span>로컬 레퍼런스 보관함</span>
             <span className="eyebrow-rule" />
-            <span>{references.length} IMAGES</span>
+            <span>이미지 {references.length}장</span>
           </div>
-          <h1>Reference<br />foundation.</h1>
+          <h1>시각 기준<br />자료.</h1>
         </div>
         <div className="reference-library-actions">
           <input
@@ -203,7 +203,7 @@ function CardNewsResearch() {
             hidden
             onChange={(event) => uploadFiles(event.target.files)}
           />
-          <span>{uploadProgress || "PNG · JPG · LOCAL ONLY"}</span>
+          <span>{uploadProgress || "PNG · JPG · 로컬 전용"}</span>
           <button type="button" onClick={() => fileInput.current?.click()}>
             <ImageIcon size={15} /> 이미지 추가
           </button>
@@ -221,7 +221,7 @@ function CardNewsResearch() {
         <section className="reference-library-workspace">
           <div className="reference-archive">
             <div className="reference-archive-heading">
-              <span>PROVIDED IMAGES</span>
+              <span>제공 이미지</span>
               <strong>생성 프롬프트의 시각 근거</strong>
             </div>
             <div className="reference-archive-grid">
@@ -265,7 +265,7 @@ function CardNewsResearch() {
                 </div>
 
                 <section className="reference-analysis-summary">
-                  <span>ANALYZED FOUNDATION</span>
+                  <span>분석한 시각 기준</span>
                   <h2>{selectedSet?.label || "분석 준비 중"}</h2>
                   <p>
                     {selectedSet?.summary
@@ -284,7 +284,7 @@ function CardNewsResearch() {
                       <strong>{rule.title}</strong>
                       <p>{rule.instruction}</p>
                       <small>
-                        EVIDENCE · {(rule.evidence_cards || []).join(", ")}
+                        근거 · {(rule.evidence_cards || []).join(", ")}
                       </small>
                     </article>
                   ))}
@@ -311,7 +311,7 @@ function CardNewsResearch() {
       )}
 
       <section className="reference-pipeline">
-        <span>GENERATION INPUT</span>
+        <span>생성 입력</span>
         <div>
           <article>
             <em>01</em>
@@ -327,7 +327,7 @@ function CardNewsResearch() {
           <span>→</span>
           <article>
             <em>03</em>
-            <strong>Reference profile</strong>
+            <strong>레퍼런스 프로필</strong>
             <p>이 저장창고에서 분석한 구조·무드·이미지 규칙</p>
           </article>
           <span>→</span>
@@ -350,7 +350,7 @@ function ResearchVisual({ type }) {
         <span className="measure vertical">1350</span>
         <div className="demo-card">
           <span>4:5</span>
-          <strong>FULL FEED<br />CANVAS</strong>
+          <strong>피드 전체<br />캔버스</strong>
         </div>
       </div>
     );
@@ -373,7 +373,7 @@ function ResearchVisual({ type }) {
         {[1, 2, 3].map((number) => (
           <div key={number}>
             <span>0{number}</span>
-            <strong>{number === 2 ? "ONE IDEA" : "NEXT"}</strong>
+            <strong>{number === 2 ? "한 가지 주장" : "다음"}</strong>
           </div>
         ))}
       </div>
@@ -384,7 +384,7 @@ function ResearchVisual({ type }) {
     return (
       <div className="research-demo image-demo">
         <div>
-          <span>CLAIM</span>
+          <span>주장</span>
           <strong>이미지는<br />주장을 설명한다</strong>
         </div>
         <div className="image-diagram">
@@ -392,7 +392,7 @@ function ResearchVisual({ type }) {
           <span />
           <span />
         </div>
-        <div className="decorative-image">DECORATION ×</div>
+        <div className="decorative-image">장식용 ×</div>
       </div>
     );
   }
@@ -421,8 +421,8 @@ function ResearchVisual({ type }) {
         <span>12.6 : 1</span>
       </div>
       <div className="contrast-light">
-        <strong>PASS</strong>
-        <span>4.5 : 1 minimum</span>
+        <strong>통과</strong>
+        <span>최소 4.5 : 1</span>
       </div>
     </div>
   );

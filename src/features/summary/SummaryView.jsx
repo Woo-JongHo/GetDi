@@ -20,6 +20,7 @@ import { ReadOnlyNotice } from "../../shared/ReadOnlyNotice.jsx";
 import { EvidencePanel } from "../evidence/EvidencePanel.jsx";
 
 import { SourceBadges } from "../../shared/SourceBadges.jsx";
+import { CARD_ROLE_LABELS, koreanLabel } from "../../shared/koreanLabels.js";
 
 /**
  * 화면 3 — 요약본.
@@ -283,7 +284,7 @@ function SummaryView({ slug }) {
         </a>
 
         <div className="eyebrow">
-          <span>STEP 03</span>
+          <span>03단계</span>
           <span className="eyebrow-rule" />
           <span>{formatDate(detail.published_date)}</span>
         </div>
@@ -461,7 +462,7 @@ function LocalOnlySource() {
   return (
     <div className="translation-empty">
       <div className="translation-icon"><ShieldAlert size={24} /></div>
-      <span className="empty-kicker">LOCAL ONLY</span>
+      <span className="empty-kicker">로컬 전용</span>
       <h2>원문 스냅샷은 로컬 전용입니다</h2>
       <p>공개 배포본에는 원문 전문·전체 번역·원본 이미지가 포함되지 않습니다.</p>
     </div>
@@ -477,7 +478,7 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
         <div className="translation-icon">
           <Sparkles size={24} />
         </div>
-        <span className="empty-kicker">ANALYSIS</span>
+        <span className="empty-kicker">기사 분석</span>
         <h2>{running ? "분석하는 중" : "아직 분석하지 않았습니다"}</h2>
         <p>
           {READ_ONLY
@@ -594,7 +595,7 @@ function AnalysisSection({ analysis, error, onAnalyze, status }) {
             <article key={card.position}>
               <div className="plan-card-top">
                 <span>{String(card.position).padStart(2, "0")}</span>
-                <em>{card.role}</em>
+                <em>{koreanLabel(card.role, CARD_ROLE_LABELS)}</em>
               </div>
               <h3>{card.headline_ko}</h3>
               <p>{card.purpose_ko}</p>
@@ -626,7 +627,7 @@ function TranslationEmpty({ error, onTranslate, status }) {
       <div className="translation-icon">
         <Languages size={24} />
       </div>
-      <span className="empty-kicker">TRANSLATION</span>
+      <span className="empty-kicker">한국어 번역</span>
       <h2>{translating ? "번역하는 중" : "한국어 번역"}</h2>
       <p>
         {READ_ONLY

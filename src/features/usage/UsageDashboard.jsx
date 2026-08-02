@@ -55,22 +55,22 @@ function UsageDashboard() {
 
   const usageCards = [
     {
-      label: "INPUT · CACHE EXCLUDED",
+      label: "입력 · 캐시 제외",
       value: uncachedInputTokens(data.usage),
       tone: "purple",
     },
     {
-      label: "CACHED INPUT",
+      label: "캐시 입력",
       value: data.usage.cached_input_tokens,
       tone: "green",
     },
     {
-      label: "OUTPUT",
+      label: "출력",
       value: data.usage.output_tokens,
       tone: "orange",
     },
     {
-      label: "REASONING",
+      label: "추론",
       value: data.usage.reasoning_output_tokens,
       tone: "ink",
     },
@@ -81,11 +81,11 @@ function UsageDashboard() {
       <header className="usage-header">
         <div>
           <div className="eyebrow">
-            <span>LIVE SESSION</span>
+            <span>현재 세션</span>
             <span className="eyebrow-rule" />
             <span>{data.session.originator}</span>
           </div>
-          <h1>Conversation<br />telemetry.</h1>
+          <h1>대화<br />사용량.</h1>
         </div>
         <button
           type="button"
@@ -116,8 +116,8 @@ function UsageDashboard() {
         <div className="context-meter-card">
           <div className="usage-section-heading">
             <div>
-              <span>CURRENT CONTEXT</span>
-              <h2>{data.context_percent.toFixed(1)}% occupied</h2>
+              <span>현재 문맥</span>
+              <h2>{data.context_percent.toFixed(1)}% 사용 중</h2>
             </div>
             <strong>
               {data.context_used.toLocaleString()} /{" "}
@@ -130,13 +130,13 @@ function UsageDashboard() {
         </div>
 
         <div className="session-card">
-          <span>SESSION</span>
+          <span>세션</span>
           <dl>
             <div><dt>ID</dt><dd>{data.session.id?.slice(0, 8)}</dd></div>
-            <div><dt>Model</dt><dd>{data.session.model || "unavailable"}</dd></div>
-            <div><dt>Provider</dt><dd>{data.session.model_provider}</dd></div>
+            <div><dt>모델</dt><dd>{data.session.model || "정보 없음"}</dd></div>
+            <div><dt>제공자</dt><dd>{data.session.model_provider}</dd></div>
             <div>
-              <dt>Messages</dt>
+              <dt>메시지</dt>
               <dd>{data.message_counts.user + data.message_counts.assistant}</dd>
             </div>
           </dl>
@@ -146,26 +146,26 @@ function UsageDashboard() {
       <section className="usage-activity">
         <div className="usage-section-heading">
           <div>
-            <span>CUMULATIVE TOKEN EVENTS</span>
-            <h2>Token flow</h2>
+            <span>누적 토큰 변화</span>
+            <h2>토큰 흐름</h2>
           </div>
-          <strong>{data.series.length} sampled events</strong>
+          <strong>{data.series.length}개 측정 시점</strong>
         </div>
         <TokenChart series={data.series} />
         <div className="chart-legend">
-          <span className="input">Total processed</span>
-          <span className="output">Assistant output</span>
+          <span className="input">전체 처리량</span>
+          <span className="output">도우미 출력</span>
         </div>
       </section>
 
       <section className="conversation-section">
         <div className="usage-section-heading">
           <div>
-            <span>RECENT CONVERSATION</span>
+            <span>최근 대화</span>
             <h2>우리 대화</h2>
           </div>
           <strong>
-            User {data.message_counts.user} · Assistant{" "}
+            사용자 {data.message_counts.user} · 도우미{" "}
             {data.message_counts.assistant}
           </strong>
         </div>
@@ -182,7 +182,7 @@ function UsageDashboard() {
                   ) : (
                     <Sparkles size={13} />
                   )}
-                  {message.role}
+                  {message.role === "user" ? "사용자" : "도우미"}
                 </span>
                 <time>
                   {new Date(message.timestamp).toLocaleTimeString("ko-KR", {
@@ -194,17 +194,17 @@ function UsageDashboard() {
               <p>{message.text}</p>
               {message.role === "assistant" && (
                 <div className="message-usage">
-                  <span>{message.model || "model unavailable"}</span>
+                  <span>{message.model || "모델 정보 없음"}</span>
                   <span>
-                    IN{" "}
+                    입력{" "}
                     {message.usage?.input_tokens != null
                       ? uncachedInputTokens(message.usage).toLocaleString()
-                      : "unavailable"}
+                      : "정보 없음"}
                   </span>
                   <span>
-                    OUT{" "}
+                    출력{" "}
                     {message.usage?.output_tokens?.toLocaleString() ||
-                      "unavailable"}
+                      "정보 없음"}
                   </span>
                 </div>
               )}
