@@ -81,14 +81,15 @@ Read [references/cardnews-foundations.md](references/cardnews-foundations.md) wh
 
 ## Prompt Inventory
 
-Audited 2026-07-27. `references/` holds both runtime prompts and agent-facing
-docs. Only the first three are read by product code.
+Audited 2026-08-02. `references/` holds runtime prompts, agent-facing docs,
+and one archived HTML-production prompt. Only the first two are read by
+product code.
 
 | file | role | loaded by |
 |---|---|---|
 | `cardnews-generation-prompt.md` | analysis and card planning | `runArticleAnalysis` |
 | `cardnews-production-prompt.md` | final card copy | `generateDraft`, `reviseDraft` |
-| `html-card-production-prompt.md` | HTML card rendering | `generateHtmlRevision`, `generateCoverRevision` |
+| `html-card-production-prompt.md` | archived HTML card rendering reference | not loaded by product code |
 | `output-contract.md` | JSON artifact shape for this skill | this SKILL.md only |
 | `cardnews-foundations.md` | research boundary notes | this SKILL.md only |
 
