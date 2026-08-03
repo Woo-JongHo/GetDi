@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import os from "node:os";
 import {
   copyFile,
   mkdir,
@@ -42,7 +43,12 @@ export function createReferencesHandler({ rootDir }) {
     "KakaoTalk_Photo_2026-07-25-20-57-14 009.png",
     "KakaoTalk_Photo_2026-07-25-20-57-14 010.png",
     "KakaoTalk_Photo_2026-07-25-20-57-15 011.png",
-  ].map((name) => path.join("/Users/jonghoPro/Downloads", name));
+  ].map((name) =>
+    path.join(
+      process.env.GETDI_REFERENCE_IMPORT_DIR || path.join(os.homedir(), "Downloads"),
+      name,
+    ),
+  );
   let referenceWriteQueue = Promise.resolve();
   let evidenceWriteQueue = Promise.resolve();
 

@@ -9,14 +9,22 @@
 
 마지막 10장은 "코드를 읽고 싶을 때" 어디부터 보면 되는지다.
 
+### GetDi 폴더로 이동하는 법
+
+터미널에 `cd `를 입력한다.
+`cd` 뒤에 공백 하나를 둔다.
+Finder에서 **GetDi 폴더를 터미널 창으로 끌어 놓고** 엔터를 누른다.
+컴퓨터마다 설치 위치가 달라서 이 문서에 특정 사용자의 경로를 적지 않는다.
+
 ## Claude Code로 안내받기
 
 Claude Code를 쓰고 있다면 이 문서를 처음부터 외울 필요가 없다.
 
 ```bash
-cd ~/woo/00_project/18_GetDi
 claude
 ```
+
+위 명령은 먼저 GetDi 폴더로 이동한 뒤 실행한다.
 
 Claude Code가 열리면 아래처럼 입력한다.
 
@@ -93,8 +101,9 @@ node --version
 
 터미널에 아래를 한 줄씩 붙여넣는다.
 
+먼저 위의 **GetDi 폴더로 이동하는 법**을 따라 이동한다.
+
 ```bash
-cd ~/woo/00_project/18_GetDi
 npm install
 ```
 
@@ -112,8 +121,9 @@ npm install
 
 ### 켤 때
 
+먼저 GetDi 폴더로 이동한 뒤 실행한다.
+
 ```bash
-cd ~/woo/00_project/18_GetDi
 npm run dev
 ```
 
