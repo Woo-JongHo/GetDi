@@ -1,7 +1,8 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { readRequestJson, sendJson } from "./http.mjs";
 import { CHARACTER_POSE_IDS, createDraftContract } from "./draft-contract.mjs";
+import { summarizeDraftChanges } from "./draft-revision.mjs";
 
 
 export function createDraftHandler({
@@ -73,7 +74,12 @@ export function createDraftHandler({
         allowedRules: allowedRuleIds,
       }),
       timeoutMessage: "Draft 생성 시간이 3분을 초과했습니다.",
-      runMeta: { operation: "draft_generation", slug },
+      runMeta: {
+        operation: "draft_generation",
+        slug,
+        prompt_version: "cardnews-production-v2",
+        source_block_ids: analysisBlockIds(analysis),
+      },
     });
     validateDraftOutput(output, analysis, source, allowedRuleIds);
     const modelUsage = normalizeModelUsage(envelope);
@@ -94,6 +100,7 @@ export function createDraftHandler({
           prompt_profile: "cardnews-production-v2",
           analysis_prompt_version: analysis.prompt_version || "legacy",
           analysis_created_at: analysis.created_at,
+          source_revision_id: source.revision_id || null,
           reference_profile_id: reference.profile.id,
           reference_analyzed_at: reference.analyzed_at,
           ...output,
@@ -185,6 +192,8 @@ export function createDraftHandler({
             slug,
             requested_variant: "fable",
             base_revision: document.current_revision,
+            prompt_version: "cardnews-production-v2",
+            source_block_ids: allowedBlockIds,
           },
         })
       : await runCodexStructured({
@@ -201,15 +210,21 @@ export function createDraftHandler({
             slug,
             requested_variant: "sol",
             base_revision: document.current_revision,
+            prompt_version: "cardnews-production-v2",
+            source_block_ids: allowedBlockIds,
           },
         });
     validateDraftOutput(output, analysis, source, allowedRuleIds);
     const revisionNumber = document.current_revision + 1;
     const now = new Date().toISOString();
     const modelUsage = normalizeModelUsage(envelope);
-    document.current_revision = revisionNumber;
-    document.updated_at = now;
-    document.revisions.push({
+    const latestDocument = JSON.parse(await readFile(cachePath, "utf8"));
+    if (latestDocument.current_revision !== expectedRevision) {
+      const error = new Error("다른 수정본이 먼저 생성됐습니다. 생성 결과를 버리고 최신 Draft를 다시 불러오세요.");
+      error.code = "REVISION_CONFLICT";
+      throw error;
+    }
+    const nextRevision = {
       revision: revisionNumber,
       created_at: now,
       instruction: instruction.trim(),
@@ -217,11 +232,16 @@ export function createDraftHandler({
       prompt_profile: "cardnews-production-v2",
       analysis_prompt_version: analysis.prompt_version || "legacy",
       analysis_created_at: analysis.created_at,
+      source_revision_id: source.revision_id || null,
       reference_profile_id: reference.profile.id,
       reference_analyzed_at: reference.analyzed_at,
+      change_summary: summarizeDraftChanges(current, output),
       ...output,
-    });
-    document.model_runs.push({
+    };
+    latestDocument.current_revision = revisionNumber;
+    latestDocument.updated_at = now;
+    latestDocument.revisions.push(nextRevision);
+    latestDocument.model_runs.push({
       purpose: "draft_revision",
       revision: revisionNumber,
       provider: useFable ? "Claude Code" : envelope.provider,
@@ -231,8 +251,10 @@ export function createDraftHandler({
       duration_ms: envelope.duration_ms ?? null,
       models: modelUsage,
     });
-    await writeFile(cachePath, `${JSON.stringify(document, null, 2)}\n`, "utf8");
-    return document;
+    const temporaryPath = `${cachePath}.tmp`;
+    await writeFile(temporaryPath, `${JSON.stringify(latestDocument, null, 2)}\n`, "utf8");
+    await rename(temporaryPath, cachePath);
+    return latestDocument;
   }
 
   async function handleDraft(request, response, url) {

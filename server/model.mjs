@@ -10,6 +10,7 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 import { sendJson } from "./http.mjs";
+import { normalizeModelRun } from "./model-run.mjs";
 
 export function createModelHandler({ rootDir }) {
   const modelLogDir = path.join(rootDir, "data/private/model-logs");
@@ -23,7 +24,24 @@ export function createModelHandler({ rootDir }) {
     } catch (error) {
       if (error.code !== "ENOENT") throw error;
     }
-    const next = { ...current, ...patch, id: runId };
+    const priorUsage = current.tokens
+      ? {
+          input_tokens: current.tokens.input,
+          output_tokens: current.tokens.output,
+          cached_input_tokens: current.tokens.cached_input,
+          reasoning_output_tokens: current.tokens.reasoning_output,
+          total_cost_usd: current.cost?.usd,
+        }
+      : undefined;
+    const raw = {
+      ...current,
+      operation: current.stage,
+      duration_ms: current.latency_ms,
+      usage: priorUsage,
+      ...patch,
+      id: runId,
+    };
+    const next = normalizeModelRun(raw);
     const temporaryPath = `${logPath}.tmp`;
     await writeFile(temporaryPath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
     await rename(temporaryPath, logPath);
@@ -51,7 +69,7 @@ export function createModelHandler({ rootDir }) {
         .sort((a, b) =>
           (b.started_at || "").localeCompare(a.started_at || ""),
         );
-      return { runs: logs.slice(0, 100) };
+      return { runs: logs.slice(0, 100).map(normalizeModelRun) };
     } catch (error) {
       if (error.code === "ENOENT") return { runs: [] };
       throw error;
@@ -73,7 +91,7 @@ export function createModelHandler({ rootDir }) {
       model: "claude-fable-5",
       reasoning_effort: null,
       started_at: new Date(startedAt).toISOString(),
-      input: { prompt, schema },
+      prompt_version: runMeta.prompt_version || null,
     });
     return new Promise((resolve, reject) => {
       const child = spawn(
@@ -154,7 +172,6 @@ export function createModelHandler({ rootDir }) {
             status: "completed",
             completed_at: new Date().toISOString(),
             duration_ms: Date.now() - startedAt,
-            output,
             usage: {
               total_cost_usd: envelope.total_cost_usd ?? null,
               models: envelope.modelUsage || {},
@@ -195,7 +212,7 @@ export function createModelHandler({ rootDir }) {
       model,
       reasoning_effort: effort,
       started_at: new Date(startedAt).toISOString(),
-      input: { prompt, schema },
+      prompt_version: runMeta.prompt_version || null,
     });
     const temporaryDir = path.join(rootDir, "data/private/model-runs");
     const schemaPath = path.join(temporaryDir, `${runId}.schema.json`);
@@ -320,7 +337,6 @@ export function createModelHandler({ rootDir }) {
             status: "completed",
             completed_at: new Date().toISOString(),
             duration_ms: Date.now() - startedAt,
-            output,
             usage,
           });
           resolve({

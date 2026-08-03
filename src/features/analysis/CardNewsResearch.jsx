@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { Image as ImageIcon, ShieldAlert } from "lucide-react";
+import { Check, Image as ImageIcon, ShieldAlert, X } from "lucide-react";
 
 import { apiFetch } from "../../shared/api.js";
 
@@ -100,6 +100,7 @@ const GETDI_BASELINE = [
 function CardNewsResearch() {
   const [references, setReferences] = useState([]);
   const [analysis, setAnalysis] = useState(null);
+  const [evidence, setEvidence] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [status, setStatus] = useState("loading");
   const [uploadProgress, setUploadProgress] = useState("");
@@ -109,9 +110,10 @@ function CardNewsResearch() {
   async function loadLibrary() {
     setError("");
     try {
-      const [libraryResponse, analysisResponse] = await Promise.all([
+      const [libraryResponse, analysisResponse, evidenceResponse] = await Promise.all([
         apiFetch("/api/references"),
         apiFetch("/api/reference-analysis"),
+        apiFetch("/api/evidence/candidates"),
       ]);
       const library = await libraryResponse.json();
       if (!libraryResponse.ok) {
@@ -120,11 +122,41 @@ function CardNewsResearch() {
       setReferences(library.items || []);
       setSelectedId((current) => current || library.items?.[0]?.id || null);
       if (analysisResponse.ok) setAnalysis(await analysisResponse.json());
+      if (evidenceResponse.ok) {
+        const payload = await evidenceResponse.json();
+        setEvidence(payload.candidates || []);
+        const targetRule = new URLSearchParams(window.location.hash.split("?")[1] || "").get("rule");
+        const target = payload.candidates?.find((candidate) => candidate.target.id === targetRule);
+        if (target) {
+          const matchingReference = library.items?.find(
+            (item) => item.reference_set === target.source_locator.profile_id,
+          );
+          if (matchingReference) setSelectedId(matchingReference.id);
+          window.requestAnimationFrame(() => {
+            document.getElementById(`evidence-${targetRule}`)?.scrollIntoView({ block: "center" });
+          });
+        }
+      }
       setStatus("ready");
     } catch (requestError) {
       setError(requestError.message);
       setStatus("error");
     }
+  }
+
+  async function reviewCandidate(candidateId, status) {
+    setError("");
+    const response = await apiFetch("/api/evidence/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ candidate_id: candidateId, status }),
+    });
+    const payload = await response.json();
+    if (!response.ok) {
+      setError(payload.error || "근거 검토를 저장하지 못했습니다.");
+      return;
+    }
+    await loadLibrary();
   }
 
   useEffect(() => {
@@ -275,19 +307,34 @@ function CardNewsResearch() {
                 </section>
 
                 <div className="reference-rule-stack">
-                  {(selectedSet?.rules || []).map((rule) => (
-                    <article key={rule.id}>
+                  {(selectedSet?.rules || []).map((rule) => {
+                    const candidate = evidence.find(
+                      (item) => item.id === `design-rule:${selectedSet.id}:${rule.id}`,
+                    );
+                    return <article id={`evidence-${rule.id}`} key={rule.id}>
                       <div>
                         <span>{rule.id}</span>
-                        <em>{rule.confidence}</em>
+                        <em>{candidate?.review_status || "pending"}</em>
                       </div>
                       <strong>{rule.title}</strong>
+                      <small>관찰 · {candidate?.observation || "근거 확인 전"}</small>
                       <p>{rule.instruction}</p>
                       <small>
                         근거 · {(rule.evidence_cards || []).join(", ")}
                       </small>
-                    </article>
-                  ))}
+                      <div className="reference-review-actions">
+                        <button type="button" onClick={() => reviewCandidate(candidate.id, "approved")} disabled={!candidate}>
+                          <Check size={13} /> 승인
+                        </button>
+                        <button type="button" onClick={() => reviewCandidate(candidate.id, "needs-change")} disabled={!candidate}>
+                          수정 요청
+                        </button>
+                        <button type="button" onClick={() => reviewCandidate(candidate.id, "rejected")} disabled={!candidate}>
+                          <X size={13} /> 반려
+                        </button>
+                      </div>
+                    </article>;
+                  })}
                 </div>
 
                 {selectedSet?.prohibited_elements?.length > 0 && (

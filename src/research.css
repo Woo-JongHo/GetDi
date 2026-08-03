@@ -541,6 +541,26 @@
   background: #fff;
 }
 
+.reference-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.reference-review-actions button {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d6d7dc;
+  border-radius: 999px;
+  color: #313238;
+  display: inline-flex;
+  font: inherit;
+  font-size: 11px;
+  gap: 4px;
+  padding: 6px 9px;
+}
+
 .reference-rule-stack article > div {
   display: flex;
   align-items: center;

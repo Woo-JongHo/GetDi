@@ -50,6 +50,32 @@ function SummaryView({ slug }) {
   const [panelOpen, setPanelOpen] = useState(false);
   const articleRef = useRef(null);
 
+  useEffect(() => {
+    if (!detail || !articleRef.current) return;
+    const query = window.location.hash.split("?")[1] || "";
+    const blockId = new URLSearchParams(query).get("block");
+    if (!blockId) return;
+    setTab("original");
+    window.requestAnimationFrame(() => {
+      const node = articleRef.current?.querySelector(
+        `[data-source-block="${CSS.escape(blockId)}"]`,
+      );
+      if (!node) {
+        setSelectedEvidence({
+          type: "block",
+          label: "근거 위치",
+          excerpt: "현재 원문 revision에서 이 블록을 찾지 못했습니다.",
+          block_id: blockId,
+          stale: true,
+        });
+        setPanelOpen(true);
+        return;
+      }
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
+      node.click();
+    });
+  }, [detail]);
+
   // 덮는 패널은 Esc로 닫히는 것이 관례다. 없으면 키보드만 쓰는 사람은
   // 열고 나서 닫을 방법을 찾아야 한다.
   useEffect(() => {

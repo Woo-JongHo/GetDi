@@ -43,17 +43,19 @@ const STEPS = [
 
 function getRoute() {
   const hash = window.location.hash;
+  const [path] = hash.split("?");
 
-  if (hash === "#/cards") return { name: "cards" };
-  if (hash === "#/guide") return { name: "guide" };
-  if (hash === "#/map") return { name: "map" };
+  if (path === "#/cards") return { name: "cards" };
+  if (path === "#/guide") return { name: "guide" };
+  if (path === "#/map") return { name: "map" };
+  if (path === "#/analysis/research") return { name: "research" };
 
-  const summaryMatch = hash.match(/^#\/summary\/(.+)$/);
+  const summaryMatch = path.match(/^#\/summary\/(.+)$/);
   if (summaryMatch) {
     return { name: "summary", slug: decodeURIComponent(summaryMatch[1]) };
   }
 
-  const draftMatch = hash.match(/^#\/draft\/(.+)$/);
+  const draftMatch = path.match(/^#\/draft\/(.+)$/);
   if (draftMatch) {
     return { name: "draft", slug: decodeURIComponent(draftMatch[1]) };
   }
@@ -94,6 +96,8 @@ function App() {
         <ServiceMap />
       ) : route.name === "guide" ? (
         <GuidePage />
+      ) : route.name === "research" ? (
+        <CardNewsResearch />
       ) : (
         <CrawlWorkspace />
       )}

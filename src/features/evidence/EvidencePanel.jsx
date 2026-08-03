@@ -47,7 +47,11 @@ function EvidencePanel({
             <span className="block-index">원문 블록 #{selected.index}</span>
           )}
           <div className="grounded-status">
-            <Check size={13} /> 근거 확인됨 · 원문 스냅샷
+            {selected.stale ? (
+              <><X size={13} /> 오래되었거나 지원되지 않는 근거</>
+            ) : (
+              <><Check size={13} /> 직접 원문 근거 · 원문 스냅샷</>
+            )}
           </div>
         </div>
       ) : (

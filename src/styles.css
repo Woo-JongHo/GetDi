@@ -208,6 +208,23 @@ a {
   overflow: auto;
 }
 
+.model-run-filters {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+}
+
+.model-run-filters select {
+  background: #fff;
+  border: 1px solid #dedfe3;
+  border-radius: 7px;
+  color: #32343a;
+  font: inherit;
+  font-size: 11px;
+  padding: 7px 8px;
+  width: 100%;
+}
+
 .model-run-list button {
   padding: 15px;
   border: 1px solid #d0cdc5;
@@ -1642,6 +1659,46 @@ a.download-html-button {
   line-height: 1.55;
 }
 
+.revision-change-summary {
+  color: #555861;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.draft-export-gate {
+  border-top: 1px solid #dedfe3;
+  display: grid;
+  gap: 9px;
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.draft-export-gate > span {
+  color: #747782;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.draft-export-gate > p {
+  color: #555861;
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.draft-export-gate > button {
+  background: #111214;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  padding: 11px 14px;
+}
+
 .tune-box {
   padding: 20px 0;
   border-bottom: 1px solid #cfcec8;
@@ -2695,6 +2752,13 @@ a.download-html-button {
   background: #f1f0eb;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 10px;
+}
+
+.source-badges a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 .core-message-card .source-badges span {

@@ -10,6 +10,7 @@ import {
 import { createCrawlHandler } from "./server/crawl.mjs";
 import { createDetailsHandler } from "./server/details.mjs";
 import { createDraftHandler } from "./server/draft.mjs";
+import { createExportHandler } from "./server/export.mjs";
 import { createModelHandler } from "./server/model.mjs";
 import { createReferencesHandler } from "./server/references.mjs";
 import { annotateSourceBlocks, imageSources } from "./server/source.mjs";
@@ -58,12 +59,14 @@ const handleTranslation = createTranslationHandler({
 });
 const handleUsage = createUsageHandler({ rootDir });
 const handleCrawl = createCrawlHandler({ rootDir });
+const handleExport = createExportHandler({ rootDir });
 const handlers = [
   handleCrawl,
   handleUsage,
   handleModel,
   handleDetails,
   handleReferences,
+  handleExport,
   handleDraft,
   handleAnalysis,
   handleTranslation,

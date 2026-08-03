@@ -92,10 +92,9 @@ export function createDraftContract({
               },
               design_rule_ids: {
                 type: "array",
-                items: {
-                  type: "string",
-                  enum: allowedRules,
-                },
+                ...(allowedRules.length
+                  ? { items: { type: "string", enum: allowedRules } }
+                  : { maxItems: 0, items: { type: "string" } }),
               },
             },
             required: [

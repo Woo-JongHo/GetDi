@@ -313,7 +313,8 @@ npm test
 ```
 
 크롤러·서버·스크립트·온보딩 진단 테스트가 전부 통과해야 한다.
-`crawler/VERIFICATION-REPORT.md`에 무엇을 어떤 기준으로 검사했는지 적혀 있다.
+검사 항목은 각 `*.test.mjs` 이름이 그대로 설명한다.
+별도 결과 보고서를 복사해 두지 않고 실행 결과를 현재 근거로 사용한다.
 
 ### 고쳐 보고 싶다면
 
@@ -329,4 +330,3 @@ npm test
 
 - 이 프로젝트가 무엇을 목표로 하는지: `README.md`
 - 카드 문구를 만드는 규칙: `skills/article-refinement/references/`
-- 파서 검증 결과: `crawler/VERIFICATION-REPORT.md`

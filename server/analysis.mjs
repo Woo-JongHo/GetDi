@@ -215,7 +215,12 @@ export function createAnalysisHandler({
       timeoutMessage: "아티클 분석 시간이 10분을 초과했습니다.",
       model: "gpt-5.6-terra",
       effort: "high",
-      runMeta: { operation: "article_analysis", slug },
+      runMeta: {
+        operation: "article_analysis",
+        slug,
+        prompt_version: "cardnews-generation-v3",
+        source_block_ids: [...annotateSourceBlocks(source.content_html).matchAll(/data-source-block="([^"]+)"/g)].map((match) => match[1]),
+      },
     });
     return {
       analyzed: output,

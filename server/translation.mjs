@@ -135,7 +135,12 @@ export function createTranslationHandler({
       timeoutMessage: "번역 시간이 10분을 초과했습니다.",
       model: "gpt-5.6-terra",
       effort: "high",
-      runMeta: { operation: "translation", slug },
+      runMeta: {
+        operation: "translation",
+        slug,
+        prompt_version: revisionBound ? "revision-bound-v2" : "legacy-v1",
+        source_block_ids: revisionBound ? source.blocks.map((block) => block.block_id) : [],
+      },
     }).then(({ output, envelope }) => ({ translated: output, envelope }));
   }
 

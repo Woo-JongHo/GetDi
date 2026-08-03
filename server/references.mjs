@@ -8,6 +8,11 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 import { readRequestJson, sendJson } from "./http.mjs";
+import {
+  approvedRuleIds,
+  createReviewEvent,
+  evidenceCandidates,
+} from "./evidence.mjs";
 
 export function createReferencesHandler({ rootDir }) {
   const referenceDir = path.join(rootDir, "data/private/references");
@@ -17,6 +22,7 @@ export function createReferencesHandler({ rootDir }) {
     rootDir,
     "data/reference-analysis.json",
   );
+  const evidenceReviewPath = path.join(rootDir, "data/state/evidence-reviews.json");
   const instagramReferenceFiles = [
     "KakaoTalk_Photo_2026-07-25-20-55-46 001.png",
     "KakaoTalk_Photo_2026-07-25-20-55-46 002.png",
@@ -38,6 +44,44 @@ export function createReferencesHandler({ rootDir }) {
     "KakaoTalk_Photo_2026-07-25-20-57-15 011.png",
   ].map((name) => path.join("/Users/jonghoPro/Downloads", name));
   let referenceWriteQueue = Promise.resolve();
+  let evidenceWriteQueue = Promise.resolve();
+
+  async function readEvidenceReviews() {
+    try {
+      return JSON.parse(await readFile(evidenceReviewPath, "utf8"));
+    } catch (error) {
+      if (error.code !== "ENOENT") throw error;
+      return { schema_version: 1, events: [] };
+    }
+  }
+
+  async function appendEvidenceReview(body) {
+    return new Promise((resolve, reject) => {
+      evidenceWriteQueue = evidenceWriteQueue.then(async () => {
+        const analysis = JSON.parse(await readFile(referenceAnalysisPath, "utf8"));
+        const reviews = await readEvidenceReviews();
+        const candidates = evidenceCandidates(analysis, reviews.events);
+        if (!candidates.some((candidate) => candidate.id === body.candidate_id)) {
+          const error = new Error("검토할 근거 후보를 찾지 못했습니다.");
+          error.statusCode = 404;
+          throw error;
+        }
+        const event = createReviewEvent({
+          candidateId: body.candidate_id,
+          status: body.status,
+          note: body.note,
+          now: new Date().toISOString(),
+          eventId: randomUUID(),
+        });
+        reviews.events.push(event);
+        await mkdir(path.dirname(evidenceReviewPath), { recursive: true });
+        const temporaryPath = `${evidenceReviewPath}.tmp`;
+        await writeFile(temporaryPath, `${JSON.stringify(reviews, null, 2)}\n`, "utf8");
+        await rename(temporaryPath, evidenceReviewPath);
+        resolve(event);
+      }).catch(reject);
+    });
+  }
 
   async function writeReferenceIndex(index) {
     await mkdir(referenceDir, { recursive: true });
@@ -179,6 +223,7 @@ export function createReferencesHandler({ rootDir }) {
 
   async function readReferenceProfile(profileId = "set-b") {
     const document = JSON.parse(await readFile(referenceAnalysisPath, "utf8"));
+    const reviews = await readEvidenceReviews();
     const set = (document.sets || []).find((candidate) => candidate.id === profileId);
     if (!set) {
       throw new Error(`Reference Library 프로필을 찾지 못했습니다: ${profileId}`);
@@ -188,7 +233,9 @@ export function createReferencesHandler({ rootDir }) {
       profile: {
         id: set.id,
         summary: set.summary,
-        rules: set.rules,
+        rules: set.rules.filter((rule) =>
+          approvedRuleIds(set.id, set.rules, reviews.events).includes(rule.id),
+        ),
         prompt_profile: set.prompt_profile,
         prohibited_elements: set.prohibited_elements,
       },
@@ -196,6 +243,30 @@ export function createReferencesHandler({ rootDir }) {
   }
 
   async function handleReferences(request, response, url) {
+    if (url.pathname === "/api/evidence/candidates" && request.method === "GET") {
+      try {
+        const analysis = JSON.parse(await readFile(referenceAnalysisPath, "utf8"));
+        const reviews = await readEvidenceReviews();
+        sendJson(response, 200, {
+          schema_version: 1,
+          candidates: evidenceCandidates(analysis, reviews.events),
+          events: reviews.events,
+        });
+      } catch (error) {
+        sendJson(response, error.code === "ENOENT" ? 404 : 500, { error: error.message });
+      }
+      return true;
+    }
+
+    if (url.pathname === "/api/evidence/reviews" && request.method === "POST") {
+      try {
+        sendJson(response, 201, await appendEvidenceReview(await readRequestJson(request)));
+      } catch (error) {
+        sendJson(response, error.statusCode || 400, { error: error.message });
+      }
+      return true;
+    }
+
     if (url.pathname === "/api/references") {
       try {
         if (request.method === "GET") {

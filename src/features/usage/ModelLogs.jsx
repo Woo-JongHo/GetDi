@@ -7,6 +7,13 @@ import { apiFetch, READ_ONLY } from "../../shared/api.js";
 import { uncachedInputTokens } from "../../shared/format.js";
 
 function modelLogTokens(run) {
+  if (run?.tokens) {
+    return {
+      input: run.tokens.input == null ? null : Math.max(0, run.tokens.input - (run.tokens.cached_input || 0)),
+      cached: run.tokens.cached_input,
+      output: run.tokens.output,
+    };
+  }
   if (run?.usage?.input_tokens != null) {
     return {
       input: uncachedInputTokens(run.usage),
@@ -34,6 +41,7 @@ function ModelLogs() {
   const [selectedId, setSelectedId] = useState(null);
   const [error, setError] = useState("");
   const [viewMode, setViewMode] = useState("audience");
+  const [filters, setFilters] = useState({ period: "all", stage: "all", provider: "all" });
 
   useEffect(() => {
     let cancelled = false;
@@ -71,38 +79,34 @@ function ModelLogs() {
     };
   }, []);
 
-  const selected = runs.find((run) => run.id === selectedId) || runs[0];
+  const visibleRuns = runs.filter((run) => {
+    if (filters.stage !== "all" && run.stage !== filters.stage) return false;
+    if (filters.provider !== "all" && run.provider !== filters.provider) return false;
+    if (filters.period === "24h" && Date.now() - new Date(run.started_at).getTime() > 86_400_000) return false;
+    return true;
+  });
+  const selected = visibleRuns.find((run) => run.id === selectedId) || visibleRuns[0];
   const tokens = modelLogTokens(selected);
-  const prompt = selected?.input?.prompt || "";
   const inputSignals = selected
     ? [
         {
           label: "카드뉴스 편집 스킬",
-          included:
-            prompt.includes("GetDi Cardnews Production Prompt") ||
-            prompt.includes("Instagram Cardnews Generation Prompt") ||
-            prompt.includes("GetDi High-Fidelity HTML Card Prompt"),
+          included: ["draft_generation", "draft_revision", "html_card_generation"].includes(selected.stage),
           detail: "논리 재구성·짧은 문장·행동 결론",
         },
         {
           label: "아티클 요약·근거",
-          included:
-            prompt.includes("GROUNDED ANALYSIS") ||
-            prompt.includes("ANNOTATED HTML") ||
-            prompt.includes("LOCKED CARD COPY"),
+          included: selected.source_block_ids?.length > 0,
           detail: "핵심 메시지와 source block",
         },
         {
           label: "이미지 레퍼런스 분석",
-          included: prompt.includes("REFERENCE IMAGE PROFILES"),
+          included: ["draft_generation", "draft_revision"].includes(selected.stage),
           detail: "18장 분석에서 추출한 구조·무드·규칙",
         },
         {
           label: "사용자 수정 지시",
-          included:
-            prompt.includes("USER INSTRUCTION") ||
-            (prompt.includes("MODEL VARIANT") &&
-              prompt.includes("RUNTIME REQUIREMENTS")),
+          included: selected.stage === "draft_revision",
           detail: "현재 요청과 모델 변형",
         },
       ]
@@ -111,22 +115,14 @@ function ModelLogs() {
   // 분석 실행 99건이 전부 "결과를 기다리는 중"으로 보인다 — 완료된 실행에
   // 스피너가 도는 것은 거짓 상태다. 같은 자리에 담을 수 있는 모양이므로
   // 옮겨 준다.
-  const outputCards =
-    selected?.output?.cards ||
-    selected?.output?.card_plan?.map((entry) => ({
-      position: entry.position,
-      headline_ko: entry.headline_ko,
-      body_ko: entry.purpose_ko,
-      visualization_method: entry.visualization_method,
-    })) ||
-    [];
+  const outputCards = [];
 
   return (
     <section className="model-log-page">
       <header className="model-log-heading">
         <div>
           <span>모델 실행 기록</span>
-          <h1>입력·출력 기록</h1>
+          <h1>호출 계측 기록</h1>
         </div>
         <div className="model-log-view-toggle">
           <button
@@ -150,8 +146,19 @@ function ModelLogs() {
 
       <div className="model-log-layout">
         <aside className="model-run-list">
-          {runs.length ? (
-            runs.map((run) => (
+          <div className="model-run-filters">
+            <select aria-label="기간" value={filters.period} onChange={(event) => setFilters((current) => ({ ...current, period: event.target.value }))}>
+              <option value="all">전체 기간</option><option value="24h">최근 24시간</option>
+            </select>
+            <select aria-label="단계" value={filters.stage} onChange={(event) => setFilters((current) => ({ ...current, stage: event.target.value }))}>
+              <option value="all">전체 단계</option>{[...new Set(runs.map((run) => run.stage))].map((stage) => <option value={stage} key={stage}>{stage}</option>)}
+            </select>
+            <select aria-label="제공자" value={filters.provider} onChange={(event) => setFilters((current) => ({ ...current, provider: event.target.value }))}>
+              <option value="all">전체 제공자</option>{[...new Set(runs.map((run) => run.provider))].map((provider) => <option value={provider} key={provider}>{provider}</option>)}
+            </select>
+          </div>
+          {visibleRuns.length ? (
+            visibleRuns.map((run) => (
               <button
                 type="button"
                 className={run.id === selected?.id ? "active" : ""}
@@ -160,9 +167,9 @@ function ModelLogs() {
               >
                 <div>
                   <span className={`run-status ${run.status}`} />
-                  <strong>{run.operation || "모델 실행"}</strong>
+                  <strong>{run.stage || "모델 실행"}</strong>
                 </div>
-                <p>{run.slug || "공통"}</p>
+                <p>{run.context?.slug || "공통"}</p>
                 <small>
                   {run.model} ·{" "}
                   {new Date(run.started_at).toLocaleTimeString("ko-KR")}
@@ -200,21 +207,21 @@ function ModelLogs() {
                 </div>
                 <div>
                   <span>입력 · 캐시 제외</span>
-                  <strong>{tokens.input.toLocaleString()}</strong>
+                  <strong>{tokens.input == null ? "정보 없음" : tokens.input.toLocaleString()}</strong>
                 </div>
                 <div>
                   <span>캐시</span>
-                  <strong>{tokens.cached.toLocaleString()}</strong>
+                  <strong>{tokens.cached == null ? "정보 없음" : tokens.cached.toLocaleString()}</strong>
                 </div>
                 <div>
                   <span>출력</span>
-                  <strong>{tokens.output.toLocaleString()}</strong>
+                  <strong>{tokens.output == null ? "정보 없음" : tokens.output.toLocaleString()}</strong>
                 </div>
                 <div>
                   <span>소요 시간</span>
                   <strong>
-                    {selected.duration_ms != null
-                      ? `${(selected.duration_ms / 1000).toFixed(1)}s`
+                    {selected.latency_ms != null
+                      ? `${(selected.latency_ms / 1000).toFixed(1)}s`
                       : "실행 중"}
                   </strong>
                 </div>
@@ -230,12 +237,6 @@ function ModelLogs() {
                     {/* 신호는 프롬프트 원문을 훑어 판정한다. 원문이 없으면
                         판정할 수 없다 — 그때 X를 찍으면 "안 넣었다"는 거짓이
                         된다. 없다는 사실을 그대로 말한다. */}
-                    {selected.input_omitted ? (
-                      <p className="model-output-omitted">
-                        {selected.omitted_reason ||
-                          "이 실행의 프롬프트 원문은 스냅샷에 담지 않아, 무엇을 넣었는지 판정할 수 없습니다."}
-                      </p>
-                    ) : (
                       <div className="model-signal-grid">
                         {inputSignals.map((signal) => (
                           <article
@@ -254,7 +255,6 @@ function ModelLogs() {
                           </article>
                         ))}
                       </div>
-                    )}
                   </section>
 
                   <div className="model-audience-arrow">
@@ -263,7 +263,7 @@ function ModelLogs() {
                     <small>
                       {selected.status === "running"
                         ? "생성 중"
-                        : `${(selected.duration_ms / 1000).toFixed(1)}초`}
+                        : selected.latency_ms == null ? "정보 없음" : `${(selected.latency_ms / 1000).toFixed(1)}초`}
                     </small>
                   </div>
 
@@ -313,48 +313,16 @@ function ModelLogs() {
                   </section>
                 </div>
               ) : (
-                <>
-                  {/* 배포용 스냅샷은 용량 때문에 최근 실행만 원문을 담는다.
-                      그때 `input_omitted`가 서 있다 — 없는 것과 아직 안 온 것을
-                      구별하지 않으면 "입력 준비 중"이라는 거짓 상태가 남는다. */}
-                  <section className="model-io-panel input">
+                <section className="model-io-panel input">
                     <header>
-                      <span>모델 입력</span>
-                      <strong>실제 전달 프롬프트</strong>
+                      <span>공통 계약</span>
+                      <strong>ModelRun 원문</strong>
                     </header>
-                    <pre>
-                      {selected.input?.prompt ||
-                        (selected.input_omitted
-                          ? selected.omitted_reason ||
-                            "이 실행의 프롬프트 원문은 스냅샷에 담지 않았습니다."
-                          : "입력 준비 중")}
-                    </pre>
+                    <pre>{JSON.stringify(selected, null, 2)}</pre>
+                    <p className="model-output-omitted">
+                      프롬프트와 모델 응답 전문은 telemetry에 복제하지 않습니다. 외부 전달 범위는 source_block_ids로 확인합니다.
+                    </p>
                   </section>
-
-                  {!selected.input_omitted && (
-                    <details className="model-schema-panel">
-                      <summary>구조화 출력 스키마</summary>
-                      <pre>
-                        {JSON.stringify(selected.input?.schema || {}, null, 2)}
-                      </pre>
-                    </details>
-                  )}
-
-                  <section className="model-io-panel output">
-                    <header>
-                      <span>모델 출력</span>
-                      <strong>구조화 응답 원문</strong>
-                    </header>
-                    <pre>
-                      {selected.output
-                        ? JSON.stringify(selected.output, null, 2)
-                        : selected.output_omitted
-                          ? selected.omitted_reason ||
-                            "이 실행의 응답 원문은 스냅샷에 담지 않았습니다."
-                          : selected.error || "모델 응답을 기다리는 중입니다."}
-                    </pre>
-                  </section>
-                </>
               )}
             </>
           ) : (

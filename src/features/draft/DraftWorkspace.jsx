@@ -25,6 +25,7 @@ function DraftWorkspace({ slug }) {
   const [selectedCard, setSelectedCard] = useState(1);
   const [instruction, setInstruction] = useState("");
   const [editor, setEditor] = useState(null);
+  const [exportState, setExportState] = useState({ status: "idle", artifact: null, error: "" });
   const editorCache = useRef(new Map());
 
   useEffect(() => {
@@ -92,6 +93,18 @@ function DraftWorkspace({ slug }) {
     } catch (requestError) {
       setError(requestError.message);
       setStatus("error");
+    }
+  }
+
+  async function exportRevision() {
+    setExportState({ status: "checking", artifact: null, error: "" });
+    try {
+      const response = await apiFetch(`/api/exports/${encodeURIComponent(slug)}/${revision.revision}`, { method: "POST" });
+      const payload = await response.json();
+      if (!response.ok) throw new Error([payload.error, ...(payload.validation || [])].join(" "));
+      setExportState({ status: "ready", artifact: payload, error: "" });
+    } catch (requestError) {
+      setExportState({ status: "error", artifact: null, error: requestError.message });
     }
   }
 
@@ -204,11 +217,17 @@ function DraftWorkspace({ slug }) {
         <div className="draft-evidence-row">
           <div>
             <span>원문 근거</span>
-            <SourceBadges ids={card.source_block_ids} />
+            <SourceBadges
+              ids={card.source_block_ids}
+              hrefForId={(id) => `#/summary/${encodeURIComponent(slug)}?block=${encodeURIComponent(id)}`}
+            />
           </div>
           <div>
             <span>디자인 규칙</span>
-            <SourceBadges ids={card.design_rule_ids} />
+            <SourceBadges
+              ids={card.design_rule_ids}
+              hrefForId={(id) => `#/analysis/research?rule=${encodeURIComponent(id)}`}
+            />
           </div>
         </div>
       </section>
@@ -269,6 +288,13 @@ function DraftWorkspace({ slug }) {
             ))}
           </div>
           <p>{revision.instruction}</p>
+          {revision.change_summary?.length > 0 && (
+            <ul className="revision-change-summary">
+              {revision.change_summary.map((item) => (
+                <li key={item.position}>{item.position}번 카드 · {item.changes.join(" · ")}</li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* 프롬프트 상자는 통째로 쓰기다 — 배포본에서는 입력칸만 회색으로
@@ -327,6 +353,22 @@ function DraftWorkspace({ slug }) {
             <div><dt>사용량 근거</dt><dd className="positive">{selectedRun?.usage_source === "actual" ? "실측" : selectedRun?.usage_source === "unavailable" ? "정보 없음" : selectedRun?.usage_source}</dd></div>
           </dl>
         </div>
+        {!READ_ONLY && (
+          <div className="draft-export-gate">
+            <span>출력 검문</span>
+            <p>승인 근거·이미지 권리·1080×1350·파일당 1.2MB를 모두 확인합니다.</p>
+            {exportState.artifact ? (
+              <a className="download-html-button" href={`/api/export-artifacts/${exportState.artifact.artifact_id}/download`} download>
+                검증된 ZIP 다운로드 <ArrowUpRight size={15} />
+              </a>
+            ) : (
+              <button type="button" onClick={exportRevision} disabled={exportState.status === "checking"}>
+                {exportState.status === "checking" ? "검증·렌더 중" : "이 수정본 검증하기"}
+              </button>
+            )}
+            {exportState.error && <p className="translation-error">{exportState.error}</p>}
+          </div>
+        )}
       </aside>
     </main>
   );
