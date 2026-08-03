@@ -8,6 +8,7 @@
 
 import { createHash } from "node:crypto";
 import { mkdir, rename, writeFile } from "node:fs/promises";
+import path from "node:path";
 import * as cheerio from "cheerio";
 import { imageSize } from "image-size";
 import { USER_AGENT } from "./robots.mjs";
@@ -72,6 +73,9 @@ export async function downloadAsset(image, { assetDir }) {
   if (!dimensions.width || !dimensions.height) {
     throw new Error("이미지 dimensions가 없습니다.");
   }
+  const decodedMime = dimensions.type === "jpg"
+    ? "image/jpeg"
+    : `image/${dimensions.type}`;
   const target = path.join(assetDir, blobSha256);
   await writeAtomic(target, payload);
   await writeAtomic(
@@ -80,7 +84,7 @@ export async function downloadAsset(image, { assetDir }) {
       `${JSON.stringify({
         sha256: blobSha256,
         bytes: payload.length,
-        mime: (contentType || "application/octet-stream").split(";")[0],
+        mime: decodedMime,
         width: dimensions.width,
         height: dimensions.height,
       }, null, 2)}\n`,
@@ -94,8 +98,8 @@ export async function downloadAsset(image, { assetDir }) {
     sha256: blobSha256,
     blob_sha256: blobSha256,
     bytes: payload.length,
-    content_type: contentType,
-    mime: (contentType || "application/octet-stream").split(";")[0],
+    content_type: decodedMime,
+    mime: decodedMime,
     width: dimensions.width,
     height: dimensions.height,
     alt: image.alt,

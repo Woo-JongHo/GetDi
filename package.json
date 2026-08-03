@@ -11,6 +11,8 @@
     "crawl": "node crawler/run.mjs",
     "source:import": "node scripts/import_source_snapshot.mjs",
     "source:import:bundle": "node scripts/import_source_snapshot.mjs --bundle",
+    "source:repair-assets": "node scripts/repair_source_assets.mjs",
+    "source:verify": "node scripts/verify_source_snapshot_corpus.mjs",
     "test": "node --test crawler/*.test.mjs scripts/*.test.mjs server/*.test.mjs .claude/skills/designer-guide/scripts/*.test.mjs src/features/draft/character/*.test.mjs",
     "smoke": "node scripts/smoke.mjs",
     "analyze": "node scripts/analyze_all.mjs",

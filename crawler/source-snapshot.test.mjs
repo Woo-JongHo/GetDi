@@ -88,6 +88,23 @@ test("missing image binary and empty body are rejected", () => {
   );
 });
 
+test("standalone body images become ordered figure blocks", () => {
+  const revision = buildSourceRevision(
+    detail({
+      content_html:
+        '<p>Before</p><img src="https://cdn.example/a.png" alt="A"><p>After</p>',
+    }),
+    [asset()],
+  );
+  assert.deepEqual(revision.blocks.map((block) => block.type), [
+    "paragraph",
+    "figure",
+    "paragraph",
+  ]);
+  assert.equal(revision.asset_occurrences[0].block_id, "B002");
+  assert.match(revision.blocks[1].html, /\/api\/source-assets\//);
+});
+
 test("SS-05: validation rejects missing, damaged, or dimensionless blobs", async () => {
   const root = await mkdtemp(path.join(os.tmpdir(), "getdi-source-"));
   const blobDir = path.join(root, "blobs");

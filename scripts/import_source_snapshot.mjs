@@ -41,7 +41,7 @@ async function prepareSourceSnapshot(slug, { projectRoot = rootDir } = {}) {
     if (!dimensions.width || !dimensions.height) {
       throw new Error(`asset dimensions를 판독하지 못했습니다: ${asset.source_url}`);
     }
-    const mime = (asset.content_type || "application/octet-stream").split(";")[0];
+    const mime = dimensions.type === "jpg" ? "image/jpeg" : `image/${dimensions.type}`;
     await writeAtomic(path.join(blobDir, sha256), payload);
     await writeAtomic(
       path.join(blobDir, `${sha256}.json`),

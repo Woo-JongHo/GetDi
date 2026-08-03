@@ -16,6 +16,7 @@ const BLOCK_TAGS = new Map([
   ["blockquote", "quote"],
   ["table", "table"],
   ["figure", "figure"],
+  ["img", "figure"],
 ]);
 
 function digest(value) {
@@ -60,9 +61,8 @@ function semanticNodes(contentHtml) {
 }
 
 function replaceImagesWithLocalUrls($, node, assetByUrl) {
-  $(node)
-    .find("img")
-    .each((_, image) => {
+  const images = node.name === "img" ? [node] : $(node).find("img").toArray();
+  images.forEach((image) => {
       const sourceUrl = $(image).attr("src");
       const asset = assetByUrl.get(sourceUrl);
       if (!asset) return;
@@ -82,9 +82,8 @@ export function buildSourceRevision(detail, assets = []) {
     const blockId = `B${String(index + 1).padStart(3, "0")}`;
     const occurrenceIds = [];
 
-    $(node)
-      .find("img")
-      .each((_, image) => {
+    const images = node.name === "img" ? [node] : $(node).find("img").toArray();
+    images.forEach((image) => {
         const sourceUrl = $(image).attr("src");
         const asset = assetByUrl.get(sourceUrl);
         if (!asset) {
